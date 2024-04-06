@@ -3,13 +3,13 @@
  */
 
 import cookieParser from 'cookie-parser';
-import morgan from 'morgan';
+import express, { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
-import express, { Request, Response, NextFunction } from 'express';
 import logger from 'jet-logger';
+import morgan from 'morgan';
 
-import UserRouter from '@src/routes/UserAPI';
 import Paths from '@src/constants/Paths';
+import UserRouter from '@src/routes/UserAPI';
 
 import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
@@ -17,6 +17,13 @@ import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { NodeEnvs } from '@src/constants/misc';
 import { RouteError } from '@src/other/classes';
 import mongoose from 'mongoose';
+import passport from 'passport';
+import {
+  ExtractJwt,
+  Strategy as JWTStrategy,
+  StrategyOptionsWithoutRequest,
+} from 'passport-jwt';
+import User from './models/User';
 
 // **** Variables **** //
 
@@ -46,6 +53,29 @@ if (EnvVars.NodeEnv === NodeEnvs.Production.valueOf()) {
   app.use(helmet());
 }
 
+const strategyOpts: StrategyOptionsWithoutRequest = {
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+  secretOrKey: EnvVars.Jwt.Secret,
+};
+
+passport.use(
+  new JWTStrategy(strategyOpts, async (jwt_payload: { sub: string }, done) => {
+    try {
+      const user = await User.findOne({ _id: jwt_payload.sub }).exec();
+
+      if (user) {
+        return done(null, user);
+      } else {
+        return done(null, null);
+      }
+    } catch (err) {
+      return done(err, null);
+    }
+  }),
+);
+
+app.use(passport.authenticate('jwt', { session: false }));
+
 // Add APIs, must be after middleware
 app.use(Paths.Base, UserRouter);
 
@@ -56,7 +86,7 @@ app.use(
     _: Request,
     res: Response,
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    next: NextFunction
+    next: NextFunction,
   ) => {
     if (EnvVars.NodeEnv !== NodeEnvs.Test.valueOf()) {
       logger.err(err, true);
@@ -66,7 +96,7 @@ app.use(
       status = err.status;
     }
     return res.status(status).json({ error: err.message });
-  }
+  },
 );
 
 // **** Export default **** //
