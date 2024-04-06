@@ -37,12 +37,12 @@ describe('UserRouter', () => {
   });
 
   // Get all users
-  describe(`"GET:${Paths.Users.Get}"`, () => {
+  describe(`"GET:${Paths.Users.GET}"`, () => {
 
     // Setup API
     const api = (cb: TApiCb) => 
       agent
-        .get(Paths.Users.Get)
+        .get(Paths.Users.GET)
         .end(apiCb(cb));
 
     // Success
@@ -61,7 +61,7 @@ describe('UserRouter', () => {
   });
 
   // Test add user
-  describe(`"POST:${Paths.Users.Add}"`, () => {
+  describe(`"POST:${Paths.Users.POST}"`, () => {
 
     const ERROR_MSG = `${ValidatorErr}"user".`,
       DUMMY_USER = getDummyUsers()[0];
@@ -69,7 +69,7 @@ describe('UserRouter', () => {
     // Setup API
     const callApi = (user: IUser | null, cb: TApiCb) => 
       agent
-        .post(Paths.Users.Add)
+        .post(Paths.Users.POST)
         .send({ user })
         .end(apiCb(cb));
 
@@ -99,7 +99,7 @@ describe('UserRouter', () => {
   });
 
   // Update users
-  describe(`"PUT:${Paths.Users.Update}"`, () => {
+  describe(`"PUT:${Paths.Users.PUT}"`, () => {
 
     const ERROR_MSG = `${ValidatorErr}"user".`,
       DUMMY_USER = getDummyUsers()[0];
@@ -107,7 +107,7 @@ describe('UserRouter', () => {
     // Setup API
     const callApi = (user: IUser | null, cb: TApiCb) => 
       agent
-        .put(Paths.Users.Update)
+        .put(Paths.Users.PUT)
         .send({ user })
         .end(apiCb(cb));
 
@@ -150,12 +150,12 @@ describe('UserRouter', () => {
   });
 
   // Delete User
-  describe(`"DELETE:${Paths.Users.Delete}"`, () => {
+  describe(`"DELETE:${Paths.Users.DELETE}"`, () => {
 
     // Call API
     const callApi = (id: number, cb: TApiCb) => 
       agent
-        .delete(insertUrlParams(Paths.Users.Delete, { id }))
+        .delete(insertUrlParams(Paths.Users.DELETE, { id }))
         .end(apiCb(cb));
 
     // Success

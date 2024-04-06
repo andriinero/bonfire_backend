@@ -1,66 +1,46 @@
-import UserRepo from '@src/repos/UserRepo';
-import { IUser } from '@src/models/User';
-import { RouteError } from '@src/other/classes';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-
-
-// **** Variables **** //
+import { TUser } from '@src/models/User';
+import { RouteError } from '@src/other/classes';
+import UserRepo from '@src/repos/UserRepo';
+import { Types } from 'mongoose';
 
 export const USER_NOT_FOUND_ERR = 'User not found';
 
+const getAll = async (): Promise<TUser[]> => {
+  const allUsers = await UserRepo.getAll();
 
-// **** Functions **** //
+  return allUsers;
+};
 
-/**
- * Get all users.
- */
-function getAll(): Promise<IUser[]> {
-  return UserRepo.getAll();
-}
-
-/**
- * Add one user.
- */
-function addOne(user: IUser): Promise<void> {
-  return UserRepo.add(user);
-}
-
-/**
- * Update one user.
- */
-async function updateOne(user: IUser): Promise<void> {
-  const persists = await UserRepo.persists(user.id);
-  if (!persists) {
-    throw new RouteError(
-      HttpStatusCodes.NOT_FOUND,
-      USER_NOT_FOUND_ERR,
-    );
+const getOneById = async (userId: Types.ObjectId): Promise<TUser | null> => {
+  const foundUser = await UserRepo.getOne({ _id: userId });
+  if (!foundUser) {
+    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
   }
-  // Return user
-  return UserRepo.update(user);
-}
 
-/**
- * Delete a user by their id.
- */
-async function _delete(id: number): Promise<void> {
-  const persists = await UserRepo.persists(id);
+  return foundUser;
+};
+
+const createOne = async (user: TUser): Promise<void> => {
+  return UserRepo.createOne(user);
+};
+
+const updateOne = async (user: TUser): Promise<void> => {
+  const persists = await UserRepo.persists({ _id: user._id });
   if (!persists) {
-    throw new RouteError(
-      HttpStatusCodes.NOT_FOUND,
-      USER_NOT_FOUND_ERR,
-    );
+    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
   }
-  // Delete user
-  return UserRepo.delete(id);
-}
 
+  return UserRepo.updateOne(user);
+};
 
-// **** Export default **** //
+const deleteOne = async (query: object): Promise<void> => {
+  const persists = await UserRepo.persists(query);
+  if (!persists) {
+    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
+  }
 
-export default {
-  getAll,
-  addOne,
-  updateOne,
-  delete: _delete,
-} as const;
+  return UserRepo.deleteOne(query);
+};
+
+export default { getAll, getOne: getOneById, createOne, updateOne, deleteOne };

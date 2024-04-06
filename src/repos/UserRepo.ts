@@ -1,93 +1,46 @@
-import { IUser } from '@src/models/User';
-import { getRandomInt } from '@src/util/misc';
-import orm from './MockOrm';
+import User from '@src/models/User';
 
+import { TUser } from '@src/models/User';
 
-// **** Functions **** //
+const getAll = async (): Promise<TUser[]> => {
+  const allUsers = await User.find().exec();
 
-/**
- * Get one user.
- */
-async function getOne(email: string): Promise<IUser | null> {
-  const db = await orm.openDb();
-  for (const user of db.users) {
-    if (user.email === email) {
-      return user;
-    }
-  }
-  return null;
-}
+  return allUsers;
+};
 
-/**
- * See if a user with the given id exists.
- */
-async function persists(id: number): Promise<boolean> {
-  const db = await orm.openDb();
-  for (const user of db.users) {
-    if (user.id === id) {
-      return true;
-    }
-  }
-  return false;
-}
+const getOne = async (query: object): Promise<TUser | null> => {
+  const user = await User.findOne(query).exec();
 
-/**
- * Get all users.
- */
-async function getAll(): Promise<IUser[]> {
-  const db = await orm.openDb();
-  return db.users;
-}
+  return user;
+};
 
-/**
- * Add one user.
- */
-async function add(user: IUser): Promise<void> {
-  const db = await orm.openDb();
-  user.id = getRandomInt();
-  db.users.push(user);
-  return orm.saveDb(db);
-}
+const persists = async (query: object): Promise<boolean> => {
+  const persistingUser = await User.findOne(query).exec();
 
-/**
- * Update a user.
- */
-async function update(user: IUser): Promise<void> {
-  const db = await orm.openDb();
-  for (let i = 0; i < db.users.length; i++) {
-    if (db.users[i].id === user.id) {
-      const dbUser = db.users[i];
-      db.users[i] = {
-        ...dbUser,
-        name: user.name,
-        email: user.email,
-      };
-      return orm.saveDb(db);
-    }
-  }
-}
+  return !!persistingUser;
+};
 
-/**
- * Delete one user.
- */
-async function delete_(id: number): Promise<void> {
-  const db = await orm.openDb();
-  for (let i = 0; i < db.users.length; i++) {
-    if (db.users[i].id === id) {
-      db.users.splice(i, 1);
-      return orm.saveDb(db);
-    }
-  }
-}
+const createOne = async (user: TUser): Promise<void> => {
+  const newUser = new User(user);
+  await newUser.save();
+};
 
+const updateOne = async (user: TUser): Promise<void> => {
+  await User.findByIdAndUpdate(user._id, user, {
+    runValidators: true,
+    new: true,
+  });
+};
 
-// **** Export default **** //
+const deleteOne = async (query: object): Promise<void> => {
+  await User.deleteOne(query);
+};
 
 export default {
+  getAll,
   getOne,
   persists,
-  getAll,
-  add,
-  update,
-  delete: delete_,
+  createOne,
+  updateOne,
+  deleteOne,
 } as const;

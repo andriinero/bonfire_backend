@@ -1,53 +1,66 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-
+import { TUser } from '@src/models/User';
 import UserService from '@src/services/UserService';
-import { IUser } from '@src/models/User';
-import { IReq, IRes } from './types/express/misc';
+import asyncHandler from 'express-async-handler';
+import { param, validationResult } from 'express-validator';
+import { Types, isValidObjectId } from 'mongoose';
+import { IRes } from './types/express/misc';
+import { IReq, IReqParams } from './types/types';
 
+// TODO: move to middlewares folder
+const useridParamValidation = param('userid', 'User id must be valid')
+  .trim()
+  .custom(isValidObjectId)
+  .escape();
 
-// **** Functions **** //
+const getAll = [
+  asyncHandler(async (_: IReq, res: IRes): Promise<void> => {
+    const allUsers = await UserService.getAll();
 
-/**
- * Get all users.
- */
-async function getAll(_: IReq, res: IRes) {
-  const users = await UserService.getAll();
-  return res.status(HttpStatusCodes.OK).json({ users });
-}
+    res.status(HttpStatusCodes.OK).json(allUsers);
+  }),
+];
 
-/**
- * Add one user.
- */
-async function add(req: IReq<{user: IUser}>, res: IRes) {
-  const { user } = req.body;
-  await UserService.addOne(user);
-  return res.status(HttpStatusCodes.CREATED).end();
-}
+const getOne = [
+  useridParamValidation,
+  asyncHandler(async (req: IReqParams<{ userid: string }>, res: IRes): Promise<void> => {
+    const errors = validationResult(req);
 
-/**
- * Update one user.
- */
-async function update(req: IReq<{user: IUser}>, res: IRes) {
-  const { user } = req.body;
-  await UserService.updateOne(user);
-  return res.status(HttpStatusCodes.OK).end();
-}
+    if (!errors.isEmpty()) {
+      res
+        .status(HttpStatusCodes.BAD_REQUEST)
+        .json({ message: 'Validation error', errors: errors.array() });
+    } else {
+      const { userid } = req.params;
+      const userObjectId = new Types.ObjectId(userid);
 
-/**
- * Delete one user.
- */
-async function delete_(req: IReq, res: IRes) {
-  const id = +req.params.id;
-  await UserService.delete(id);
-  return res.status(HttpStatusCodes.OK).end();
-}
+      const user = await UserService.getOne(userObjectId);
 
+      res.status(HttpStatusCodes.OK).json(user);
+    }
+  }),
+];
 
-// **** Export default **** //
+const post = [
+  useridParamValidation,
+  asyncHandler(async (req: IReq<{ user: TUser }>, res: IRes): Promise<void> => {
+    const { user } = req.body;
 
-export default {
-  getAll,
-  add,
-  update,
-  delete: delete_,
-} as const;
+    await UserService.createOne(user);
+
+    res.status(HttpStatusCodes.CREATED).end();
+  }),
+];
+
+const put = [
+  useridParamValidation,
+  asyncHandler(async (req: IReq<{ user: TUser }>, res: IRes): Promise<void> => {
+    const { user } = req.body;
+
+    await UserService.updateOne(user);
+
+    res.status(HttpStatusCodes.OK).end();
+  }),
+];
+
+export default { getAll, getOne, post, put };
