@@ -1,7 +1,16 @@
+import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { TUser, TUserMutable } from '@src/models/User';
 import { RouteError } from '@src/other/classes';
 import UserRepo from '@src/repos/UserRepo';
+import bcrypt from 'bcrypt';
+
+export type UserPost = {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
 
 export const USER_NOT_FOUND_ERR = 'User not found';
 
@@ -20,8 +29,15 @@ const getOneById = async (id: string): Promise<TUser | null> => {
   return foundUser;
 };
 
-const createOne = async (userData: TUserMutable): Promise<void> => {
-  return UserRepo.createOne(userData);
+const createOne = async (userData: UserPost): Promise<void> => {
+  const hashedPassword = await bcrypt.hash(
+    userData.password,
+    +EnvVars.Bcrypt.Salt,
+  );
+
+  const userDetails = { ...userData, password: hashedPassword };
+
+  return UserRepo.createOne(userDetails);
 };
 
 const updateOne = async (id: string, data: TUserMutable): Promise<void> => {

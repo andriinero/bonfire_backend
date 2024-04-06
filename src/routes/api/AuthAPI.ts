@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import Paths from '@src/constants/Paths';
-import AuthRoutes from './AuthRoutes';
+import AuthRoutes from '../AuthRoutes';
 
 const apiRouter = Router();
 

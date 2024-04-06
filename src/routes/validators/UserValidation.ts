@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { body, param } from 'express-validator';
 import { isValidObjectId } from 'mongoose';
 
@@ -17,4 +18,17 @@ const userData = [
     .escape(),
 ];
 
-export default { useridParam, userData };
+const userPassword = [
+  body('password', 'Password must be valid')
+    .trim()
+    .isLength({ min: 8 })
+    .escape(),
+  body('confirmPassword', 'Passwords must match')
+    .trim()
+    .custom((value: string, { req }) => {
+      return value === req.body.password;
+    })
+    .escape(),
+];
+
+export default { useridParam, userData, userPassword };

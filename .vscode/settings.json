@@ -2,5 +2,25 @@
   "cSpell.words": [
     "maxlength",
     "userid"
-  ]
+  ],
+  "workbench.colorCustomizations": {
+    "activityBar.activeBackground": "#37216c",
+    "activityBar.background": "#37216c",
+    "activityBar.foreground": "#e7e7e7",
+    "activityBar.inactiveForeground": "#e7e7e799",
+    "activityBarBadge.background": "#924b2d",
+    "activityBarBadge.foreground": "#e7e7e7",
+    "commandCenter.border": "#e7e7e799",
+    "sash.hoverBorder": "#37216c",
+    "statusBar.background": "#231545",
+    "statusBar.foreground": "#e7e7e7",
+    "statusBarItem.hoverBackground": "#37216c",
+    "statusBarItem.remoteBackground": "#231545",
+    "statusBarItem.remoteForeground": "#e7e7e7",
+    "titleBar.activeBackground": "#231545",
+    "titleBar.activeForeground": "#e7e7e7",
+    "titleBar.inactiveBackground": "#23154599",
+    "titleBar.inactiveForeground": "#e7e7e799"
+  },
+  "peacock.color": "#231545"
 }

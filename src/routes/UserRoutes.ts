@@ -39,9 +39,15 @@ const getOne = [
 
 const post = [
   ...UserValidation.userData,
+  ...UserValidation.userPassword,
   asyncHandler(
     async (
-      req: IReq<{ username: string; email: string }>,
+      req: IReq<{
+        username: string;
+        email: string;
+        password: string;
+        confirmPassword: string;
+      }>,
       res: IRes,
     ): Promise<void> => {
       const errors = validationResult(req);
@@ -51,9 +57,14 @@ const post = [
           .status(HttpStatusCodes.BAD_REQUEST)
           .json(formatValidationErrors(errors));
       } else {
-        const { username, email } = req.body;
+        const { username, email, password, confirmPassword } = req.body;
 
-        await UserService.createOne({ username, email });
+        await UserService.createOne({
+          username,
+          email,
+          password,
+          confirmPassword,
+        });
 
         res.sendStatus(HttpStatusCodes.CREATED);
       }

@@ -9,8 +9,8 @@ import logger from 'jet-logger';
 import morgan from 'morgan';
 
 import Paths from '@src/constants/Paths';
-import AuthRouter from '@src/routes/AuthAPI';
-import UserRouter from '@src/routes/UserAPI';
+import AuthRouter from '@src/routes/api/AuthAPI';
+import UserRouter from '@src/routes/api/UserAPI';
 
 import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';

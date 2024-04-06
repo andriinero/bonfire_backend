@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
-import Paths from '../constants/Paths';
-import UserRoutes from './UserRoutes';
+import Paths from '../../constants/Paths';
+import UserRoutes from '../UserRoutes';
 
 const apiRouter = Router();
 
