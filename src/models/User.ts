@@ -8,10 +8,15 @@ export type TUser = {
   isOnline: boolean;
 };
 
+export type TUserMutable = {
+  username?: string;
+  email?: string;
+};
+
 const UserSchema = new Schema<TUser>({
   username: { type: String, required: true, minlength: 3, maxlength: 100 },
   email: { type: String, required: true, minlength: 3, maxlength: 100 },
-  created: { type: Date, required: true },
+  created: { type: Date, required: true, default: new Date() },
   isOnline: { type: Boolean, required: true, default: false },
 });
 

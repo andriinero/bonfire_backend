@@ -1,9 +1,9 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { TUser } from '@src/models/User';
+import { TUserMutable } from '@src/models/User';
 import UserService from '@src/services/UserService';
 import asyncHandler from 'express-async-handler';
-import { param, validationResult } from 'express-validator';
-import { Types, isValidObjectId } from 'mongoose';
+import { body, param, validationResult } from 'express-validator';
+import { isValidObjectId } from 'mongoose';
 import { IRes } from './types/express/misc';
 import { IReq, IReqParams } from './types/types';
 
@@ -32,9 +32,8 @@ const getOne = [
         .json({ message: 'Validation error', errors: errors.array() });
     } else {
       const { userid } = req.params;
-      const userObjectId = new Types.ObjectId(userid);
 
-      const user = await UserService.getOne(userObjectId);
+      const user = await UserService.getOne(userid);
 
       res.status(HttpStatusCodes.OK).json(user);
     }
@@ -42,25 +41,41 @@ const getOne = [
 ];
 
 const post = [
-  useridParamValidation,
-  asyncHandler(async (req: IReq<{ user: TUser }>, res: IRes): Promise<void> => {
-    const { user } = req.body;
+  body('username', 'Username must be valid')
+    .trim()
+    .isLength({ min: 3, max: 100 })
+    .escape(),
+  body('email', 'Username must be valid').trim().isLength({ min: 3, max: 100 }).escape(),
+  asyncHandler(
+    async (req: IReq<{ userData: TUserMutable }>, res: IRes): Promise<void> => {
+      const { userData } = req.body;
 
-    await UserService.createOne(user);
+      await UserService.createOne(userData);
 
-    res.status(HttpStatusCodes.CREATED).end();
-  }),
+      res.status(HttpStatusCodes.CREATED).end();
+    },
+  ),
 ];
 
 const put = [
   useridParamValidation,
-  asyncHandler(async (req: IReq<{ user: TUser }>, res: IRes): Promise<void> => {
-    const { user } = req.body;
+  body('username', 'Username must be valid')
+    .trim()
+    .isLength({ min: 3, max: 100 })
+    .escape(),
+  body('email', 'Username must be valid').trim().isLength({ min: 3, max: 100 }).escape(),
+  asyncHandler(
+    async (
+      req: IReqParams<{ userid: string }, { user: TUserMutable }>,
+      res: IRes,
+    ): Promise<void> => {
+      const { user } = req.body;
 
-    await UserService.updateOne(user);
+      await UserService.updateOne(userid, user);
 
-    res.status(HttpStatusCodes.OK).end();
-  }),
+      res.status(HttpStatusCodes.OK).end();
+    },
+  ),
 ];
 
 export default { getAll, getOne, post, put };
