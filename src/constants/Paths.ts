@@ -12,4 +12,9 @@ export default {
     PUT: '/:userid',
     DELETE: '/:userid',
   },
+  Auth: {
+    BASE: '/auth',
+    GET: '/data',
+    POST: '/sign-in',
+  },
 } as const;

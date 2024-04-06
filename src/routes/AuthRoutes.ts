@@ -1,0 +1,46 @@
+import HttpStatusCodes from '@src/constants/HttpStatusCodes';
+import { authenticate } from '@src/middlewares/authentication';
+import { TUser } from '@src/models/User';
+import AuthService from '@src/services/AuthService';
+import { formatValidationErrors } from '@src/util/misc';
+import asyncHandler from 'express-async-handler';
+import { validationResult } from 'express-validator';
+import { IRes } from './types/express/misc';
+import { IReq } from './types/types';
+import AuthValidation from './validators/AuthValidation';
+
+const get = [
+  authenticate,
+  (req: IReq, res: IRes): void => {
+    const user = req.user as TUser;
+    const data = AuthService.getAuthData(user);
+
+    res.status(HttpStatusCodes.OK).json(data);
+  },
+];
+
+const post = [
+  ...AuthValidation.signInData,
+  asyncHandler(
+    async (
+      req: IReq<{ username: string; password: string }>,
+      res: IRes,
+    ): Promise<void> => {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        res
+          .status(HttpStatusCodes.BAD_REQUEST)
+          .json(formatValidationErrors(errors));
+      } else {
+        const { username, password } = req.body;
+
+        const token = await AuthService.signIn(username, password);
+
+        res.status(HttpStatusCodes.OK).json({ message: 'Success', token });
+      }
+    },
+  ),
+];
+
+export default { get, post };

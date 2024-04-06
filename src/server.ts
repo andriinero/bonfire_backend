@@ -9,6 +9,7 @@ import logger from 'jet-logger';
 import morgan from 'morgan';
 
 import Paths from '@src/constants/Paths';
+import AuthRouter from '@src/routes/AuthAPI';
 import UserRouter from '@src/routes/UserAPI';
 
 import EnvVars from '@src/constants/EnvVars';
@@ -64,7 +65,8 @@ passport.use(
       const user = await User.findOne({ _id: jwt_payload.sub }).exec();
 
       if (user) {
-        return done(null, user);
+        const userObject = user.toObject();
+        return done(null, userObject);
       } else {
         return done(null, null);
       }
@@ -74,10 +76,10 @@ passport.use(
   }),
 );
 
-app.use(passport.authenticate('jwt', { session: false }));
-
 // Add APIs, must be after middleware
+
 app.use(Paths.Base, UserRouter);
+app.use(Paths.Base, AuthRouter);
 
 // Add error handler
 app.use(

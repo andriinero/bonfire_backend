@@ -3,8 +3,6 @@ import { Router } from 'express';
 import Paths from '../constants/Paths';
 import UserRoutes from './UserRoutes';
 
-// **** Variables **** //
-
 const apiRouter = Router();
 
 const userRouter = Router();
@@ -19,7 +17,5 @@ userRouter.put(Paths.Users.PUT, UserRoutes.put);
 
 // Add UserRouter
 apiRouter.use(Paths.Users.BASE, userRouter);
-
-// **** Export default **** //
 
 export default apiRouter;
