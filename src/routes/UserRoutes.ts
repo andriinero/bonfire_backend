@@ -1,17 +1,12 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { TUserMutable } from '@src/models/User';
 import UserService from '@src/services/UserService';
+import { formatValidationErrors } from '@src/util/misc';
 import asyncHandler from 'express-async-handler';
-import { body, param, validationResult } from 'express-validator';
-import { isValidObjectId } from 'mongoose';
+import { validationResult } from 'express-validator';
 import { IRes } from './types/express/misc';
 import { IReq, IReqParams } from './types/types';
-
-// TODO: move to middlewares folder
-const useridParamValidation = param('userid', 'User id must be valid')
-  .trim()
-  .custom(isValidObjectId)
-  .escape();
+import UserValidation from './validators/UserValidation';
 
 const getAll = [
   asyncHandler(async (_: IReq, res: IRes): Promise<void> => {
@@ -22,58 +17,72 @@ const getAll = [
 ];
 
 const getOne = [
-  useridParamValidation,
-  asyncHandler(async (req: IReqParams<{ userid: string }>, res: IRes): Promise<void> => {
-    const errors = validationResult(req);
+  UserValidation.useridParam,
+  asyncHandler(
+    async (req: IReqParams<{ userid: string }>, res: IRes): Promise<void> => {
+      const errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-      res
-        .status(HttpStatusCodes.BAD_REQUEST)
-        .json({ message: 'Validation error', errors: errors.array() });
-    } else {
-      const { userid } = req.params;
+      if (!errors.isEmpty()) {
+        res
+          .status(HttpStatusCodes.BAD_REQUEST)
+          .json(formatValidationErrors(errors));
+      } else {
+        const { userid } = req.params;
 
-      const user = await UserService.getOne(userid);
+        const user = await UserService.getOne(userid);
 
-      res.status(HttpStatusCodes.OK).json(user);
-    }
-  }),
+        res.status(HttpStatusCodes.OK).json(user);
+      }
+    },
+  ),
 ];
 
 const post = [
-  body('username', 'Username must be valid')
-    .trim()
-    .isLength({ min: 3, max: 100 })
-    .escape(),
-  body('email', 'Username must be valid').trim().isLength({ min: 3, max: 100 }).escape(),
+  ...UserValidation.userData,
   asyncHandler(
-    async (req: IReq<{ userData: TUserMutable }>, res: IRes): Promise<void> => {
-      const { userData } = req.body;
+    async (
+      req: IReq<{ username: string; email: string }>,
+      res: IRes,
+    ): Promise<void> => {
+      const errors = validationResult(req);
 
-      await UserService.createOne(userData);
+      if (!errors.isEmpty()) {
+        res
+          .status(HttpStatusCodes.BAD_REQUEST)
+          .json(formatValidationErrors(errors));
+      } else {
+        const { username, email } = req.body;
 
-      res.status(HttpStatusCodes.CREATED).end();
+        await UserService.createOne({ username, email });
+
+        res.sendStatus(HttpStatusCodes.CREATED);
+      }
     },
   ),
 ];
 
 const put = [
-  useridParamValidation,
-  body('username', 'Username must be valid')
-    .trim()
-    .isLength({ min: 3, max: 100 })
-    .escape(),
-  body('email', 'Username must be valid').trim().isLength({ min: 3, max: 100 }).escape(),
+  UserValidation.useridParam,
+  ...UserValidation.userData,
   asyncHandler(
     async (
       req: IReqParams<{ userid: string }, { user: TUserMutable }>,
       res: IRes,
     ): Promise<void> => {
-      const { user } = req.body;
+      const errors = validationResult(req);
 
-      await UserService.updateOne(userid, user);
+      if (!errors.isEmpty()) {
+        res
+          .status(HttpStatusCodes.BAD_REQUEST)
+          .json(formatValidationErrors(errors));
+      } else {
+        const { userid } = req.params;
+        const { user } = req.body;
 
-      res.status(HttpStatusCodes.OK).end();
+        await UserService.updateOne(userid, user);
+
+        res.sendStatus(HttpStatusCodes.OK);
+      }
     },
   ),
 ];

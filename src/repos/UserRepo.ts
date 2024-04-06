@@ -1,6 +1,4 @@
-import User, { TUserMutable } from '@src/models/User';
-
-import { TUser } from '@src/models/User';
+import User, { TUser, TUserMutable } from '@src/models/User';
 
 const getAll = async (): Promise<TUser[]> => {
   const allUsers = await User.find().exec();
@@ -32,8 +30,8 @@ const updateOne = async (id: string, data: TUserMutable): Promise<void> => {
   });
 };
 
-const deleteOne = async (userId: string): Promise<void> => {
-  await User.findByIdAndDelete(userId);
+const deleteOne = async (id: string): Promise<void> => {
+  await User.findByIdAndDelete(id);
 };
 
 export default {
