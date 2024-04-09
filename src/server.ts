@@ -25,6 +25,8 @@ import {
   StrategyOptionsWithoutRequest,
 } from 'passport-jwt';
 import User from './models/User';
+import cors from 'cors';
+import ChatRoomRouter from './routes/api/ChatRoomAPI';
 
 // **** Variables **** //
 
@@ -40,6 +42,7 @@ const main = async () => {
 main().catch((err: unknown) => logger.err(err, true));
 
 // Basic middleware
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(EnvVars.CookieProps.Secret));
@@ -80,6 +83,7 @@ passport.use(
 
 app.use(Paths.Base, UserRouter);
 app.use(Paths.Base, AuthRouter);
+app.use(Paths.Base, ChatRoomRouter);
 
 // Add error handler
 app.use(

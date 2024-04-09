@@ -12,12 +12,6 @@ const getOne = async (id: string): Promise<TUser | null> => {
   return user;
 };
 
-const persists = async (id: string): Promise<boolean> => {
-  const persistingUser = await User.findById(id).exec();
-
-  return !!persistingUser;
-};
-
 const createOne = async (data: TUserMutable): Promise<void> => {
   const newUser = new User(data);
   await newUser.save();
@@ -34,11 +28,17 @@ const deleteOne = async (id: string): Promise<void> => {
   await User.findByIdAndDelete(id);
 };
 
+const persists = async (id: string): Promise<boolean> => {
+  const persistingUser = await User.findById(id).exec();
+
+  return !!persistingUser;
+};
+
 export default {
   getAll,
   getOne,
-  persists,
   createOne,
   updateOne,
-  deleteOne: deleteOne,
+  deleteOne,
+  persists,
 } as const;

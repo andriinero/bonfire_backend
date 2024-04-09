@@ -9,15 +9,15 @@ import { USER_NOT_FOUND_ERR } from './UserService';
 export const AUTHENTICATION_ERR = 'Incorrect credentials';
 
 const getAuthData = (user: TUser): AuthPayload => {
-  const { _id, username, role } = user;
+  const { _id, username, email, role, profile_image } = user;
 
-  return { sub: _id.toString(), username, role };
+  return { sub: _id.toString(), username, email, role, profile_image };
 };
 
-const signIn = async (username: string, password: string): Promise<string> => {
+const signIn = async (email: string, password: string): Promise<string> => {
   const user = await User.findOne(
-    { username },
-    'username password role',
+    { email },
+    'username email password role',
   ).exec();
   if (!user) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
@@ -31,7 +31,9 @@ const signIn = async (username: string, password: string): Promise<string> => {
   const jwtPayload: AuthPayload = {
     sub: user.id as string,
     username: user.username,
+    email: user.email,
     role: user.role,
+    profile_image: user.profile_image,
   };
 
   const token = jwt.sign(jwtPayload, EnvVars.Jwt.Secret, {

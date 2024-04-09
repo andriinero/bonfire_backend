@@ -23,7 +23,7 @@ const post = [
   ...AuthValidation.signInData,
   asyncHandler(
     async (
-      req: IReq<{ username: string; password: string }>,
+      req: IReq<{ email: string; password: string }>,
       res: IRes,
     ): Promise<void> => {
       const errors = validationResult(req);
@@ -33,9 +33,9 @@ const post = [
           .status(HttpStatusCodes.BAD_REQUEST)
           .json(formatValidationErrors(errors));
       } else {
-        const { username, password } = req.body;
+        const { email, password } = req.body;
 
-        const token = await AuthService.signIn(username, password);
+        const token = await AuthService.signIn(email, password);
 
         res.status(HttpStatusCodes.OK).json({ message: 'Success', token });
       }

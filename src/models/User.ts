@@ -7,7 +7,8 @@ export type TUser = {
   password: string;
   role: 'user' | 'admin';
   created: Date;
-  isOnline: boolean;
+  is_online: boolean;
+  profile_image: string;
 };
 
 export type TUserMutable = {
@@ -16,10 +17,19 @@ export type TUserMutable = {
   password?: string;
 };
 
+export type UserPost = {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
 export type AuthPayload = {
   sub: string;
   username: string;
+  email: string;
   role: string;
+  profile_image: string;
 };
 
 const UserSchema = new Schema<TUser>(
@@ -29,7 +39,8 @@ const UserSchema = new Schema<TUser>(
     password: { type: String, required: true, minlength: 8 },
     role: { type: String, enum: ['user', 'admin'], default: 'user' },
     created: { type: Date, required: true, default: new Date() },
-    isOnline: { type: Boolean, required: true, default: false },
+    is_online: { type: Boolean, required: true, default: false },
+    profile_image: { type: String },
   },
   { versionKey: false },
 );

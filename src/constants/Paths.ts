@@ -17,4 +17,11 @@ export default {
     GET: '/data',
     POST: '/sign-in',
   },
+  ChatRoom: {
+    BASE: '/chat-room',
+    GET_ALL: '/',
+    GET: '/:chatroomid',
+    POST: '/',
+    PUT: '/:chatroomid',
+  },
 } as const;

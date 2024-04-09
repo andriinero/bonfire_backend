@@ -1,16 +1,9 @@
 import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { TUser, TUserMutable } from '@src/models/User';
+import { TUser, TUserMutable, UserPost } from '@src/models/User';
 import { RouteError } from '@src/other/classes';
 import UserRepo from '@src/repos/UserRepo';
 import bcrypt from 'bcrypt';
-
-export type UserPost = {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
 
 export const USER_NOT_FOUND_ERR = 'User not found';
 
@@ -49,13 +42,4 @@ const updateOne = async (id: string, data: TUserMutable): Promise<void> => {
   return UserRepo.updateOne(id, data);
 };
 
-const deleteOne = async (id: string): Promise<void> => {
-  const persists = await UserRepo.persists(id);
-  if (!persists) {
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
-  }
-
-  return UserRepo.deleteOne(id);
-};
-
-export default { getAll, getOne: getOneById, createOne, updateOne, deleteOne };
+export default { getAll, getOne: getOneById, createOne, updateOne };
