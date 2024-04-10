@@ -10,6 +10,7 @@ export type TChatRoom = {
 
 export type TChatRoomPost = {
   name: string;
+  participant: Types.ObjectId[];
 };
 
 export type TChatRoomMutable = {

@@ -8,6 +8,7 @@ const chatroomidParam = param('chatroomid', 'Chat room id must be valid')
 
 const chatRoomName = body('name', 'Chat room name must be valid')
   .trim()
+  .optional()
   .isLength({ min: 3, max: 8 })
   .escape();
 

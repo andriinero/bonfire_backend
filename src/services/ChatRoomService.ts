@@ -6,7 +6,9 @@ import {
 } from '@src/models/ChatRoom';
 import { RouteError } from '@src/other/classes';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
+import UserRepo from '@src/repos/UserRepo';
 import { Types } from 'mongoose';
+import { USER_NOT_FOUND_ERR } from './UserService';
 
 export type TChatQuery = {
   _id: Types.ObjectId;
@@ -35,8 +37,13 @@ const getOneById = async (query: TChatQuery): Promise<TChatRoom> => {
   return foundChatRoom;
 };
 
-const createOne = async (data: TChatRoomPost): Promise<void> => {
-  return ChatRoomRepo.createOne(data);
+const createOne = async (postData: TChatRoomPost): Promise<void> => {
+  const persists = await UserRepo.persists(postData.participant);
+  if (!persists) {
+    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
+  }
+
+  return ChatRoomRepo.createOne(postData);
 };
 
 const updateOneById = async (

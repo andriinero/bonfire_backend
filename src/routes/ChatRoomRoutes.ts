@@ -58,22 +58,27 @@ const getOne = [
 const post = [
   authenticate,
   ChatRoomValidation.chatRoomName,
-  asyncHandler(async (req: IReq<{ name: string }>, res: IRes) => {
-    const errors = validationResult(req);
+  asyncHandler(
+    async (req: IReq<{ name: string; participant: string }>, res: IRes) => {
+      const errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-      res
-        .status(HttpStatusCodes.BAD_REQUEST)
-        .json(formatValidationErrors(errors));
-    } else {
-      const { name } = req.body;
-      const chatRoomDetails = { name };
+      if (!errors.isEmpty()) {
+        res
+          .status(HttpStatusCodes.BAD_REQUEST)
+          .json(formatValidationErrors(errors));
+      } else {
+        const userId = req.user!._id;
+        const { name, participant } = req.body;
+        const participantId = new Types.ObjectId(participant);
 
-      await ChatRoomService.createOne(chatRoomDetails);
+        const chatRoomDetails = { name, participant: [userId, participantId] };
 
-      res.status(HttpStatusCodes.OK).end();
-    }
-  }),
+        await ChatRoomService.createOne(chatRoomDetails);
+
+        res.sendStatus(HttpStatusCodes.OK);
+      }
+    },
+  ),
 ];
 
 const put = [
@@ -104,7 +109,7 @@ const put = [
 
         await ChatRoomService.updateOneById(query, chatRoomDetails);
 
-        res.status(HttpStatusCodes.OK).end();
+        res.sendStatus(HttpStatusCodes.OK);
       }
     },
   ),
