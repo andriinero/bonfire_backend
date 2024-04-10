@@ -15,7 +15,8 @@ export default {
   Auth: {
     BASE: '/auth',
     GET: '/data',
-    POST: '/sign-in',
+    SIGN_IN: '/sign-in',
+    SIGN_UP: '/sign-up',
   },
   ChatRoom: {
     BASE: '/chat-room',

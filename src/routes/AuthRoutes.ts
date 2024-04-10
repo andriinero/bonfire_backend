@@ -19,7 +19,7 @@ const get = [
   },
 ];
 
-const post = [
+const sign_in_post = [
   ...AuthValidation.signInData,
   asyncHandler(
     async (
@@ -43,4 +43,32 @@ const post = [
   ),
 ];
 
-export default { get, post };
+const sign_up_post = [
+  asyncHandler(
+    async (
+      req: IReq<{
+        username: string;
+        email: string;
+        password: string;
+        confirmPassword: string;
+      }>,
+      res: IRes,
+    ) => {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        res
+          .status(HttpStatusCodes.BAD_REQUEST)
+          .json(formatValidationErrors(errors));
+      } else {
+        const { ...signUpBody } = req.body;
+        
+        await AuthService.signUp(signUpBody);
+
+        res.sendStatus(HttpStatusCodes.BAD_REQUEST);
+      }
+    },
+  ),
+];
+
+export default { get, sign_in_post, sign_up_post };

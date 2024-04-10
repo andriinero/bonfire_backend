@@ -1,12 +1,20 @@
 import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import User, { AuthPayload, TUser } from '@src/models/User';
+import User, { AuthPayload, TUser, TUserMutable } from '@src/models/User';
 import { RouteError } from '@src/other/classes';
+import UserRepo from '@src/repos/UserRepo';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { USER_NOT_FOUND_ERR } from './UserService';
 
 export const AUTHENTICATION_ERR = 'Incorrect credentials';
+
+export type TSignUpBody = {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
 
 const getAuthData = (user: TUser): AuthPayload => {
   const { _id, username, email, role, profile_image } = user;
@@ -43,4 +51,8 @@ const signIn = async (email: string, password: string): Promise<string> => {
   return token;
 };
 
-export default { getAuthData, signIn };
+const signUp = async (postData: TUserMutable): Promise<void> => {
+  await UserRepo.createOne(postData);
+};
+
+export default { getAuthData, signIn, signUp };

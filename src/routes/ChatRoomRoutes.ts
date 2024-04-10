@@ -1,19 +1,29 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { authenticate } from '@src/middlewares/authentication';
-import ChatRoomService, { TChatQuery } from '@src/services/ChatRoomService';
+import { TChatRoomMutableData, TChatRoomQuery } from '@src/repos/ChatRoomRepo';
+import ChatRoomService from '@src/services/ChatRoomService';
 import { formatValidationErrors } from '@src/util/misc';
 import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
-import mongoose, { Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { IRes } from './types/express/misc';
 import { IReq, IReqParams } from './types/types';
 import ChatRoomValidation from './validators/ChatRoomValidation';
 
-const getAll = [
+export type TChatRoomPost = {
+  name: string;
+  participant: string;
+};
+
+export type TChatRoomPut = {
+  chatroomid: string;
+};
+
+const chat_room_get_all = [
   authenticate,
   asyncHandler(async (req: IReq, res: IRes): Promise<void> => {
     const { _id } = req.user!;
-    const userId = _id.toString();
+    const userId = _id;
 
     const allChatRooms = await ChatRoomService.getAll(userId);
 
@@ -21,7 +31,7 @@ const getAll = [
   }),
 ];
 
-const getOne = [
+const chat_room_get_one = [
   authenticate,
   ChatRoomValidation.chatroomidParam,
   asyncHandler(
@@ -39,10 +49,10 @@ const getOne = [
         const { chatroomid } = req.params;
         const { _id } = req.user!._id;
 
-        const chatRoomId = new mongoose.Types.ObjectId(chatroomid);
-        const userId = _id.toString();
+        const chatRoomId = new Types.ObjectId(chatroomid);
+        const userId = _id;
 
-        const query: TChatQuery = {
+        const query: TChatRoomQuery = {
           _id: chatRoomId,
           participants: userId,
         };
@@ -55,41 +65,36 @@ const getOne = [
   ),
 ];
 
-const post = [
+const chat_room_post = [
   authenticate,
   ChatRoomValidation.chatRoomName,
-  asyncHandler(
-    async (req: IReq<{ name: string; participant: string }>, res: IRes) => {
-      const errors = validationResult(req);
+  asyncHandler(async (req: IReq<TChatRoomPost>, res: IRes) => {
+    const errors = validationResult(req);
 
-      if (!errors.isEmpty()) {
-        res
-          .status(HttpStatusCodes.BAD_REQUEST)
-          .json(formatValidationErrors(errors));
-      } else {
-        const userId = req.user!._id;
-        const { name, participant } = req.body;
-        const participantId = new Types.ObjectId(participant);
+    if (!errors.isEmpty()) {
+      res
+        .status(HttpStatusCodes.BAD_REQUEST)
+        .json(formatValidationErrors(errors));
+    } else {
+      const { name, participant } = req.body;
+      const userId = req.user!._id;
+      const participantId = new Types.ObjectId(participant);
 
-        const chatRoomDetails = { name, participant: [userId, participantId] };
+      const chatRoomDetails = { name, participants: [userId, participantId] };
 
-        await ChatRoomService.createOne(chatRoomDetails);
+      await ChatRoomService.createOne(chatRoomDetails);
 
-        res.sendStatus(HttpStatusCodes.OK);
-      }
-    },
-  ),
+      res.sendStatus(HttpStatusCodes.OK);
+    }
+  }),
 ];
 
-const put = [
+const chat_room_put = [
   authenticate,
   ChatRoomValidation.chatroomidParam,
   ChatRoomValidation.chatRoomName,
   asyncHandler(
-    async (
-      req: IReqParams<{ chatroomid: string }, { name: string }>,
-      res: IRes,
-    ) => {
+    async (req: IReqParams<TChatRoomPut, TChatRoomMutableData>, res: IRes) => {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
@@ -102,9 +107,9 @@ const put = [
         const { name } = req.body;
 
         const chatRoomId = new Types.ObjectId(chatroomid);
-        const userId = _id.toString();
+        const userId = _id;
 
-        const query: TChatQuery = { _id: chatRoomId, participants: userId };
+        const query = { _id: chatRoomId, participants: userId };
         const chatRoomDetails = { name };
 
         await ChatRoomService.updateOneById(query, chatRoomDetails);
@@ -116,8 +121,8 @@ const put = [
 ];
 
 export default {
-  getAll,
-  getOne,
-  post,
-  put,
+  chat_room_get_all,
+  chat_room_get_one,
+  chat_room_post,
+  chat_room_put,
 };
