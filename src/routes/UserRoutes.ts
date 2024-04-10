@@ -4,6 +4,7 @@ import UserService from '@src/services/UserService';
 import { formatValidationErrors } from '@src/util/misc';
 import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
+import { Types } from 'mongoose';
 import { IRes } from './types/express/misc';
 import { IReq, IReqParams } from './types/types';
 import UserValidation from './validators/UserValidation';
@@ -28,8 +29,9 @@ const getOne = [
           .json(formatValidationErrors(errors));
       } else {
         const { userid } = req.params;
+        const userId = new Types.ObjectId(userid);
 
-        const user = await UserService.getOne(userid);
+        const user = await UserService.getOneById(userId);
 
         res.status(HttpStatusCodes.OK).json(user);
       }
@@ -89,8 +91,9 @@ const put = [
       } else {
         const { userid } = req.params;
         const { user } = req.body;
+        const userId = new Types.ObjectId(userid);
 
-        await UserService.updateOne(userid, user);
+        await UserService.updateOne(userId, user);
 
         res.sendStatus(HttpStatusCodes.OK);
       }

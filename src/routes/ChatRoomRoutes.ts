@@ -1,4 +1,5 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
+import { authenticate } from '@src/middlewares/authentication';
 import ChatRoomService, { TChatQuery } from '@src/services/ChatRoomService';
 import { formatValidationErrors } from '@src/util/misc';
 import asyncHandler from 'express-async-handler';
@@ -7,7 +8,6 @@ import mongoose, { Types } from 'mongoose';
 import { IRes } from './types/express/misc';
 import { IReq, IReqParams } from './types/types';
 import ChatRoomValidation from './validators/ChatRoomValidation';
-import { authenticate } from '@src/middlewares/authentication';
 
 const getAll = [
   authenticate,
@@ -67,7 +67,6 @@ const post = [
         .json(formatValidationErrors(errors));
     } else {
       const { name } = req.body;
-
       const chatRoomDetails = { name };
 
       await ChatRoomService.createOne(chatRoomDetails);
@@ -94,10 +93,11 @@ const put = [
           .json(formatValidationErrors(errors));
       } else {
         const { _id } = req.user!;
-        const userId = _id.toString();
         const { chatroomid } = req.params;
         const { name } = req.body;
+
         const chatRoomId = new Types.ObjectId(chatroomid);
+        const userId = _id.toString();
 
         const query: TChatQuery = { _id: chatRoomId, participants: userId };
         const chatRoomDetails = { name };

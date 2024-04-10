@@ -26,8 +26,8 @@ const getAll = async (userId: string): Promise<TChatRoom[]> => {
   return allChatRooms;
 };
 
-const getOneById = async (data: TChatQuery): Promise<TChatRoom> => {
-  const foundChatRoom = await ChatRoomRepo.getOne(data);
+const getOneById = async (query: TChatQuery): Promise<TChatRoom> => {
+  const foundChatRoom = await ChatRoomRepo.getOne(query);
   if (!foundChatRoom) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
   }

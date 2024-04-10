@@ -6,8 +6,8 @@ const getAll = async (): Promise<TUser[]> => {
   return allUsers;
 };
 
-const getOne = async (id: string): Promise<TUser | null> => {
-  const user = await User.findById(id).exec();
+const getOne = async (query: object): Promise<TUser | null> => {
+  const user = await User.findById(query).exec();
 
   return user;
 };
@@ -17,19 +17,19 @@ const createOne = async (data: TUserMutable): Promise<void> => {
   await newUser.save();
 };
 
-const updateOne = async (id: string, data: TUserMutable): Promise<void> => {
-  await User.findByIdAndUpdate(id, data, {
+const updateOne = async (query: object, data: TUserMutable): Promise<void> => {
+  await User.findOneAndUpdate(query, data, {
     runValidators: true,
     new: true,
   });
 };
 
-const deleteOne = async (id: string): Promise<void> => {
-  await User.findByIdAndDelete(id);
+const deleteOne = async (query: object): Promise<void> => {
+  await User.findOneAndDelete(query);
 };
 
-const persists = async (id: string): Promise<boolean> => {
-  const persistingUser = await User.findById(id).exec();
+const persists = async (query: object): Promise<boolean> => {
+  const persistingUser = await User.findOne(query).exec();
 
   return !!persistingUser;
 };
