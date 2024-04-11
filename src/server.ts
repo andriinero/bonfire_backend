@@ -10,13 +10,13 @@ import morgan from 'morgan';
 
 import Paths from '@src/constants/Paths';
 import AuthRouter from '@src/routes/api/AuthAPI';
-import UserRouter from '@src/routes/api/UserAPI';
 
 import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 
 import { NodeEnvs } from '@src/constants/misc';
 import { RouteError } from '@src/other/classes';
+import cors from 'cors';
 import mongoose from 'mongoose';
 import passport from 'passport';
 import {
@@ -25,7 +25,6 @@ import {
   StrategyOptionsWithoutRequest,
 } from 'passport-jwt';
 import User from './models/User';
-import cors from 'cors';
 import ChatRoomRouter from './routes/api/ChatRoomAPI';
 
 // **** Variables **** //
@@ -81,7 +80,6 @@ passport.use(
 
 // Add APIs, must be after middleware
 
-app.use(Paths.Base, UserRouter);
 app.use(Paths.Base, AuthRouter);
 app.use(Paths.Base, ChatRoomRouter);
 

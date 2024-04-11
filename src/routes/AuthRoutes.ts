@@ -7,7 +7,7 @@ import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
 import { IRes } from './types/express/misc';
 import { IReq } from './types/types';
-import AuthValidation from './validators/AuthValidation';
+import { signInData, signUpData } from './validators/AuthValidation';
 
 const get = [
   authenticate,
@@ -20,7 +20,7 @@ const get = [
 ];
 
 const sign_in_post = [
-  ...AuthValidation.signInData,
+  ...signInData,
   asyncHandler(
     async (
       req: IReq<{ email: string; password: string }>,
@@ -44,6 +44,7 @@ const sign_in_post = [
 ];
 
 const sign_up_post = [
+  ...signUpData,
   asyncHandler(
     async (
       req: IReq<{
@@ -62,7 +63,7 @@ const sign_up_post = [
           .json(formatValidationErrors(errors));
       } else {
         const { ...signUpBody } = req.body;
-        
+
         await AuthService.signUp(signUpBody);
 
         res.sendStatus(HttpStatusCodes.BAD_REQUEST);

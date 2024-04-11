@@ -1,16 +1,15 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { RouteError } from '@src/other/classes';
 import UserRepo from '@src/repos/UserRepo';
 import { body } from 'express-validator';
 import { IReq } from '../types/types';
 
-const signInData = [
+export const signInData = [
   body('username').trim().escape(),
   body('password').trim().escape(),
 ];
 
-const signUpData = [
+export const signUpData = [
   body('username', 'Username must be valid')
     .trim()
     .custom(async (value: string) => {
@@ -46,5 +45,3 @@ const signUpData = [
     })
     .escape(),
 ];
-
-export default { signInData, signUpData };

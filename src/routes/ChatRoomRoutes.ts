@@ -7,7 +7,11 @@ import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
 import { IRes } from './types/express/misc';
 import { IReq, IReqParams } from './types/types';
-import ChatRoomValidation from './validators/ChatRoomValidation';
+import {
+  chatRoomNameBody,
+  chatRoomParticipantIdBody,
+  chatroomidParam,
+} from './validators/ChatRoomValidation';
 
 export type TChatRoomPost = {
   name: string;
@@ -32,7 +36,7 @@ const chat_room_get_all = [
 
 const chat_room_get_one = [
   authenticate,
-  ChatRoomValidation.chatroomidParam,
+  chatroomidParam,
   asyncHandler(
     async (
       req: IReqParams<{ chatroomid: string }>,
@@ -66,7 +70,8 @@ const chat_room_get_one = [
 
 const chat_room_post = [
   authenticate,
-  ChatRoomValidation.chatRoomName,
+  chatRoomNameBody,
+  chatRoomParticipantIdBody,
   asyncHandler(async (req: IReq<TChatRoomPost>, res: IRes) => {
     const errors = validationResult(req);
 
@@ -92,8 +97,9 @@ const chat_room_post = [
 
 const chat_room_put = [
   authenticate,
-  ChatRoomValidation.chatroomidParam,
-  ChatRoomValidation.chatRoomName,
+  chatroomidParam,
+  chatRoomNameBody,
+  chatRoomParticipantIdBody,
   asyncHandler(
     async (req: IReqParams<TChatRoomPut, TChatRoomMutableData>, res: IRes) => {
       const errors = validationResult(req);

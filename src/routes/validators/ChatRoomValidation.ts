@@ -1,18 +1,21 @@
 import { body, param } from 'express-validator';
 import { isValidObjectId } from 'mongoose';
 
-const chatroomidParam = param('chatroomid', 'Chat room id must be valid')
+export const chatroomidParam = param('chatroomid', 'Chat room id must be valid')
   .trim()
   .custom(isValidObjectId)
   .escape();
 
-const chatRoomName = body('name', 'Chat room name must be valid')
+export const chatRoomNameBody = body('name', 'Chat room name must be valid')
   .trim()
   .optional()
   .isLength({ min: 3, max: 8 })
   .escape();
 
-export default {
-  chatroomidParam,
-  chatRoomName,
-};
+export const chatRoomParticipantIdBody = body(
+  'participantId',
+  'Participant id must be valid',
+)
+  .trim()
+  .custom(isValidObjectId)
+  .escape();
