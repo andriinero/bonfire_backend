@@ -66,7 +66,7 @@ const sign_up_post = [
 
         await AuthService.signUp(signUpBody);
 
-        res.sendStatus(HttpStatusCodes.BAD_REQUEST);
+        res.sendStatus(HttpStatusCodes.OK);
       }
     },
   ),

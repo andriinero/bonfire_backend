@@ -1,4 +1,24 @@
-import User, { TUser, TUserMutable } from '@src/models/User';
+import User, { TUser } from '@src/models/User';
+
+type TQuery = {
+  _id?: string
+  username?: string;
+  email?: string;
+};
+
+type TUserMutable = {
+  username?: string;
+  email?: string;
+  password?: string;
+};
+
+type TCreate = {
+  username: string;
+  email: string;
+  password: string;
+  created: Date;
+  profile_image?: string;
+};
 
 const getAll = async (): Promise<TUser[]> => {
   const allUsers = await User.find().exec();
@@ -6,18 +26,18 @@ const getAll = async (): Promise<TUser[]> => {
   return allUsers;
 };
 
-const getOne = async (query: object): Promise<TUser | null> => {
+const getOne = async (query: TQuery): Promise<TUser | null> => {
   const user = await User.findById(query).exec();
 
   return user;
 };
 
-const createOne = async (data: TUserMutable): Promise<void> => {
+const createOne = async (data: TCreate): Promise<void> => {
   const newUser = new User(data);
   await newUser.save();
 };
 
-const updateOne = async (query: object, data: TUserMutable): Promise<void> => {
+const updateOne = async (query: TQuery, data: TUserMutable): Promise<void> => {
   await User.findOneAndUpdate(query, data, {
     runValidators: true,
     new: true,

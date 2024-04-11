@@ -1,19 +1,26 @@
 import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import User, { AuthPayload, TUser, TUserMutable } from '@src/models/User';
+import { TUser } from '@src/models/User';
 import { RouteError } from '@src/other/classes';
 import UserRepo from '@src/repos/UserRepo';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import { USER_NOT_FOUND_ERR } from './UserService';
 
 export const AUTHENTICATION_ERR = 'Incorrect credentials';
+export const USER_NOT_FOUND_ERR = 'User not found';
 
-export type TSignUpBody = {
+type AuthPayload = {
+  sub: string;
+  username: string;
+  email: string;
+  role: string;
+  profile_image: string;
+};
+
+type TSignUpBody = {
   username: string;
   email: string;
   password: string;
-  confirmPassword: string;
 };
 
 const getAuthData = (user: TUser): AuthPayload => {
@@ -23,10 +30,8 @@ const getAuthData = (user: TUser): AuthPayload => {
 };
 
 const signIn = async (email: string, password: string): Promise<string> => {
-  const user = await User.findOne(
-    { email },
-    'username email password role',
-  ).exec();
+  const user = await UserRepo.getOne({ email });
+
   if (!user) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
   }
@@ -37,7 +42,7 @@ const signIn = async (email: string, password: string): Promise<string> => {
   }
 
   const jwtPayload: AuthPayload = {
-    sub: user.id as string,
+    sub: user._id.toString(),
     username: user.username,
     email: user.email,
     role: user.role,
@@ -51,8 +56,18 @@ const signIn = async (email: string, password: string): Promise<string> => {
   return token;
 };
 
-const signUp = async (postData: TUserMutable): Promise<void> => {
-  await UserRepo.createOne(postData);
+const signUp = async (userData: TSignUpBody): Promise<void> => {
+  const hashedPassword = await bcrypt.hash(
+    userData.password,
+    +EnvVars.Bcrypt.Salt,
+  );
+  const userDetails = {
+    ...userData,
+    password: hashedPassword,
+    created: new Date(),
+  };
+
+  await UserRepo.createOne(userDetails);
 };
 
 export default { getAuthData, signIn, signUp };

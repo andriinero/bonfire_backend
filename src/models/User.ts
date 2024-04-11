@@ -11,27 +11,6 @@ export type TUser = {
   profile_image: string;
 };
 
-export type TUserMutable = {
-  username?: string;
-  email?: string;
-  password?: string;
-};
-
-export type UserPost = {
-  username: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-};
-
-export type AuthPayload = {
-  sub: string;
-  username: string;
-  email: string;
-  role: string;
-  profile_image: string;
-};
-
 const UserSchema = new Schema<TUser>(
   {
     username: { type: String, required: true, minlength: 3, maxlength: 100 },
