@@ -1,11 +1,10 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { authenticate } from '@src/middlewares/authentication';
-import { TChatRoomMutableData, TChatRoomQuery } from '@src/repos/ChatRoomRepo';
+import { TChatRoomMutableData } from '@src/repos/ChatRoomRepo';
 import ChatRoomService from '@src/services/ChatRoomService';
 import { formatValidationErrors } from '@src/util/misc';
 import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
-import { Types } from 'mongoose';
 import { IRes } from './types/express/misc';
 import { IReq, IReqParams } from './types/types';
 import ChatRoomValidation from './validators/ChatRoomValidation';
@@ -23,7 +22,7 @@ const chat_room_get_all = [
   authenticate,
   asyncHandler(async (req: IReq, res: IRes): Promise<void> => {
     const { _id } = req.user!;
-    const userId = _id;
+    const userId = _id.toString();
 
     const allChatRooms = await ChatRoomService.getAll(userId);
 
@@ -49,15 +48,15 @@ const chat_room_get_one = [
         const { chatroomid } = req.params;
         const { _id } = req.user!._id;
 
-        const chatRoomId = new Types.ObjectId(chatroomid);
-        const userId = _id;
+        const roomId = chatroomid;
+        const userId = _id.toString();
 
-        const query: TChatRoomQuery = {
-          _id: chatRoomId,
-          participants: userId,
+        const query = {
+          roomId,
+          userId,
         };
 
-        const allChatRooms = await ChatRoomService.getOneById(query);
+        const allChatRooms = await ChatRoomService.getOne(query);
 
         res.status(HttpStatusCodes.OK).json(allChatRooms);
       }
@@ -76,9 +75,11 @@ const chat_room_post = [
         .status(HttpStatusCodes.BAD_REQUEST)
         .json(formatValidationErrors(errors));
     } else {
+      const user = req.user!;
       const { name, participant } = req.body;
-      const userId = req.user!._id;
-      const participantId = new Types.ObjectId(participant);
+
+      const userId = user._id.toString();
+      const participantId = participant;
 
       const chatRoomDetails = { name, participants: [userId, participantId] };
 
@@ -106,13 +107,13 @@ const chat_room_put = [
         const { chatroomid } = req.params;
         const { name } = req.body;
 
-        const chatRoomId = new Types.ObjectId(chatroomid);
-        const userId = _id;
+        const roomId = chatroomid;
+        const userId = _id.toString();
 
-        const query = { _id: chatRoomId, participants: userId };
+        const query = { roomId, userId };
         const chatRoomDetails = { name };
 
-        await ChatRoomService.updateOneById(query, chatRoomDetails);
+        await ChatRoomService.updateOne(query, chatRoomDetails);
 
         res.sendStatus(HttpStatusCodes.OK);
       }

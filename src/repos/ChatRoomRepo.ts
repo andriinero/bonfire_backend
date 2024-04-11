@@ -1,15 +1,14 @@
 import ChatRoom, { TChatRoom } from '@src/models/ChatRoom';
-import { Types } from 'mongoose';
 
-export type TChatRoomQuery = {
-  _id?: Types.ObjectId;
+type TRepoQuery = {
+  _id?: string;
   name?: string;
-  participants?: Types.ObjectId | Types.ObjectId[];
+  participants?: string | string[];
 };
 
-type TChatRoomCreate = {
+type TCreateData = {
   name: string;
-  participants: Types.ObjectId[];
+  participants: string[];
   date: Date;
 };
 
@@ -17,25 +16,25 @@ export type TChatRoomMutableData = {
   name: string;
 };
 
-const getAll = async (query: TChatRoomQuery): Promise<TChatRoom[]> => {
+const getAll = async (query: TRepoQuery): Promise<TChatRoom[]> => {
   const allChatRooms = await ChatRoom.find(query).exec();
 
   return allChatRooms;
 };
 
-const getOne = async (query: TChatRoomQuery) => {
+const getOne = async (query: TRepoQuery) => {
   const chatRoom = await ChatRoom.findOne(query).exec();
 
   return chatRoom;
 };
 
-const createOne = async (data: TChatRoomCreate): Promise<void> => {
+const createOne = async (data: TCreateData): Promise<void> => {
   const newChatRoom = new ChatRoom(data);
   await newChatRoom.save();
 };
 
 const updateOne = async (
-  query: TChatRoomQuery,
+  query: TRepoQuery,
   newData: TChatRoomMutableData,
 ): Promise<void> => {
   await ChatRoom.findOneAndUpdate(query, newData, {
@@ -44,7 +43,7 @@ const updateOne = async (
   }).exec();
 };
 
-const persists = async (query: TChatRoomQuery): Promise<boolean> => {
+const persists = async (query: TRepoQuery): Promise<boolean> => {
   const persistingChatRoom = await ChatRoom.findOne(query).exec();
 
   return !!persistingChatRoom;
