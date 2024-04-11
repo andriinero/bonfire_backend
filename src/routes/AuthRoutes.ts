@@ -9,6 +9,18 @@ import { IRes } from './types/express/misc';
 import { IReq } from './types/types';
 import { signInData, signUpData } from './validators/AuthValidation';
 
+type TSignInBody = {
+  email: string;
+  password: string;
+};
+
+type TSignUpBody = {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
 const get = [
   authenticate,
   (req: IReq, res: IRes): void => {
@@ -21,55 +33,39 @@ const get = [
 
 const sign_in_post = [
   ...signInData,
-  asyncHandler(
-    async (
-      req: IReq<{ email: string; password: string }>,
-      res: IRes,
-    ): Promise<void> => {
-      const errors = validationResult(req);
+  asyncHandler(async (req: IReq<TSignInBody>, res: IRes): Promise<void> => {
+    const errors = validationResult(req);
 
-      if (!errors.isEmpty()) {
-        res
-          .status(HttpStatusCodes.BAD_REQUEST)
-          .json(formatValidationErrors(errors));
-      } else {
-        const { email, password } = req.body;
+    if (!errors.isEmpty()) {
+      res
+        .status(HttpStatusCodes.BAD_REQUEST)
+        .json(formatValidationErrors(errors));
+    } else {
+      const { email, password } = req.body;
+      const token = await AuthService.signIn(email, password);
 
-        const token = await AuthService.signIn(email, password);
-
-        res.status(HttpStatusCodes.OK).json({ message: 'Success', token });
-      }
-    },
-  ),
+      res.status(HttpStatusCodes.OK).json({ message: 'Success', token });
+    }
+  }),
 ];
 
 const sign_up_post = [
   ...signUpData,
-  asyncHandler(
-    async (
-      req: IReq<{
-        username: string;
-        email: string;
-        password: string;
-        confirmPassword: string;
-      }>,
-      res: IRes,
-    ) => {
-      const errors = validationResult(req);
+  asyncHandler(async (req: IReq<TSignUpBody>, res: IRes) => {
+    const errors = validationResult(req);
 
-      if (!errors.isEmpty()) {
-        res
-          .status(HttpStatusCodes.BAD_REQUEST)
-          .json(formatValidationErrors(errors));
-      } else {
-        const { ...signUpBody } = req.body;
+    if (!errors.isEmpty()) {
+      res
+        .status(HttpStatusCodes.BAD_REQUEST)
+        .json(formatValidationErrors(errors));
+    } else {
+      const { ...signUpBody } = req.body;
 
-        await AuthService.signUp(signUpBody);
+      await AuthService.signUp(signUpBody);
 
-        res.sendStatus(HttpStatusCodes.OK);
-      }
-    },
-  ),
+      res.sendStatus(HttpStatusCodes.OK);
+    }
+  }),
 ];
 
 export default { get, sign_in_post, sign_up_post };

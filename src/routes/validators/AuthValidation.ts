@@ -5,7 +5,7 @@ import { body } from 'express-validator';
 import { IReq } from '../types/types';
 
 export const signInData = [
-  body('username').trim().escape(),
+  body('email').trim().escape(),
   body('password').trim().escape(),
 ];
 

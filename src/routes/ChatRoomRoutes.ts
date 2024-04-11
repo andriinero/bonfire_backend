@@ -15,7 +15,7 @@ import {
 
 export type TChatRoomPost = {
   name: string;
-  participant: string;
+  participantId: string;
 };
 
 export type TChatRoomPut = {
@@ -81,10 +81,9 @@ const chat_room_post = [
         .json(formatValidationErrors(errors));
     } else {
       const user = req.user!;
-      const { name, participant } = req.body;
+      const { name, participantId } = req.body;
 
       const userId = user._id.toString();
-      const participantId = participant;
 
       const chatRoomDetails = { name, participants: [userId, participantId] };
 

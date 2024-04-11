@@ -42,13 +42,17 @@ const createOne = async (postData: TCreateChatRoomData): Promise<void> => {
   const users = await Promise.all(
     postData.participants.map((p) => UserRepo.getOne({ _id: p })),
   );
+
   const persists = users.every((p) => !!p);
   if (!persists) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
   }
 
+  const chatRoomName = postData.name ? postData.name : users[1]!.username;
+
   const chatRoomDetails = {
     ...postData,
+    name: chatRoomName,
     date: new Date(),
   };
 

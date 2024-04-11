@@ -9,7 +9,7 @@ export type TChatRoom = {
 };
 
 const ChatRoomSchema = new Schema<TChatRoom>({
-  name: { type: String, required: true, minlength: 3, maxlength: 8 },
+  name: { type: String, required: true, minlength: 3, maxlength: 100 },
   participants: [{ type: Types.ObjectId, ref: 'User' }],
   created: { type: Date, required: true, default: new Date() },
 });

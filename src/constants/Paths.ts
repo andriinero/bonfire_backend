@@ -19,7 +19,7 @@ export default {
     SIGN_UP: '/sign-up',
   },
   ChatRoom: {
-    BASE: '/chat-room',
+    BASE: '/chat-rooms',
     GET_ALL: '/',
     GET: '/:chatroomid',
     POST: '/',

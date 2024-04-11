@@ -1,7 +1,7 @@
 import User, { TUser } from '@src/models/User';
 
 type TQuery = {
-  _id?: string
+  _id?: string;
   username?: string;
   email?: string;
 };
@@ -27,7 +27,7 @@ const getAll = async (): Promise<TUser[]> => {
 };
 
 const getOne = async (query: TQuery): Promise<TUser | null> => {
-  const user = await User.findById(query).exec();
+  const user = await User.findOne(query).exec();
 
   return user;
 };
