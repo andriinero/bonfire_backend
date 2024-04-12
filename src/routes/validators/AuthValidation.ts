@@ -13,7 +13,7 @@ export const signUpData = [
   body('username', 'Username must be valid')
     .trim()
     .custom(async (value: string) => {
-      const userByUsername = await UserRepo.persists({ username: value });
+      const userByUsername = await UserRepo.persistOne({ username: value });
 
       if (userByUsername)
         throw new RouteError(
@@ -26,7 +26,7 @@ export const signUpData = [
     .trim()
     .isEmail()
     .custom(async (value: string) => {
-      const userByEmail = await UserRepo.persists({ email: value });
+      const userByEmail = await UserRepo.persistOne({ email: value });
 
       if (userByEmail)
         throw new RouteError(

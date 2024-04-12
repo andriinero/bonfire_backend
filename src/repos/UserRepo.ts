@@ -1,7 +1,8 @@
 import User, { TUser } from '@src/models/User';
+import { Condition, Types } from 'mongoose';
 
 type TQuery = {
-  _id?: string;
+  _id?: string | Condition<Types.ObjectId>;
   username?: string;
   email?: string;
 };
@@ -20,8 +21,8 @@ type TCreate = {
   profile_image?: string;
 };
 
-const getAll = async (): Promise<TUser[]> => {
-  const allUsers = await User.find().exec();
+const getAll = async (query: TQuery): Promise<TUser[]> => {
+  const allUsers = await User.find(query).exec();
 
   return allUsers;
 };
@@ -37,21 +38,27 @@ const createOne = async (data: TCreate): Promise<void> => {
   await newUser.save();
 };
 
-const updateOne = async (query: TQuery, data: TUserMutable): Promise<void> => {
-  await User.findOneAndUpdate(query, data, {
+const updateOne = async (id: string, data: TUserMutable): Promise<void> => {
+  await User.findByIdAndUpdate(id, data, {
     runValidators: true,
     new: true,
   });
 };
 
-const deleteOne = async (query: object): Promise<void> => {
-  await User.findOneAndDelete(query);
+const deleteOne = async (id: string): Promise<void> => {
+  await User.findByIdAndDelete(id);
 };
 
-const persists = async (query: object): Promise<boolean> => {
+const persistOne = async (query: TQuery): Promise<boolean> => {
   const persistingUser = await User.findOne(query).exec();
 
   return !!persistingUser;
+};
+
+const persistMany = async (ids: string[]) => {
+  const persistingUsers = await User.find({ _id: { $in: ids } }).exec();
+
+  return persistingUsers.length === ids.length;
 };
 
 export default {
@@ -60,5 +67,6 @@ export default {
   createOne,
   updateOne,
   deleteOne,
-  persists,
+  persistOne,
+  persistMany,
 } as const;

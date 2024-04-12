@@ -3,6 +3,7 @@ import { TChatRoom } from '@src/models/ChatRoom';
 import { RouteError } from '@src/other/classes';
 import ChatRoomRepo, { TChatRoomMutableData } from '@src/repos/ChatRoomRepo';
 import UserRepo from '@src/repos/UserRepo';
+import { getChatRoomName } from '@src/util/chatRoomUtils';
 import { USER_NOT_FOUND_ERR } from './AuthService';
 
 type TChatRoomQuery = {
@@ -11,19 +12,18 @@ type TChatRoomQuery = {
 };
 
 type TCreateChatRoomData = {
-  name: string;
   participants: string[];
 };
 
 export const CHAT_ROOM_NOT_FOUND_ERR = 'Chat room not found';
 
-const getAll = async (userId: string): Promise<TChatRoom[]> => {
+const getAllByUserId = async (userId: string): Promise<TChatRoom[]> => {
   const allChatRooms = await ChatRoomRepo.getAll({ participants: userId });
 
   return allChatRooms;
 };
 
-const getOne = async ({
+const getOneById = async ({
   roomId,
   userId,
 }: TChatRoomQuery): Promise<TChatRoom> => {
@@ -38,17 +38,18 @@ const getOne = async ({
   return foundChatRoom;
 };
 
-const createOne = async (postData: TCreateChatRoomData): Promise<void> => {
-  const users = await Promise.all(
-    postData.participants.map((p) => UserRepo.getOne({ _id: p })),
-  );
+const createOne = async (
+  currentUserId: string,
+  postData: TCreateChatRoomData,
+): Promise<void> => {
+  const persist = await UserRepo.persistMany(postData.participants);
 
-  const persists = users.every((p) => !!p);
-  if (!persists) {
+  if (!persist) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
   }
 
-  const chatRoomName = postData.name ? postData.name : users[1]!.username;
+  const users = await UserRepo.getAll({ _id: { $in: postData.participants } });
+  const chatRoomName = getChatRoomName(currentUserId, users);
 
   const chatRoomDetails = {
     ...postData,
@@ -73,8 +74,8 @@ const updateOne = async (
 };
 
 export default {
-  getAll,
-  getOne,
+  getAllByUserId,
+  getOneById,
   createOne,
   updateOne,
 };
