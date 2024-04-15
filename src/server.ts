@@ -26,6 +26,7 @@ import {
 } from 'passport-jwt';
 import User from './models/User';
 import ChatRoomRouter from './routes/api/ChatRoomAPI';
+import messageRouter from './routes/api/MessageAPI';
 
 // **** Variables **** //
 
@@ -82,7 +83,7 @@ passport.use(
 
 app.use(Paths.Base, AuthRouter);
 app.use(Paths.Base, ChatRoomRouter);
-
+app.use(Paths.Base, messageRouter);
 // Add error handler
 app.use(
   (

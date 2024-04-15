@@ -25,4 +25,12 @@ export default {
     POST: '/',
     PUT: '/:chatroomid',
   },
+  Message: {
+    BASE: '/messages',
+    GET_ALL: '/',
+    GET: '/:messageid',
+    POST: '/',
+    PUT: '/:messageid',
+    DELETE: '/:messageid',
+  },
 } as const;
