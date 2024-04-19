@@ -1,4 +1,5 @@
 import ChatRoom, { TChatRoom } from '@src/models/ChatRoom';
+import { userDataSelection } from './UserRepo';
 
 type TRepoQuery = {
   _id?: string;
@@ -17,7 +18,9 @@ export type TChatRoomMutableData = {
 };
 
 const getAll = async (query: TRepoQuery): Promise<TChatRoom[]> => {
-  const allChatRooms = await ChatRoom.find(query).exec();
+  const allChatRooms = await ChatRoom.find(query)
+    .populate('participants', userDataSelection)
+    .exec();
 
   return allChatRooms;
 };

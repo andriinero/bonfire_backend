@@ -26,7 +26,7 @@ export default {
     PUT: '/:chatroomid',
   },
   Message: {
-    BASE: '/messages',
+    BASE: '/chat-rooms/:chatroomid/messages',
     GET_ALL: '/',
     GET: '/:messageid',
     POST: '/',

@@ -21,6 +21,9 @@ type TCreate = {
   profile_image?: string;
 };
 
+export const userDataSelection =
+  'username email role created is_online profile_image';
+
 const getAll = async (query: TQuery): Promise<TUser[]> => {
   const allUsers = await User.find(query).exec();
 
