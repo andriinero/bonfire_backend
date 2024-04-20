@@ -7,6 +7,7 @@ export type TMessage = {
   body: string;
   created: Date;
   reply: ObjectId;
+  type?: 'action' | 'message';
 };
 
 const MessageSchema = new Schema<TMessage>({
@@ -15,6 +16,12 @@ const MessageSchema = new Schema<TMessage>({
   body: { type: String, required: true },
   created: { type: Date, required: true, default: new Date() },
   reply: { type: Types.ObjectId, ref: 'Message' },
+  type: {
+    type: String,
+    enum: ['action', 'message'],
+    required: true,
+    default: 'message',
+  },
 });
 
 const Message = model<TMessage>('Message', MessageSchema);

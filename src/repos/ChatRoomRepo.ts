@@ -1,5 +1,7 @@
 import ChatRoom, { TChatRoom } from '@src/models/ChatRoom';
-import { userDataSelection } from './UserRepo';
+import { getQueryOpts } from '@src/util/misc';
+import { USER_DATA_SELECTION } from './UserRepo';
+import { TQueryOptions } from './types/TQueryOptions';
 
 type TRepoQuery = {
   _id?: string;
@@ -19,14 +21,19 @@ export type TChatRoomMutableData = {
 
 const getAll = async (query: TRepoQuery): Promise<TChatRoom[]> => {
   const allChatRooms = await ChatRoom.find(query)
-    .populate('participants', userDataSelection)
+    .populate('participants', USER_DATA_SELECTION)
     .exec();
 
   return allChatRooms;
 };
 
-const getOne = async (query: TRepoQuery) => {
-  const chatRoom = await ChatRoom.findOne(query).exec();
+const getOne = async (query: TRepoQuery, opts?: TQueryOptions) => {
+  const newOpts = getQueryOpts(opts);
+
+  const chatRoom = await ChatRoom.findOne(query)
+    .select(newOpts.select)
+    .populate(newOpts.populate.path, newOpts.populate.select)
+    .exec();
 
   return chatRoom;
 };

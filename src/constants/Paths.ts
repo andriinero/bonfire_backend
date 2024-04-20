@@ -33,4 +33,11 @@ export default {
     PUT: '/:messageid',
     DELETE: '/:messageid',
   },
+  Participants: {
+    BASE: '/chat-rooms/:chatroomid/participants',
+    GET_ALL: '/',
+    GET: '/:participantid',
+    POST: '/',
+    DELETE: '/:participantid',
+  },
 } as const;

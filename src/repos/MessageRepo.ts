@@ -1,4 +1,5 @@
 import Message, { TMessage } from '@src/models/Message';
+import { MessageType } from '@src/types/MessageTypes';
 
 type TQuery = {
   _id?: string;
@@ -14,6 +15,7 @@ export type TCreateMessageData = {
   user?: string;
   body: string;
   reply?: string;
+  type: MessageType;
 };
 
 export type TMessageMutable = {
@@ -32,9 +34,10 @@ const getOne = async (query: TQuery): Promise<TMessage | null> => {
   return message;
 };
 
-const createOne = async (data: TCreateMessageData): Promise<void> => {
+const createOne = async (data: TCreateMessageData): Promise<TMessage> => {
   const message = new Message(data);
-  await message.save();
+  const savedMessage = await message.save();
+  return savedMessage;
 };
 
 const updateOne = async (

@@ -1,15 +1,20 @@
 import { Schema, Types, model } from 'mongoose';
 
-export type TUser = {
+export type TUserPublic = {
   _id: Types.ObjectId;
   username: string;
   email: string;
-  password: string;
   role: 'user' | 'admin';
   created: Date;
   is_online: boolean;
   profile_image: string;
 };
+
+export type TUserPrivate = {
+  password: string;
+};
+
+export type TUser = TUserPublic & TUserPrivate;
 
 const UserSchema = new Schema<TUser>(
   {

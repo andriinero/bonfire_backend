@@ -29,8 +29,9 @@ const getOneById = async (id: string): Promise<TMessage> => {
   return message;
 };
 
-const createOne = async (data: TCreateMessageData): Promise<void> => {
-  await MessageRepo.createOne(data);
+const createOne = async (data: TCreateMessageData): Promise<TMessage> => {
+  const createdMessage = await MessageRepo.createOne(data);
+  return createdMessage;
 };
 
 const updateOneById = async (

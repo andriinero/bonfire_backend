@@ -9,7 +9,6 @@ import logger from 'jet-logger';
 import morgan from 'morgan';
 
 import Paths from '@src/constants/Paths';
-import AuthRouter from '@src/routes/api/AuthAPI';
 
 import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
@@ -24,9 +23,13 @@ import {
   Strategy as JWTStrategy,
   StrategyOptionsWithoutRequest,
 } from 'passport-jwt';
+
 import User from './models/User';
+
+import AuthRouter from '@src/routes/api/AuthAPI';
 import ChatRoomRouter from './routes/api/ChatRoomAPI';
 import messageRouter from './routes/api/MessageAPI';
+import participantRouter from './routes/api/ParticipantAPI';
 
 // **** Variables **** //
 
@@ -84,6 +87,8 @@ passport.use(
 app.use(Paths.Base, AuthRouter);
 app.use(Paths.Base, ChatRoomRouter);
 app.use(Paths.Base, messageRouter);
+app.use(Paths.Base, participantRouter);
+
 // Add error handler
 app.use(
   (
