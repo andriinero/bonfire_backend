@@ -72,4 +72,4 @@ const signUp = async (userData: TSignUpBody): Promise<void> => {
   await UserRepo.createOne(userDetails);
 };
 
-export default { getAuthData, signIn, signUp };
+export default { getAuthData, signIn, signUp } as const;

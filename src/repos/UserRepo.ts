@@ -55,4 +55,4 @@ export default {
   deleteOne,
   persistOne,
   persistMany,
-};
+} as const;

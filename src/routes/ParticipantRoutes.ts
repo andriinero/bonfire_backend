@@ -27,4 +27,4 @@ const participant_get_all = [
   }),
 ];
 
-export default { participant_get_all };
+export default { participant_get_all } as const;

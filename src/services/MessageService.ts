@@ -56,4 +56,4 @@ export default {
   createOne,
   updateOneById,
   deleteOneById,
-};
+} as const;

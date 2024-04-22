@@ -1,5 +1,5 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { authenticate } from '@src/middlewares/authentication';
+import { authenticateJwt } from '@src/middlewares/authentication';
 import { TUpdateChatRoom } from '@src/repos/ChatRoomRepo';
 import ChatRoomService from '@src/services/ChatRoomService';
 import { formatValidationErrors } from '@src/util/misc';
@@ -23,7 +23,7 @@ type TCharRoomParam = {
 };
 
 const chat_room_get_all = [
-  authenticate,
+  authenticateJwt,
   asyncHandler(async (req: IReq, res: IRes): Promise<void> => {
     const { _id } = req.user!;
     const userId = _id.toString();
@@ -35,7 +35,7 @@ const chat_room_get_all = [
 ];
 
 const chat_room_get_one = [
-  authenticate,
+  authenticateJwt,
   chatroomidParam,
   asyncHandler(
     async (req: IReqParams<TCharRoomParam>, res: IRes): Promise<void> => {
@@ -66,7 +66,7 @@ const chat_room_get_one = [
 ];
 
 const chat_room_post = [
-  authenticate,
+  authenticateJwt,
   chatRoomNameBody,
   chatRoomParticipantIdBody,
   asyncHandler(async (req: IReq<TPostBody>, res: IRes) => {
@@ -92,33 +92,35 @@ const chat_room_post = [
 ];
 
 const chat_room_put = [
-  authenticate,
+  authenticateJwt,
   chatroomidParam,
   chatRoomNameBody,
   chatRoomParticipantIdBody,
-  asyncHandler(async (req: IReqParams<TCharRoomParam, TUpdateChatRoom>, res: IRes) => {
-    const errors = validationResult(req);
+  asyncHandler(
+    async (req: IReqParams<TCharRoomParam, TUpdateChatRoom>, res: IRes) => {
+      const errors = validationResult(req);
 
-    if (!errors.isEmpty()) {
-      res
-        .status(HttpStatusCodes.BAD_REQUEST)
-        .json(formatValidationErrors(errors));
-    } else {
-      const { _id } = req.user!;
-      const { chatroomid } = req.params;
-      const { name } = req.body;
+      if (!errors.isEmpty()) {
+        res
+          .status(HttpStatusCodes.BAD_REQUEST)
+          .json(formatValidationErrors(errors));
+      } else {
+        const { _id } = req.user!;
+        const { chatroomid } = req.params;
+        const { name } = req.body;
 
-      const roomId = chatroomid;
-      const userId = _id.toString();
+        const roomId = chatroomid;
+        const userId = _id.toString();
 
-      const query = { roomId, userId };
-      const chatRoomDetails = { name };
+        const query = { roomId, userId };
+        const chatRoomDetails = { name };
 
-      await ChatRoomService.updateOne(query, chatRoomDetails);
+        await ChatRoomService.updateOne(query, chatRoomDetails);
 
-      res.sendStatus(HttpStatusCodes.OK);
-    }
-  }),
+        res.sendStatus(HttpStatusCodes.OK);
+      }
+    },
+  ),
 ];
 
 export default {
@@ -126,4 +128,4 @@ export default {
   chat_room_get_one,
   chat_room_post,
   chat_room_put,
-};
+} as const;

@@ -1,5 +1,5 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { authenticate } from '@src/middlewares/authentication';
+import { authenticateJwt } from '@src/middlewares/authentication';
 import MessageService from '@src/services/MessageService';
 import { formatValidationErrors } from '@src/util/misc';
 import asyncHandler from 'express-async-handler';
@@ -16,7 +16,7 @@ type TMessagePostBody = {
 };
 
 const message_get_all = [
-  authenticate,
+  authenticateJwt,
   chatroomidParam,
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
     const errors = validationResult(req);
@@ -35,7 +35,7 @@ const message_get_all = [
 ];
 
 const message_post = [
-  authenticate,
+  authenticateJwt,
   asyncHandler(
     async (
       req: IReqParams<{ chatroomid: string }, TMessagePostBody>,
@@ -72,4 +72,4 @@ const message_post = [
 export default {
   message_get_all,
   message_post,
-};
+} as const;

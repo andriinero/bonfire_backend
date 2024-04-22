@@ -12,4 +12,4 @@ const getAllByChatRoomId = async (
 
 export default {
   getAllByChatRoomId,
-};
+} as const;

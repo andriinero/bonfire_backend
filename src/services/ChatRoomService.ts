@@ -82,4 +82,4 @@ export default {
   getOneById,
   createOne,
   updateOne,
-};
+} as const;

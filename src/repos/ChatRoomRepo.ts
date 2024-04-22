@@ -46,4 +46,4 @@ export default {
   createOne,
   updateOne,
   persists,
-};
+} as const;

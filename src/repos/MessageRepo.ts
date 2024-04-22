@@ -43,4 +43,11 @@ const persists = async (ids: string[]): Promise<boolean> => {
   return ids.length === messages.length;
 };
 
-export default { getAll, getOne, createOne, updateOne, deleteOne, persists };
+export default {
+  getAll,
+  getOne,
+  createOne,
+  updateOne,
+  deleteOne,
+  persists,
+} as const;

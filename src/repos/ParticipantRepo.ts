@@ -16,4 +16,4 @@ const getAll = async (query: TQuery): Promise<TUserPublic[]> => {
 
 export default {
   getAll,
-};
+} as const;

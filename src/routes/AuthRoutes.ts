@@ -1,5 +1,5 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { authenticate } from '@src/middlewares/authentication';
+import { authenticateJwt } from '@src/middlewares/authentication';
 import { TUser } from '@src/models/User';
 import AuthService from '@src/services/AuthService';
 import { formatValidationErrors } from '@src/util/misc';
@@ -22,7 +22,7 @@ type TSignUpBody = {
 };
 
 const get = [
-  authenticate,
+  authenticateJwt,
   (req: IReq, res: IRes): void => {
     const user = req.user as TUser;
     const data = AuthService.getAuthData(user);
@@ -68,4 +68,4 @@ const sign_up_post = [
   }),
 ];
 
-export default { get, sign_in_post, sign_up_post };
+export default { get, sign_in_post, sign_up_post } as const;
