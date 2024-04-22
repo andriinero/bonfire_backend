@@ -1,9 +1,10 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { TChatRoom } from '@src/models/ChatRoom';
 import { RouteError } from '@src/other/classes';
-import ChatRoomRepo, { TChatRoomMutableData } from '@src/repos/ChatRoomRepo';
+import ChatRoomRepo, { TUpdateChatRoom } from '@src/repos/ChatRoomRepo';
 import UserRepo from '@src/repos/UserRepo';
 import { getChatRoomName } from '@src/util/chatRoomUtils';
+import { Types } from 'mongoose';
 import { USER_NOT_FOUND_ERR } from './AuthService';
 
 type TChatRoomQuery = {
@@ -48,13 +49,16 @@ const createOne = async (
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
   }
 
-  const users = await UserRepo.getAll({ _id: { $in: postData.participants } });
+  const participantsIds = postData.participants.map(
+    (p) => new Types.ObjectId(p),
+  );
+  const users = await UserRepo.getAll({ _id: { $in: participantsIds } });
   const chatRoomName = getChatRoomName(currentUserId, users);
 
   const chatRoomDetails = {
     ...postData,
     name: chatRoomName,
-    date: new Date(),
+    created: new Date(),
   };
 
   return ChatRoomRepo.createOne(chatRoomDetails);
@@ -62,7 +66,7 @@ const createOne = async (
 
 const updateOne = async (
   { userId: participants, roomId: _id }: TChatRoomQuery,
-  data: TChatRoomMutableData,
+  data: TUpdateChatRoom,
 ): Promise<void> => {
   const query = { _id, participants };
   const persists = await ChatRoomRepo.persists(query);

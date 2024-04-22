@@ -1,10 +1,10 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { authenticate } from '@src/middlewares/authentication';
 import MessageService from '@src/services/MessageService';
-import { MessageType } from '@src/types/MessageTypes';
 import { formatValidationErrors } from '@src/util/misc';
 import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
+import { Types } from 'mongoose';
 import { IRes } from './types/express/misc';
 import { IReqParams } from './types/types';
 import { chatroomidParam } from './validators/ChatRoomValidation';
@@ -48,16 +48,17 @@ const message_post = [
           .status(HttpStatusCodes.BAD_REQUEST)
           .json(formatValidationErrors(errors));
       } else {
-        const userId = req.user!._id.toString();
         const { chatroomid } = req.params;
         const { body, reply } = req.body;
+        const userId = req.user!._id;
+        const chatRoomId = new Types.ObjectId(chatroomid);
+        const replyId = new Types.ObjectId(reply);
 
         const messageDetails = {
-          chat_room: chatroomid,
+          chat_room: chatRoomId,
           user: userId,
           body,
-          reply,
-          type: MessageType.MESSAGE,
+          reply: replyId,
         };
 
         const result = await MessageService.createOne(messageDetails);

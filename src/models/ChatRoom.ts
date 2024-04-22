@@ -1,10 +1,9 @@
 import { Schema, Types, model } from 'mongoose';
-import { TUser } from './User';
 
 export type TChatRoom = {
   _id: Types.ObjectId;
   name: string;
-  participants: TUser[];
+  participants: string[];
   created: Date;
 };
 

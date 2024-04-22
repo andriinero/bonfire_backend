@@ -1,21 +1,21 @@
-import { ObjectId, Schema, Types, model } from 'mongoose';
+import { Schema, Types, model } from 'mongoose';
 
 export type TMessage = {
   _id: Types.ObjectId;
-  chat_room: ObjectId;
-  user: ObjectId;
+  chat_room: Types.ObjectId;
+  user: Types.ObjectId;
   body: string;
   created: Date;
-  reply: ObjectId;
-  type?: 'action' | 'message';
+  reply: Types.ObjectId;
+  type: 'action' | 'message';
 };
 
 const MessageSchema = new Schema<TMessage>({
-  chat_room: { type: Types.ObjectId, required: true, ref: 'ChatRoom' },
-  user: { type: Types.ObjectId, required: true, ref: 'User' },
+  chat_room: { type: Schema.Types.ObjectId, required: true, ref: 'ChatRoom' },
+  user: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
   body: { type: String, required: true },
   created: { type: Date, required: true, default: new Date() },
-  reply: { type: Types.ObjectId, ref: 'Message' },
+  reply: { type: Schema.Types.ObjectId, ref: 'Message' },
   type: {
     type: String,
     enum: ['action', 'message'],

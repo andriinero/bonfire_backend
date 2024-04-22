@@ -1,51 +1,32 @@
 import ChatRoom, { TChatRoom } from '@src/models/ChatRoom';
-import { getQueryOpts } from '@src/util/misc';
-import { USER_DATA_SELECTION } from './UserRepo';
-import { TQueryOptions } from './types/TQueryOptions';
+import { FilterQuery } from 'mongoose';
 
-type TRepoQuery = {
-  _id?: string;
-  name?: string;
-  participants?: string | string[];
-};
+type TQuery = FilterQuery<TChatRoom>;
 
-type TCreateData = {
-  name: string;
-  participants: string[];
-  date: Date;
-};
+type TCreate = Omit<TChatRoom, '_id'>;
 
-export type TChatRoomMutableData = {
-  name: string;
-};
+export type TUpdateChatRoom = Partial<TChatRoom>;
 
-const getAll = async (query: TRepoQuery): Promise<TChatRoom[]> => {
-  const allChatRooms = await ChatRoom.find(query)
-    .populate('participants', USER_DATA_SELECTION)
-    .exec();
+const getAll = async (query: TQuery): Promise<TChatRoom[]> => {
+  const allChatRooms = await ChatRoom.find(query).exec();
 
   return allChatRooms;
 };
 
-const getOne = async (query: TRepoQuery, opts?: TQueryOptions) => {
-  const newOpts = getQueryOpts(opts);
-
-  const chatRoom = await ChatRoom.findOne(query)
-    .select(newOpts.select)
-    .populate(newOpts.populate.path, newOpts.populate.select)
-    .exec();
+const getOne = async (query: TQuery) => {
+  const chatRoom = await ChatRoom.findOne(query).exec();
 
   return chatRoom;
 };
 
-const createOne = async (data: TCreateData): Promise<void> => {
+const createOne = async (data: TCreate): Promise<void> => {
   const newChatRoom = new ChatRoom(data);
   await newChatRoom.save();
 };
 
 const updateOne = async (
-  query: TRepoQuery,
-  newData: TChatRoomMutableData,
+  query: TQuery,
+  newData: TUpdateChatRoom,
 ): Promise<void> => {
   await ChatRoom.findOneAndUpdate(query, newData, {
     runValidators: true,
@@ -53,7 +34,7 @@ const updateOne = async (
   }).exec();
 };
 
-const persists = async (query: TRepoQuery): Promise<boolean> => {
+const persists = async (query: TQuery): Promise<boolean> => {
   const persistingChatRoom = await ChatRoom.findOne(query).exec();
 
   return !!persistingChatRoom;

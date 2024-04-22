@@ -2,13 +2,13 @@ import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { TMessage } from '@src/models/Message';
 import { RouteError } from '@src/other/classes';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
-import MessageRepo, {
-  TCreateMessageData,
-  TMessageMutable,
-} from '@src/repos/MessageRepo';
+import MessageRepo, { TUpdateMessage } from '@src/repos/MessageRepo';
+import { MessageType } from '@src/types/MessageTypes';
 import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
 
-export const MESSAGE_NOT_FOUND_ERR = '';
+type TCreateMessageData = Omit<TMessage, '_id' | 'created' | 'type'>;
+
+export const MESSAGE_NOT_FOUND_ERR = 'Message not found';
 
 const getAllByChatRoomId = async (chatRoomId: string): Promise<TMessage[]> => {
   const persists = await ChatRoomRepo.persists({ _id: chatRoomId });
@@ -30,13 +30,19 @@ const getOneById = async (id: string): Promise<TMessage> => {
 };
 
 const createOne = async (data: TCreateMessageData): Promise<TMessage> => {
-  const createdMessage = await MessageRepo.createOne(data);
+  const messageDetails = {
+    ...data,
+    created: new Date(),
+    type: MessageType.MESSAGE,
+  };
+
+  const createdMessage = await MessageRepo.createOne(messageDetails);
   return createdMessage;
 };
 
 const updateOneById = async (
   id: string,
-  data: TMessageMutable,
+  data: TUpdateMessage,
 ): Promise<void> => {
   await MessageRepo.updateOne({ _id: id }, data);
 };

@@ -65,6 +65,8 @@ const signUp = async (userData: TSignUpBody): Promise<void> => {
     ...userData,
     password: hashedPassword,
     created: new Date(),
+    role: 'user' as const,
+    is_online: false,
   };
 
   await UserRepo.createOne(userDetails);

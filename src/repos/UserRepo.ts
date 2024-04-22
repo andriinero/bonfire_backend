@@ -1,28 +1,11 @@
 import User, { TUser } from '@src/models/User';
-import { Condition, Types } from 'mongoose';
+import { FilterQuery } from 'mongoose';
 
-type TQuery = {
-  _id?: string | Condition<Types.ObjectId>;
-  username?: string;
-  email?: string;
-};
+type TQuery = FilterQuery<TUser>;
 
-type TUserMutable = {
-  username?: string;
-  email?: string;
-  password?: string;
-};
+type TCreate = Omit<TUser, '_id' | 'profile_image'>;
 
-type TCreate = {
-  username: string;
-  email: string;
-  password: string;
-  created: Date;
-  profile_image?: string;
-};
-
-export const USER_DATA_SELECTION =
-  'username email role created is_online profile_image';
+type TUpdate = Partial<TUser>;
 
 const getAll = async (query: TQuery): Promise<TUser[]> => {
   const allUsers = await User.find(query).exec();
@@ -41,7 +24,7 @@ const createOne = async (data: TCreate): Promise<void> => {
   await newUser.save();
 };
 
-const updateOne = async (id: string, data: TUserMutable): Promise<void> => {
+const updateOne = async (id: string, data: TUpdate): Promise<void> => {
   await User.findByIdAndUpdate(id, data, {
     runValidators: true,
     new: true,
@@ -58,7 +41,7 @@ const persistOne = async (query: TQuery): Promise<boolean> => {
   return !!persistingUser;
 };
 
-const persistMany = async (ids: string[]) => {
+const persistMany = async (ids: string[]): Promise<boolean> => {
   const persistingUsers = await User.find({ _id: { $in: ids } }).exec();
 
   return persistingUsers.length === ids.length;
@@ -72,4 +55,4 @@ export default {
   deleteOne,
   persistOne,
   persistMany,
-} as const;
+};

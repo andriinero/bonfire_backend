@@ -10,7 +10,6 @@ const getAllByChatRoomId = async (
     select: 'participants',
     populate: { path: 'participants', select: USER_DATA_SELECTION },
   };
-
   const chatRoom = await ChatRoomRepo.getOne({ _id: chatRoomId }, queryOpts);
 
   return chatRoom ? chatRoom.participants : [];

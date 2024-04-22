@@ -1,26 +1,11 @@
 import Message, { TMessage } from '@src/models/Message';
-import { MessageType } from '@src/types/MessageTypes';
+import { FilterQuery } from 'mongoose';
 
-type TQuery = {
-  _id?: string;
-  chat_room?: string;
-  user?: string;
-  body?: string;
-  created?: string;
-  reply?: string;
-};
+type TQuery = FilterQuery<TMessage>;
 
-export type TCreateMessageData = {
-  chat_room: string;
-  user?: string;
-  body: string;
-  reply?: string;
-  type: MessageType;
-};
+type TCreate = Omit<TMessage, '_id'>;
 
-export type TMessageMutable = {
-  body: string;
-};
+export type TUpdateMessage = Partial<TMessage>;
 
 const getAll = async (query: TQuery): Promise<TMessage[]> => {
   const messages = await Message.find(query).exec();
@@ -34,15 +19,16 @@ const getOne = async (query: TQuery): Promise<TMessage | null> => {
   return message;
 };
 
-const createOne = async (data: TCreateMessageData): Promise<TMessage> => {
+const createOne = async (data: TCreate): Promise<TMessage> => {
   const message = new Message(data);
   const savedMessage = await message.save();
+
   return savedMessage;
 };
 
 const updateOne = async (
   query: TQuery,
-  messageData: TMessageMutable,
+  messageData: TUpdateMessage,
 ): Promise<void> => {
   await Message.findOneAndUpdate(query, messageData, { runValidators: true });
 };
