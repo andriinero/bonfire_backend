@@ -1,9 +1,8 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { TMessage } from '@src/models/Message';
+import { MessageType, TMessage } from '@src/models/Message';
 import { RouteError } from '@src/other/classes';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import MessageRepo, { TUpdateMessage } from '@src/repos/MessageRepo';
-import { MessageType } from '@src/types/MessageTypes';
 import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
 
 type TCreateMessageData = Omit<TMessage, '_id' | 'created' | 'type'>;

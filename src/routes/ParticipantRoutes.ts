@@ -3,6 +3,7 @@ import ParticipantService from '@src/services/ParticipantService';
 import { formatValidationErrors } from '@src/util/misc';
 import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
+import { Types } from 'mongoose';
 import { IRes } from './types/express/misc';
 import { IReqParams } from './types/types';
 
@@ -16,8 +17,10 @@ const participant_get_all = [
         .json(formatValidationErrors(errors));
     } else {
       const { chatroomid } = req.params;
+      const chatRoomId = new Types.ObjectId(chatroomid);
+
       const participants =
-        await ParticipantService.getAllByChatRoomId(chatroomid);
+        await ParticipantService.getAllByChatRoomId(chatRoomId);
 
       res.status(HttpStatusCodes.OK).json(participants);
     }

@@ -83,7 +83,6 @@ passport.use(
 );
 
 // Add APIs, must be after middleware
-
 app.use(Paths.Base, AuthRouter);
 app.use(Paths.Base, ChatRoomRouter);
 app.use(Paths.Base, messageRouter);

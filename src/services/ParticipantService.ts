@@ -1,18 +1,13 @@
 import { TUserPublic } from '@src/models/User';
-import ChatRoomRepo from '@src/repos/ChatRoomRepo';
-import { USER_DATA_SELECTION } from '@src/repos/UserRepo';
-import { TQueryOptions } from '@src/repos/types/TQueryOptions';
+import ParticipantRepo from '@src/repos/ParticipantRepo';
+import { Types } from 'mongoose';
 
 const getAllByChatRoomId = async (
-  chatRoomId: string,
+  chatRoomId: Types.ObjectId,
 ): Promise<TUserPublic[]> => {
-  const queryOpts: TQueryOptions = {
-    select: 'participants',
-    populate: { path: 'participants', select: USER_DATA_SELECTION },
-  };
-  const chatRoom = await ChatRoomRepo.getOne({ _id: chatRoomId }, queryOpts);
+  const participants = await ParticipantRepo.getAll({ _id: chatRoomId });
 
-  return chatRoom ? chatRoom.participants : [];
+  return participants;
 };
 
 export default {

@@ -1,5 +1,10 @@
 import { Schema, Types, model } from 'mongoose';
 
+export enum MessageType {
+  ACTION = 'action',
+  MESSAGE = 'message',
+}
+
 export type TMessage = {
   _id: Types.ObjectId;
   chat_room: Types.ObjectId;
@@ -7,7 +12,7 @@ export type TMessage = {
   body: string;
   created: Date;
   reply: Types.ObjectId;
-  type: 'action' | 'message';
+  type: MessageType;
 };
 
 const MessageSchema = new Schema<TMessage>({
@@ -18,9 +23,9 @@ const MessageSchema = new Schema<TMessage>({
   reply: { type: Schema.Types.ObjectId, ref: 'Message' },
   type: {
     type: String,
-    enum: ['action', 'message'],
+    enum: Object.values(MessageType),
     required: true,
-    default: 'message',
+    default: MessageType.MESSAGE,
   },
 });
 
