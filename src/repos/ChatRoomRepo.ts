@@ -1,4 +1,6 @@
+import EnvVars from '@src/constants/EnvVars';
 import ChatRoom, { TChatRoom } from '@src/models/ChatRoom';
+import { TQueryOptions } from '@src/types/TQueryOptions';
 import { FilterQuery } from 'mongoose';
 
 type TQuery = FilterQuery<TChatRoom>;
@@ -7,8 +9,14 @@ type TCreate = Omit<TChatRoom, '_id'>;
 
 export type TUpdateChatRoom = Partial<TChatRoom>;
 
-const getAll = async (query: TQuery): Promise<TChatRoom[]> => {
-  const allChatRooms = await ChatRoom.find(query).exec();
+const getAll = async (
+  query: TQuery,
+  opts?: TQueryOptions<TChatRoom>,
+): Promise<TChatRoom[]> => {
+  const allChatRooms = await ChatRoom.find(query)
+    .sort(opts?.sort)
+    .skip((opts?.page as number) * EnvVars.Bandwidth.maxDocsPerFetch)
+    .exec();
 
   return allChatRooms;
 };

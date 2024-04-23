@@ -15,7 +15,10 @@ const getAllByChatRoomId = async (chatRoomId: string): Promise<TMessage[]> => {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
   }
 
-  const messages = await MessageRepo.getAll({ chat_room: chatRoomId });
+  const messages = await MessageRepo.getAll(
+    { chat_room: chatRoomId },
+    { sort: { created: -1 } },
+  );
   return messages;
 };
 

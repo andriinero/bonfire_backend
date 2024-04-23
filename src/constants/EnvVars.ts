@@ -30,4 +30,7 @@ export default {
   Bcrypt: {
     Salt: process.env.SALT_VALUE ?? '',
   },
+  Bandwidth: {
+    maxDocsPerFetch: 25,
+  },
 } as const;

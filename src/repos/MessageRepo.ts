@@ -1,4 +1,6 @@
+import EnvVars from '@src/constants/EnvVars';
 import Message, { TMessage } from '@src/models/Message';
+import { TQueryOptions } from '@src/types/TQueryOptions';
 import { FilterQuery } from 'mongoose';
 
 type TQuery = FilterQuery<TMessage>;
@@ -7,8 +9,14 @@ type TCreate = Omit<TMessage, '_id'>;
 
 export type TUpdateMessage = Partial<TMessage>;
 
-const getAll = async (query: TQuery): Promise<TMessage[]> => {
-  const messages = await Message.find(query).exec();
+const getAll = async (
+  query: TQuery,
+  opts?: TQueryOptions<TMessage>,
+): Promise<TMessage[]> => {
+  const messages = await Message.find(query)
+    .sort(opts?.sort)
+    .skip((opts?.page as number) * EnvVars.Bandwidth.maxDocsPerFetch)
+    .exec();
 
   return messages;
 };

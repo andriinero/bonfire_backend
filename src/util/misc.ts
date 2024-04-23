@@ -2,10 +2,6 @@
  * Miscellaneous shared functions go here.
  */
 
-import {
-  DEFAULT_QUERY_OPTS,
-  TQueryOptions,
-} from '@src/types/TQueryOptions';
 import { TErrorData } from '@src/types/ErrorData';
 import { Result, ValidationError } from 'express-validator';
 
@@ -34,13 +30,4 @@ export const formatValidationErrors = (result?: Result<ValidationError>) => {
     message: VALIDATION_ERROR_MESSAGE,
     errors: result?.array() ?? [],
   } as TErrorData;
-};
-
-export const getQueryOpts = (opts?: TQueryOptions): Required<TQueryOptions> => {
-  const newOpts = {
-    ...DEFAULT_QUERY_OPTS,
-    ...opts,
-  } as Required<TQueryOptions>;
-
-  return newOpts;
 };

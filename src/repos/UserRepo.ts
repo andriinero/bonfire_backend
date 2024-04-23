@@ -1,4 +1,6 @@
-import User, { TUser } from '@src/models/User';
+import EnvVars from '@src/constants/EnvVars';
+import User, { TUser, TUserPublic } from '@src/models/User';
+import { TQueryOptions } from '@src/types/TQueryOptions';
 import { FilterQuery } from 'mongoose';
 
 type TQuery = FilterQuery<TUser>;
@@ -7,8 +9,14 @@ type TCreate = Omit<TUser, '_id' | 'profile_image'>;
 
 type TUpdate = Partial<TUser>;
 
-const getAll = async (query: TQuery): Promise<TUser[]> => {
-  const allUsers = await User.find(query).exec();
+const getAll = async (
+  query: TQuery,
+  opts?: TQueryOptions<TUserPublic>,
+): Promise<TUser[]> => {
+  const allUsers = await User.find(query)
+    .sort(opts?.sort)
+    .skip((opts?.page as number) * EnvVars.Bandwidth.maxDocsPerFetch)
+    .exec();
 
   return allUsers;
 };
