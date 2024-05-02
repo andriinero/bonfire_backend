@@ -9,9 +9,12 @@ export type TUser = {
   created: Date;
   is_online: boolean;
   profile_image: string;
+  contacts: Types.ObjectId;
 };
 
 export type TUserPublic = Omit<TUser, 'password'>;
+
+export const USER_DATA_SELECTION = '-password';
 
 const UserSchema = new Schema<TUser>(
   {
@@ -22,6 +25,7 @@ const UserSchema = new Schema<TUser>(
     created: { type: Date, required: true, default: new Date() },
     is_online: { type: Boolean, required: true, default: false },
     profile_image: { type: String },
+    contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   },
   { versionKey: false },
 );

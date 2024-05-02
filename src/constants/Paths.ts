@@ -40,4 +40,8 @@ export default {
     POST: '/',
     DELETE: '/:participantid',
   },
+  Profile: {
+    BASE: '/profile',
+    GET_CONTACTS: '/contacts',
+  },
 } as const;

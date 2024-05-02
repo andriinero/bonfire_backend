@@ -8,7 +8,8 @@
     "start": "node -r module-alias/register ./dist --env=production",
     "dev": "nodemon",
     "test": "nodemon --config ./spec/nodemon.json",
-    "test:no-reloading": "npx ts-node --files -r tsconfig-paths/register ./spec"
+    "test:no-reloading": "npx ts-node --files -r tsconfig-paths/register ./spec",
+    "type-check": "tsc --noEmit"
   },
   "nodemonConfig": {
     "watch": [

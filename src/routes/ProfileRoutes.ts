@@ -1,16 +1,15 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { authenticateJwt } from '@src/middlewares/authentication';
-import ParticipantService from '@src/services/ParticipantService';
+import ProfileService from '@src/services/ProfileService';
 import { formatValidationErrors } from '@src/util/misc';
 import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
-import { Types } from 'mongoose';
 import { IRes } from './types/express/misc';
-import { IReqParams } from './types/types';
+import { IReq } from './types/types';
 
-const participant_get_all = [
+const contacts_get_all = [
   authenticateJwt,
-  asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
+  asyncHandler(async (req: IReq, res: IRes) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -18,15 +17,14 @@ const participant_get_all = [
         .status(HttpStatusCodes.BAD_REQUEST)
         .json(formatValidationErrors(errors));
     } else {
-      const { chatroomid } = req.params;
-      const chatRoomId = new Types.ObjectId(chatroomid);
-
-      const participants =
-        await ParticipantService.getAllByChatRoomId(chatRoomId);
+      const { _id } = req.user!;
+      const participants = await ProfileService.getContacts(_id);
 
       res.status(HttpStatusCodes.OK).json(participants);
     }
   }),
 ];
 
-export default { participant_get_all } as const;
+export default {
+  contacts_get_all,
+};

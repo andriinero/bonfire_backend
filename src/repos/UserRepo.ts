@@ -5,7 +5,7 @@ import { FilterQuery } from 'mongoose';
 
 type TQuery = FilterQuery<TUser>;
 
-type TCreate = Omit<TUser, '_id' | 'profile_image'>;
+type TCreate = Omit<TUser, '_id' | 'profile_image' | 'contacts'>;
 
 type TUpdate = Partial<TUser>;
 
