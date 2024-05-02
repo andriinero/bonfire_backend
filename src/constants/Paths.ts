@@ -24,6 +24,10 @@ export default {
     GET: '/:chatroomid',
     POST: '/',
     PUT: '/:chatroomid',
+    Participants: {
+      BASE: '/:chatroomid/participants',
+      GET_ALL: '/',
+    },
   },
   Message: {
     BASE: '/chat-rooms/:chatroomid/messages',
@@ -32,13 +36,6 @@ export default {
     POST: '/',
     PUT: '/:messageid',
     DELETE: '/:messageid',
-  },
-  Participants: {
-    BASE: '/chat-rooms/:chatroomid/participants',
-    GET_ALL: '/',
-    GET: '/:participantid',
-    POST: '/',
-    DELETE: '/:participantid',
   },
   Profile: {
     BASE: '/profile',

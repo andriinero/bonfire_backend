@@ -1,7 +1,9 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { TChatRoom } from '@src/models/ChatRoom';
+import { TUserPublic } from '@src/models/User';
 import { RouteError } from '@src/other/classes';
 import ChatRoomRepo, { TUpdateChatRoom } from '@src/repos/ChatRoomRepo';
+import ParticipantRepo from '@src/repos/ParticipantRepo';
 import UserRepo from '@src/repos/UserRepo';
 import { getChatRoomName } from '@src/util/chatRoomUtils';
 import { Types } from 'mongoose';
@@ -77,9 +79,18 @@ const updateOne = async (
   return ChatRoomRepo.updateOne(query, data);
 };
 
+const getAllByChatRoomId = async (
+  chatRoomId: Types.ObjectId,
+): Promise<TUserPublic[]> => {
+  const participants = await ParticipantRepo.getAll({ _id: chatRoomId });
+
+  return participants;
+};
+
 export default {
   getAllByUserId,
   getOneById,
   createOne,
   updateOne,
+  getAllByChatRoomId,
 } as const;

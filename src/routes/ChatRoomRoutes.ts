@@ -5,6 +5,7 @@ import ChatRoomService from '@src/services/ChatRoomService';
 import { formatValidationErrors } from '@src/util/misc';
 import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
+import { Types } from 'mongoose';
 import { IRes } from './types/express/misc';
 import { IReq, IReqParams } from './types/types';
 import {
@@ -123,9 +124,30 @@ const chat_room_put = [
   ),
 ];
 
+const participant_get_all = [
+  authenticateJwt,
+  asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res
+        .status(HttpStatusCodes.BAD_REQUEST)
+        .json(formatValidationErrors(errors));
+    } else {
+      const { chatroomid } = req.params;
+      const chatRoomId = new Types.ObjectId(chatroomid);
+
+      const participants = await ChatRoomService.getAllByChatRoomId(chatRoomId);
+
+      res.status(HttpStatusCodes.OK).json(participants);
+    }
+  }),
+];
+
 export default {
   chat_room_get_all,
   chat_room_get_one,
   chat_room_post,
   chat_room_put,
+  participant_get_all,
 } as const;

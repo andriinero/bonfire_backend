@@ -29,7 +29,6 @@ import User from './models/User';
 import AuthRouter from '@src/routes/api/AuthAPI';
 import ChatRoomRouter from './routes/api/ChatRoomAPI';
 import messageRouter from './routes/api/MessageAPI';
-import participantRouter from './routes/api/ParticipantAPI';
 import profileRouter from './routes/api/ProfileAPI';
 
 // **** Variables **** //
@@ -87,7 +86,6 @@ passport.use(
 app.use(Paths.Base, AuthRouter);
 app.use(Paths.Base, ChatRoomRouter);
 app.use(Paths.Base, messageRouter);
-app.use(Paths.Base, participantRouter);
 app.use(Paths.Base, profileRouter);
 
 // Add error handler
