@@ -7,13 +7,13 @@ const apiRouter = Router();
 
 const chatRoomRouter = Router();
 
+// CHAT ROOMS //
+
 chatRoomRouter.get(Paths.ChatRoom.GET_ALL, ChatRoomRoutes.chat_room_get_all);
 
 chatRoomRouter.get(Paths.ChatRoom.GET, ChatRoomRoutes.chat_room_get_one);
 
-// chatRoomRouter.post(Paths.ChatRoom.POST, ChatRoomRoutes.chat_room_post);
-
-// chatRoomRouter.put(Paths.ChatRoom.PUT, ChatRoomRoutes.chat_room_put);
+chatRoomRouter.post(Paths.ChatRoom.POST, ChatRoomRoutes.chat_room_post);
 
 // PARTICIPANTS //
 

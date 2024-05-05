@@ -5,7 +5,7 @@ import { FilterQuery } from 'mongoose';
 
 type TQuery = FilterQuery<TChatRoom>;
 
-type TCreate = Omit<TChatRoom, '_id'>;
+type TCreate = Omit<TChatRoom, '_id' | 'name'>;
 
 export type TUpdateChatRoom = Partial<TChatRoom>;
 

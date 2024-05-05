@@ -1,3 +1,7 @@
+import HttpStatusCodes from '@src/constants/HttpStatusCodes';
+import { RouteError } from '@src/other/classes';
+import UserRepo from '@src/repos/UserRepo';
+import { USER_NOT_FOUND_ERR } from '@src/services/AuthService';
 import { body, param } from 'express-validator';
 import { isValidObjectId } from 'mongoose';
 import { IReq } from '../types/types';
@@ -13,22 +17,32 @@ const chatRoomNameBody = body('name', 'Chat room name must be valid')
   .isLength({ min: 3, max: 100 })
   .escape();
 
-const chatRoomParticipantIdBody = body(
-  'participantId',
-  'Participant id must be valid',
+const participantUsernameSanitizer = body(
+  'participantUsername',
+  'Participant username must be valid',
 )
   .trim()
-  .custom(isValidObjectId)
-  .custom((value, { req }) => {
+  // can't create chat where the only participant is user himself
+  .custom((participantUsername, { req }) => {
     const request = req as IReq;
-    const userId = request.user?._id.toString();
+    const userUsername = request.user?.username;
 
-    return value !== userId;
+    return participantUsername !== userUsername;
+  })
+  .customSanitizer(async (participantUsername: string) => {
+    const participant = await UserRepo.getOne({
+      username: participantUsername,
+    });
+
+    if (!participant)
+      throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
+
+    return participant?._id;
   })
   .escape();
 
 export default {
   chatroomidParam,
   chatRoomNameBody,
-  chatRoomParticipantIdBody,
+  participantUsernameSanitizer,
 } as const;

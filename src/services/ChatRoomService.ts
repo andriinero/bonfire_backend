@@ -2,20 +2,15 @@ import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { TChatRoom } from '@src/models/ChatRoom';
 import { TUserPublic } from '@src/models/User';
 import { RouteError } from '@src/other/classes';
-import ChatRoomRepo, { TUpdateChatRoom } from '@src/repos/ChatRoomRepo';
+import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import ParticipantRepo from '@src/repos/ParticipantRepo';
 import UserRepo from '@src/repos/UserRepo';
-import { getChatRoomName } from '@src/util/chatRoomUtils';
 import { Types } from 'mongoose';
 import { USER_NOT_FOUND_ERR } from './AuthService';
 
 type TChatRoomQuery = {
   userId: string;
   roomId: string;
-};
-
-type TCreateChatRoomData = {
-  participants: string[];
 };
 
 export const CHAT_ROOM_NOT_FOUND_ERR = 'Chat room not found';
@@ -42,41 +37,21 @@ const getOneById = async ({
 };
 
 const createOne = async (
-  currentUserId: string,
-  postData: TCreateChatRoomData,
+  currentUserUserId: Types.ObjectId,
+  participantId: Types.ObjectId,
 ): Promise<void> => {
-  const persist = await UserRepo.persistMany(postData.participants);
+  const persist = await UserRepo.persistOne({ _id: participantId });
 
   if (!persist) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
   }
 
-  const participantsIds = postData.participants.map(
-    (p) => new Types.ObjectId(p),
-  );
-  const users = await UserRepo.getAll({ _id: { $in: participantsIds } });
-  const chatRoomName = getChatRoomName(currentUserId, users);
-
   const chatRoomDetails = {
-    ...postData,
-    name: chatRoomName,
+    participants: [currentUserUserId, participantId],
     created: new Date(),
   };
 
   return ChatRoomRepo.createOne(chatRoomDetails);
-};
-
-const updateOne = async (
-  { userId: participants, roomId: _id }: TChatRoomQuery,
-  data: TUpdateChatRoom,
-): Promise<void> => {
-  const query = { _id, participants };
-  const persists = await ChatRoomRepo.persists(query);
-  if (!persists) {
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
-  }
-
-  return ChatRoomRepo.updateOne(query, data);
 };
 
 const getAllByChatRoomId = async (
@@ -91,6 +66,5 @@ export default {
   getAllByUserId,
   getOneById,
   createOne,
-  updateOne,
   getAllByChatRoomId,
 } as const;
