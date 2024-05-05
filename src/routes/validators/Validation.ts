@@ -8,4 +8,4 @@ const useridParam = param('userid', 'User id must be valid')
 
 export default {
   useridParam,
-};
+} as const;

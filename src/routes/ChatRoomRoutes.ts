@@ -8,11 +8,7 @@ import { validationResult } from 'express-validator';
 import { Types } from 'mongoose';
 import { IRes } from './types/express/misc';
 import { IReq, IReqParams } from './types/types';
-import {
-  chatRoomNameBody,
-  chatRoomParticipantIdBody,
-  chatroomidParam,
-} from './validators/ChatRoomValidation';
+import ChatRoomValidation from './validators/ChatRoomValidation';
 
 type TPostBody = {
   name: string;
@@ -37,7 +33,7 @@ const chat_room_get_all = [
 
 const chat_room_get_one = [
   authenticateJwt,
-  chatroomidParam,
+  ChatRoomValidation.chatroomidParam,
   asyncHandler(
     async (req: IReqParams<TCharRoomParam>, res: IRes): Promise<void> => {
       const errors = validationResult(req);
@@ -68,8 +64,8 @@ const chat_room_get_one = [
 
 const chat_room_post = [
   authenticateJwt,
-  chatRoomNameBody,
-  chatRoomParticipantIdBody,
+  ChatRoomValidation.chatRoomNameBody,
+  ChatRoomValidation.chatRoomParticipantIdBody,
   asyncHandler(async (req: IReq<TPostBody>, res: IRes) => {
     const errors = validationResult(req);
 
@@ -94,9 +90,9 @@ const chat_room_post = [
 
 const chat_room_put = [
   authenticateJwt,
-  chatroomidParam,
-  chatRoomNameBody,
-  chatRoomParticipantIdBody,
+  ChatRoomValidation.chatroomidParam,
+  ChatRoomValidation.chatRoomNameBody,
+  ChatRoomValidation.chatRoomParticipantIdBody,
   asyncHandler(
     async (req: IReqParams<TCharRoomParam, TUpdateChatRoom>, res: IRes) => {
       const errors = validationResult(req);

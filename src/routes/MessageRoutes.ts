@@ -7,7 +7,7 @@ import { validationResult } from 'express-validator';
 import { Types } from 'mongoose';
 import { IRes } from './types/express/misc';
 import { IReqParams } from './types/types';
-import { chatroomidParam } from './validators/ChatRoomValidation';
+import ChatRoomValidation from './validators/ChatRoomValidation';
 
 type TMessagePostBody = {
   user: string;
@@ -17,7 +17,7 @@ type TMessagePostBody = {
 
 const message_get_all = [
   authenticateJwt,
-  chatroomidParam,
+  ChatRoomValidation.chatroomidParam,
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
     const errors = validationResult(req);
 

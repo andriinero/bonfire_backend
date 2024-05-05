@@ -2,18 +2,18 @@ import { body, param } from 'express-validator';
 import { isValidObjectId } from 'mongoose';
 import { IReq } from '../types/types';
 
-export const chatroomidParam = param('chatroomid', 'Chat room id must be valid')
+const chatroomidParam = param('chatroomid', 'Chat room id must be valid')
   .trim()
   .custom(isValidObjectId)
   .escape();
 
-export const chatRoomNameBody = body('name', 'Chat room name must be valid')
+const chatRoomNameBody = body('name', 'Chat room name must be valid')
   .trim()
   .optional()
   .isLength({ min: 3, max: 100 })
   .escape();
 
-export const chatRoomParticipantIdBody = body(
+const chatRoomParticipantIdBody = body(
   'participantId',
   'Participant id must be valid',
 )
@@ -26,3 +26,9 @@ export const chatRoomParticipantIdBody = body(
     return value !== userId;
   })
   .escape();
+
+export default {
+  chatroomidParam,
+  chatRoomNameBody,
+  chatRoomParticipantIdBody,
+} as const;

@@ -11,13 +11,16 @@ chatRoomRouter.get(Paths.ChatRoom.GET_ALL, ChatRoomRoutes.chat_room_get_all);
 
 chatRoomRouter.get(Paths.ChatRoom.GET, ChatRoomRoutes.chat_room_get_one);
 
-chatRoomRouter.post(Paths.ChatRoom.POST, ChatRoomRoutes.chat_room_post);
+// chatRoomRouter.post(Paths.ChatRoom.POST, ChatRoomRoutes.chat_room_post);
 
-chatRoomRouter.put(Paths.ChatRoom.PUT, ChatRoomRoutes.chat_room_put);
+// chatRoomRouter.put(Paths.ChatRoom.PUT, ChatRoomRoutes.chat_room_put);
 
-// TODO: split into two APIs?
+// PARTICIPANTS //
+
+const participantsBase = Paths.ChatRoom.Participants.BASE;
+
 chatRoomRouter.get(
-  Paths.ChatRoom.Participants.BASE + Paths.ChatRoom.Participants.GET_ALL,
+  participantsBase + Paths.ChatRoom.Participants.GET_ALL,
   ChatRoomRoutes.participant_get_all,
 );
 

@@ -7,7 +7,7 @@ import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
 import { IRes } from './types/express/misc';
 import { IReq } from './types/types';
-import { signInData, signUpData } from './validators/AuthValidation';
+import AuthValidation from './validators/AuthValidation';
 
 type TSignInBody = {
   email: string;
@@ -32,7 +32,7 @@ const get = [
 ];
 
 const sign_in_post = [
-  ...signInData,
+  ...AuthValidation.signInData,
   asyncHandler(async (req: IReq<TSignInBody>, res: IRes): Promise<void> => {
     const errors = validationResult(req);
 
@@ -50,7 +50,7 @@ const sign_in_post = [
 ];
 
 const sign_up_post = [
-  ...signUpData,
+  ...AuthValidation.signUpData,
   asyncHandler(async (req: IReq<TSignUpBody>, res: IRes) => {
     const errors = validationResult(req);
 
@@ -63,7 +63,9 @@ const sign_up_post = [
 
       await AuthService.signUp(signUpBody);
 
-      res.sendStatus(HttpStatusCodes.OK);
+      res
+        .status(HttpStatusCodes.CREATED)
+        .json({ message: 'User created', status: HttpStatusCodes.CREATED });
     }
   }),
 ];

@@ -4,12 +4,12 @@ import UserRepo from '@src/repos/UserRepo';
 import { body } from 'express-validator';
 import { IReq } from '../types/types';
 
-export const signInData = [
+const signInData = [
   body('email').trim().escape(),
   body('password').trim().escape(),
 ];
 
-export const signUpData = [
+const signUpData = [
   body('username', 'Username must be valid')
     .trim()
     .custom(async (value: string) => {
@@ -45,3 +45,5 @@ export const signUpData = [
     })
     .escape(),
 ];
+
+export default { signInData, signUpData } as const;

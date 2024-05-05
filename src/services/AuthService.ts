@@ -26,7 +26,7 @@ type TSignUpBody = {
 const getAuthData = (user: TUser): AuthPayload => {
   const { _id, username, email, role, profile_image } = user;
 
-  return { sub: _id.toString(), username, email, role, profile_image };
+  return { sub: _id.toString() , username, email, role, profile_image };
 };
 
 const signIn = async (email: string, password: string): Promise<string> => {
