@@ -1,7 +1,7 @@
 import EnvVars from '@src/constants/EnvVars';
 import ChatRoom, { TChatRoom } from '@src/models/ChatRoom';
 import { TQueryOptions } from '@src/types/TQueryOptions';
-import { FilterQuery } from 'mongoose';
+import { Document, FilterQuery } from 'mongoose';
 
 type TQuery = FilterQuery<TChatRoom>;
 
@@ -12,7 +12,7 @@ export type TUpdateChatRoom = Partial<TChatRoom>;
 const getAll = async (
   query: TQuery,
   opts?: TQueryOptions<TChatRoom>,
-): Promise<TChatRoom[]> => {
+): Promise<(Document<unknown, unknown, TChatRoom> & TChatRoom)[]> => {
   const allChatRooms = await ChatRoom.find(query)
     .sort(opts?.sort)
     .skip((opts?.page as number) * EnvVars.Bandwidth.maxDocsPerFetch)
@@ -21,7 +21,9 @@ const getAll = async (
   return allChatRooms;
 };
 
-const getOne = async (query: TQuery) => {
+const getOne = async (
+  query: TQuery,
+): Promise<(Document<unknown, unknown, TChatRoom> & TChatRoom) | null> => {
   const chatRoom = await ChatRoom.findOne(query).exec();
 
   return chatRoom;

@@ -1,7 +1,7 @@
 import EnvVars from '@src/constants/EnvVars';
 import User, { TUser, TUserPublic } from '@src/models/User';
 import { TQueryOptions } from '@src/types/TQueryOptions';
-import { FilterQuery } from 'mongoose';
+import { Document, FilterQuery } from 'mongoose';
 
 type TQuery = FilterQuery<TUser>;
 
@@ -12,7 +12,7 @@ type TUpdate = Partial<TUser>;
 const getAll = async (
   query: TQuery,
   opts?: TQueryOptions<TUserPublic>,
-): Promise<TUser[]> => {
+): Promise<(Document<unknown, unknown, TUser> & TUser)[]> => {
   const allUsers = await User.find(query)
     .sort(opts?.sort)
     .skip((opts?.page as number) * EnvVars.Bandwidth.maxDocsPerFetch)
@@ -21,7 +21,9 @@ const getAll = async (
   return allUsers;
 };
 
-const getOne = async (query: TQuery): Promise<TUser | null> => {
+const getOne = async (
+  query: TQuery,
+): Promise<(Document<unknown, unknown, TUser> & TUser) | null> => {
   const user = await User.findOne(query).exec();
 
   return user;

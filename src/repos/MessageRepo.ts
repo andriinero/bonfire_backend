@@ -1,7 +1,7 @@
 import EnvVars from '@src/constants/EnvVars';
 import Message, { TMessage } from '@src/models/Message';
 import { TQueryOptions } from '@src/types/TQueryOptions';
-import { FilterQuery } from 'mongoose';
+import { Document, FilterQuery } from 'mongoose';
 
 type TQuery = FilterQuery<TMessage>;
 
@@ -12,7 +12,7 @@ export type TUpdateMessage = Partial<TMessage>;
 const getAll = async (
   query: TQuery,
   opts?: TQueryOptions<TMessage>,
-): Promise<TMessage[]> => {
+): Promise<(Document<unknown, unknown, TMessage> & TMessage)[]> => {
   const messages = await Message.find(query)
     .sort(opts?.sort)
     .skip((opts?.page as number) * EnvVars.Bandwidth.maxDocsPerFetch)
@@ -21,13 +21,17 @@ const getAll = async (
   return messages;
 };
 
-const getOne = async (query: TQuery): Promise<TMessage | null> => {
+const getOne = async (
+  query: TQuery,
+): Promise<(Document<unknown, unknown, TMessage> & TMessage) | null> => {
   const message = await Message.findOne(query).exec();
 
   return message;
 };
 
-const createOne = async (data: TCreate): Promise<TMessage> => {
+const createOne = async (
+  data: TCreate,
+): Promise<Document<unknown, unknown, TMessage> & TMessage> => {
   const message = new Message(data);
   const savedMessage = await message.save();
 

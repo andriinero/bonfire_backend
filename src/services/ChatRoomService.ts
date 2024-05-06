@@ -5,7 +5,7 @@ import { RouteError } from '@src/other/classes';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import ParticipantRepo from '@src/repos/ParticipantRepo';
 import UserRepo from '@src/repos/UserRepo';
-import { Types } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { USER_NOT_FOUND_ERR } from './AuthService';
 
 type TChatRoomQuery = {
@@ -56,7 +56,7 @@ const createOne = async (
 
 const getAllByChatRoomId = async (
   chatRoomId: Types.ObjectId,
-): Promise<TUserPublic[]> => {
+): Promise<(Document<unknown, unknown, TUserPublic> & TUserPublic)[]> => {
   const participants = await ParticipantRepo.getAll({ _id: chatRoomId });
 
   return participants;
