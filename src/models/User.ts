@@ -9,7 +9,7 @@ export type TUser = {
   created: Date;
   is_online: boolean;
   profile_image: string;
-  contacts: Types.ObjectId;
+  contacts: Types.ObjectId[];
 };
 
 export type TUserPublic = Omit<TUser, 'password'>;

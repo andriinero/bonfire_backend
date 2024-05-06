@@ -1,7 +1,3 @@
-/**
- * Express router paths go here.
- */
-
 export default {
   Base: '/api',
   Users: {
@@ -39,6 +35,10 @@ export default {
   },
   Profile: {
     BASE: '/profile',
-    GET_CONTACTS: '/contacts',
+    Contacts: {
+      BASE: '/contacts',
+      GET_ALL: '/',
+      DELETE: '/:userid',
+    },
   },
 } as const;

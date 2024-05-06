@@ -4,8 +4,10 @@ import ProfileService from '@src/services/ProfileService';
 import { formatValidationErrors } from '@src/util/misc';
 import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
+import { Types } from 'mongoose';
 import { IRes } from './types/express/misc';
-import { IReq } from './types/types';
+import { IReq, IReqParams } from './types/types';
+import Validation from './validators/Validation';
 
 const contacts_get_all = [
   authenticateJwt,
@@ -25,6 +27,28 @@ const contacts_get_all = [
   }),
 ];
 
+const contacts_delete = [
+  authenticateJwt,
+  Validation.useridParam,
+  asyncHandler(async (req: IReqParams<{ userid: string }>, res: IRes) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res
+        .status(HttpStatusCodes.BAD_REQUEST)
+        .json(formatValidationErrors(errors));
+    } else {
+      const { _id } = req.user!;
+      const { userid: contactid } = req.params;
+      const contactId = new Types.ObjectId(contactid);
+      const participants = await ProfileService.deleteContact(_id, contactId);
+
+      res.status(HttpStatusCodes.OK).json(participants);
+    }
+  }),
+];
+
 export default {
   contacts_get_all,
+  contacts_delete,
 };
