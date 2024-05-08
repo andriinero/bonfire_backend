@@ -7,6 +7,7 @@ import { validationResult } from 'express-validator';
 import { Types } from 'mongoose';
 import { IRes } from './types/express/misc';
 import { IReq, IReqParams } from './types/types';
+import ProfileValidation from './validators/ProfileValidation';
 import Validation from './validators/Validation';
 
 const contacts_get_all = [
@@ -25,6 +26,30 @@ const contacts_get_all = [
       res.status(HttpStatusCodes.OK).json(participants);
     }
   }),
+];
+
+const contact_post = [
+  authenticateJwt,
+  ProfileValidation.contactUsernameSanitizer,
+  asyncHandler(
+    async (req: IReq<{ contactUsername: Types.ObjectId }>, res: IRes) => {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        res
+          .status(HttpStatusCodes.BAD_REQUEST)
+          .json(formatValidationErrors(errors));
+      } else {
+        const { _id } = req.user!;
+        const { contactUsername: contactId } = req.body;
+        await ProfileService.createContact(_id, contactId);
+
+        res
+          .status(HttpStatusCodes.CREATED)
+          .json({ message: 'Contact created' });
+      }
+    },
+  ),
 ];
 
 const contacts_delete = [
@@ -51,4 +76,5 @@ const contacts_delete = [
 export default {
   contacts_get_all,
   contacts_delete,
-};
+  contact_post,
+} as const;

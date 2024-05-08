@@ -38,6 +38,7 @@ export default {
     Contacts: {
       BASE: '/contacts',
       GET_ALL: '/',
+      POST: '/',
       DELETE: '/:userid',
     },
   },
