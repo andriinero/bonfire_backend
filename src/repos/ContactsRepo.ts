@@ -16,6 +16,7 @@ const getAll = async (
   const user = (await User.findOne(query)
     .select('contacts')
     .populate({ path: 'contacts', select: USER_DATA_SELECTION })
+    .limit(opts?.limit as number)
     .sort(opts?.sort)
     .skip((opts?.page as number) * EnvVars.Bandwidth.maxDocsPerFetch)
     .exec()) as unknown as {

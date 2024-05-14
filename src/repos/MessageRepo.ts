@@ -14,6 +14,7 @@ const getAll = async (
   opts?: TQueryOptions<TMessage>,
 ): Promise<(Document<unknown, unknown, TMessage> & TMessage)[]> => {
   const messages = await Message.find(query)
+    .limit(opts?.limit as number)
     .sort(opts?.sort)
     .skip((opts?.page as number) * EnvVars.Bandwidth.maxDocsPerFetch)
     .exec();

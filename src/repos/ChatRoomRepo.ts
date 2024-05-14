@@ -14,6 +14,7 @@ const getAll = async (
   opts?: TQueryOptions<TChatRoom>,
 ): Promise<(Document<unknown, unknown, TChatRoom> & TChatRoom)[]> => {
   const allChatRooms = await ChatRoom.find(query)
+    .limit(opts?.limit as number)
     .sort(opts?.sort)
     .skip((opts?.page as number) * EnvVars.Bandwidth.maxDocsPerFetch)
     .exec();

@@ -14,6 +14,7 @@ const getAll = async (
   opts?: TQueryOptions<TUserPublic>,
 ): Promise<(Document<unknown, unknown, TUser> & TUser)[]> => {
   const allUsers = await User.find(query)
+    .limit(opts?.limit as number)
     .sort(opts?.sort)
     .skip((opts?.page as number) * EnvVars.Bandwidth.maxDocsPerFetch)
     .exec();

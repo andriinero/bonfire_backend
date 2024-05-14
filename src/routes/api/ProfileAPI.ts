@@ -17,7 +17,7 @@ profileRouter.get(
 
 profileRouter.post(
   contactsBase + Paths.Profile.Contacts.POST,
-  ProfileRoutes.contacts_get_all,
+  ProfileRoutes.contact_post,
 );
 
 profileRouter.delete(

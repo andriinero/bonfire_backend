@@ -3,6 +3,7 @@ import { MessageType, TMessage } from '@src/models/Message';
 import { RouteError } from '@src/other/classes';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import MessageRepo, { TUpdateMessage } from '@src/repos/MessageRepo';
+import { getQueryOpts } from '@src/util/misc';
 import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
 
 type TCreateMessageData = Omit<TMessage, '_id' | 'created' | 'type'>;
@@ -15,10 +16,9 @@ const getAllByChatRoomId = async (chatRoomId: string): Promise<TMessage[]> => {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
   }
 
-  const messages = await MessageRepo.getAll(
-    { chat_room: chatRoomId },
-    { sort: { created: -1 } },
-  );
+  const opts = getQueryOpts({ sort: { created: -1 } });
+  const messages = await MessageRepo.getAll({ chat_room: chatRoomId }, opts);
+
   return messages;
 };
 

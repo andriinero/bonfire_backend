@@ -13,6 +13,7 @@ const getAll = async (
   const chatRoom = (await ChatRoom.findById(query._id)
     .select('participants')
     .populate({ path: 'participants', select: USER_DATA_SELECTION })
+    .limit(opts?.limit as number)
     .sort(opts?.sort)
     .skip((opts?.page as number) * EnvVars.Bandwidth.maxDocsPerFetch)
     .exec()) as unknown as {

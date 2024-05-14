@@ -13,7 +13,7 @@ const contactUsernameSanitizer = body(
   // can't create a contact of himself
   .custom((contactUsername, { req }) => {
     const request = req as IReq;
-    const userUsername = request.user?.username;
+  const userUsername = request.user?.username;
 
     return contactUsername !== userUsername;
   })
@@ -22,8 +22,9 @@ const contactUsernameSanitizer = body(
       username: contactUsername,
     });
 
-    if (!contact)
+    if (!contact) {
       throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
+    }
 
     return contact?._id;
   })

@@ -5,6 +5,7 @@ import { RouteError } from '@src/other/classes';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import ParticipantRepo from '@src/repos/ParticipantRepo';
 import UserRepo from '@src/repos/UserRepo';
+import { getQueryOpts } from '@src/util/misc';
 import { Document, Types } from 'mongoose';
 import { USER_NOT_FOUND_ERR } from './AuthService';
 
@@ -16,7 +17,11 @@ type TChatRoomQuery = {
 export const CHAT_ROOM_NOT_FOUND_ERR = 'Chat room not found';
 
 const getAllByUserId = async (userId: string): Promise<TChatRoom[]> => {
-  const allChatRooms = await ChatRoomRepo.getAll({ participants: userId });
+  const opts = getQueryOpts();
+  const allChatRooms = await ChatRoomRepo.getAll(
+    { participants: userId },
+    opts,
+  );
 
   return allChatRooms;
 };
