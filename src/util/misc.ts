@@ -3,7 +3,6 @@
  */
 
 import { TErrorData } from '@src/types/ErrorData';
-import { TQueryOptions } from '@src/types/TQueryOptions';
 import { Result, ValidationError } from 'express-validator';
 
 const VALIDATION_ERROR_MESSAGE = 'Validation error';
@@ -31,14 +30,4 @@ export const formatValidationErrors = (result?: Result<ValidationError>) => {
     message: VALIDATION_ERROR_MESSAGE,
     errors: result?.array() ?? [],
   } as TErrorData;
-};
-
-export const getQueryOpts = <T>(opts?: TQueryOptions<T>) => {
-  const defaultOptions = {
-    limit: 25,
-    page: 0,
-    ...opts,
-  };
-
-  return defaultOptions;
 };

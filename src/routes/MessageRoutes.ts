@@ -8,6 +8,7 @@ import { Types } from 'mongoose';
 import { IRes } from './types/express/misc';
 import { IReqParams } from './types/types';
 import ChatRoomValidation from './validators/ChatRoomValidation';
+import Validation from './validators/Validation';
 
 type TMessagePostBody = {
   user: string;
@@ -17,6 +18,7 @@ type TMessagePostBody = {
 
 const message_get_all = [
   authenticateJwt,
+  ...Validation.defaultQueries,
   ChatRoomValidation.chatroomidParam,
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
     const errors = validationResult(req);
@@ -27,7 +29,11 @@ const message_get_all = [
         .json(formatValidationErrors(errors));
     } else {
       const { chatroomid } = req.params;
-      const messages = await MessageService.getAllByChatRoomId(chatroomid);
+      const opts = req.query;
+      const messages = await MessageService.getAllByChatRoomId(
+        chatroomid,
+        opts,
+      );
 
       res.status(HttpStatusCodes.OK).json(messages);
     }

@@ -3,7 +3,7 @@ import { MessageType, TMessage } from '@src/models/Message';
 import { RouteError } from '@src/other/classes';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import MessageRepo, { TUpdateMessage } from '@src/repos/MessageRepo';
-import { getQueryOpts } from '@src/util/misc';
+import { TQueryOptions } from '@src/types/TQueryOptions';
 import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
 
 type TCreateUserMessage = Omit<TMessage, '_id' | 'created' | 'type'>;
@@ -15,14 +15,19 @@ type TCreateActionMessage = Omit<
 
 export const MESSAGE_NOT_FOUND_ERR = 'Message not found';
 
-const getAllByChatRoomId = async (chatRoomId: string): Promise<TMessage[]> => {
+const getAllByChatRoomId = async (
+  chatRoomId: string,
+  query: TQueryOptions<TMessage>,
+): Promise<TMessage[]> => {
   const persists = await ChatRoomRepo.persists({ _id: chatRoomId });
   if (!persists) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
   }
 
-  const opts = getQueryOpts({ sort: { created: -1 } });
-  const messages = await MessageRepo.getAll({ chat_room: chatRoomId }, opts);
+  const messages = await MessageRepo.getAll(
+    { chat_room: chatRoomId },
+    { ...query, sort: { created: -1 } },
+  );
 
   return messages;
 };

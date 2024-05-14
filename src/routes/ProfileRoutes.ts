@@ -12,6 +12,7 @@ import Validation from './validators/Validation';
 
 const contacts_get_all = [
   authenticateJwt,
+  ...Validation.defaultQueries,
   asyncHandler(async (req: IReq, res: IRes) => {
     const errors = validationResult(req);
 
@@ -21,7 +22,8 @@ const contacts_get_all = [
         .json(formatValidationErrors(errors));
     } else {
       const { _id } = req.user!;
-      const participants = await ProfileService.getContacts(_id);
+      const query = req.query;
+      const participants = await ProfileService.getContacts(_id, query);
 
       res.status(HttpStatusCodes.OK).json(participants);
     }
