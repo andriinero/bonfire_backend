@@ -17,7 +17,7 @@ export type TMessage = {
 
 const MessageSchema = new Schema<TMessage>({
   chat_room: { type: Schema.Types.ObjectId, required: true, ref: 'ChatRoom' },
-  user: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
+  user: { type: Schema.Types.ObjectId, ref: 'User' },
   body: { type: String, required: true },
   created: { type: Date, required: true, default: new Date() },
   reply: { type: Schema.Types.ObjectId, ref: 'Message' },

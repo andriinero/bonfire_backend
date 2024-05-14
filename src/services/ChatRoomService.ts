@@ -8,6 +8,7 @@ import UserRepo from '@src/repos/UserRepo';
 import { getQueryOpts } from '@src/util/misc';
 import { Document, Types } from 'mongoose';
 import { USER_NOT_FOUND_ERR } from './AuthService';
+import MessageService from './MessageService';
 
 type TChatRoomQuery = {
   userId: string;
@@ -55,8 +56,11 @@ const createOne = async (
     participants: [currentUserUserId, participantId],
     created: new Date(),
   };
-
-  return ChatRoomRepo.createOne(chatRoomDetails);
+  const id = await ChatRoomRepo.createOne(chatRoomDetails);
+  await MessageService.createActionMessage({
+    chat_room: id,
+    body: 'chat room created',
+  });
 };
 
 const getAllByChatRoomId = async (

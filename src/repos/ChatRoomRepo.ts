@@ -1,7 +1,7 @@
 import EnvVars from '@src/constants/EnvVars';
 import ChatRoom, { TChatRoom } from '@src/models/ChatRoom';
 import { TQueryOptions } from '@src/types/TQueryOptions';
-import { Document, FilterQuery } from 'mongoose';
+import { Document, FilterQuery, Types } from 'mongoose';
 
 type TQuery = FilterQuery<TChatRoom>;
 
@@ -30,9 +30,11 @@ const getOne = async (
   return chatRoom;
 };
 
-const createOne = async (data: TCreate): Promise<void> => {
+const createOne = async (data: TCreate): Promise<Types.ObjectId> => {
   const newChatRoom = new ChatRoom(data);
   await newChatRoom.save();
+
+  return newChatRoom._id;
 };
 
 const updateOne = async (

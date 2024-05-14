@@ -6,7 +6,12 @@ import MessageRepo, { TUpdateMessage } from '@src/repos/MessageRepo';
 import { getQueryOpts } from '@src/util/misc';
 import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
 
-type TCreateMessageData = Omit<TMessage, '_id' | 'created' | 'type'>;
+type TCreateUserMessage = Omit<TMessage, '_id' | 'created' | 'type'>;
+
+type TCreateActionMessage = Omit<
+  TMessage,
+  '_id' | 'created' | 'user' | 'reply' | 'type'
+>;
 
 export const MESSAGE_NOT_FOUND_ERR = 'Message not found';
 
@@ -31,14 +36,16 @@ const getOneById = async (id: string): Promise<TMessage> => {
   return message;
 };
 
-const createOne = async (data: TCreateMessageData): Promise<TMessage> => {
+const createUserMessage = async (
+  data: TCreateUserMessage,
+): Promise<TMessage> => {
   const messageDetails = {
     ...data,
     created: new Date(),
     type: MessageType.MESSAGE,
   };
-
   const createdMessage = await MessageRepo.createOne(messageDetails);
+
   return createdMessage;
 };
 
@@ -53,10 +60,24 @@ const deleteOneById = async (id: string): Promise<void> => {
   await MessageRepo.deleteOne({ _id: id });
 };
 
+const createActionMessage = async (
+  data: TCreateActionMessage,
+): Promise<TMessage> => {
+  const messageDetails = {
+    ...data,
+    created: new Date(),
+    type: MessageType.ACTION,
+  };
+  const createdMessage = await MessageRepo.createOne(messageDetails);
+
+  return createdMessage;
+};
+
 export default {
   getAllByChatRoomId,
   getOneById,
-  createOne,
+  createOne: createUserMessage,
+  createActionMessage,
   updateOneById,
   deleteOneById,
 } as const;

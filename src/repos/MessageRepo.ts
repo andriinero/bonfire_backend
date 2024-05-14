@@ -5,7 +5,8 @@ import { Document, FilterQuery } from 'mongoose';
 
 type TQuery = FilterQuery<TMessage>;
 
-type TCreate = Omit<TMessage, '_id'>;
+type TCreate = Pick<TMessage, 'body' | 'type' | 'created' | 'chat_room'> &
+  Partial<Pick<TMessage, 'user' | 'reply'>>;
 
 export type TUpdateMessage = Partial<TMessage>;
 
