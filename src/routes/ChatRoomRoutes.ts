@@ -22,7 +22,10 @@ const chat_room_get_all = [
     const userId = _id.toString();
     const query = req.query;
 
-    const allChatRooms = await ChatRoomService.getAllByUserId(userId, query);
+    const allChatRooms = await ChatRoomService.getChatRoomsByUserId(
+      userId,
+      query,
+    );
 
     res.status(HttpStatusCodes.OK).json(allChatRooms);
   }),
@@ -51,7 +54,7 @@ const chat_room_get_one = [
           userId,
         };
 
-        const allChatRooms = await ChatRoomService.getOneById(query);
+        const allChatRooms = await ChatRoomService.getChatRoomById(query);
 
         res.status(HttpStatusCodes.OK).json(allChatRooms);
       }
@@ -109,7 +112,8 @@ const participant_get_all = [
       const { chatroomid } = req.params;
       const chatRoomId = new Types.ObjectId(chatroomid);
 
-      const participants = await ChatRoomService.getAllByChatRoomId(chatRoomId);
+      const participants =
+        await ChatRoomService.getParticipantsByChatRoomId(chatRoomId);
 
       res.status(HttpStatusCodes.OK).json(participants);
     }
