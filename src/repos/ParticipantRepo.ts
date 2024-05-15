@@ -23,6 +23,13 @@ const getAll = async (
   return chatRoom.participants ?? [];
 };
 
+const getCount = async (query: TQuery): Promise<number> => {
+  const chatRoom = await ChatRoom.findById(query._id).exec();
+
+  return chatRoom ? chatRoom.participants.length : 0;
+};
+
 export default {
   getAll,
+  getCount,
 } as const;

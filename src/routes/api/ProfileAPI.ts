@@ -25,6 +25,11 @@ profileRouter.delete(
   ProfileRoutes.contacts_delete,
 );
 
+profileRouter.get(
+  contactsBase + Paths.Profile.Contacts.GET_COUNT,
+  ProfileRoutes.contacts_count,
+);
+
 apiRouter.use(Paths.Profile.BASE, profileRouter);
 
 export default apiRouter;

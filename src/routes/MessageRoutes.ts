@@ -67,7 +67,7 @@ const message_post = [
           reply: replyId,
         };
 
-        const result = await MessageService.createOne(messageDetails);
+        const result = await MessageService.createUserMessage(messageDetails);
 
         res.status(HttpStatusCodes.CREATED).json(result);
       }
@@ -75,7 +75,18 @@ const message_post = [
   ),
 ];
 
+const message_count = [
+  authenticateJwt,
+  asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
+    const { chatroomid } = req.params;
+    const count = await MessageService.getCountByChatRoomId(chatroomid);
+
+    res.status(HttpStatusCodes.OK).json(count);
+  }),
+];
+
 export default {
   message_get_all,
   message_post,
+  message_count,
 } as const;

@@ -83,6 +83,17 @@ const chat_room_post = [
   ),
 ];
 
+const chat_room_count = [
+  authenticateJwt,
+  ChatRoomValidation.userIdBody,
+  asyncHandler(async (req: IReq<{ userid: string }>, res: IRes) => {
+    const { userid } = req.params;
+    const count = await ChatRoomService.getChatRoomCount(userid);
+
+    res.status(HttpStatusCodes.OK).json(count);
+  }),
+];
+
 // PARTICIPANTS //
 
 const participant_get_all = [
@@ -105,9 +116,33 @@ const participant_get_all = [
   }),
 ];
 
+const participant_count = [
+  authenticateJwt,
+  ChatRoomValidation.chatroomidParam,
+  asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res
+        .status(HttpStatusCodes.BAD_REQUEST)
+        .json(formatValidationErrors(errors));
+    } else {
+      const { chatroomid } = req.params;
+      const chatRoomId = new Types.ObjectId(chatroomid);
+
+      const participantCount =
+        await ChatRoomService.getParticipantCount(chatRoomId);
+
+      res.status(HttpStatusCodes.OK).json(participantCount);
+    }
+  }),
+];
+
 export default {
   chat_room_get_all,
   chat_room_get_one,
   chat_room_post,
   participant_get_all,
+  chat_room_count,
+  participant_count,
 } as const;

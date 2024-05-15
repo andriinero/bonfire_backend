@@ -75,8 +75,19 @@ const contacts_delete = [
   }),
 ];
 
+const contacts_count = [
+  authenticateJwt,
+  asyncHandler(async (req: IReq, res: IRes) => {
+    const { _id } = req.user!;
+    const count = await ProfileService.getContactCount(_id);
+
+    res.status(HttpStatusCodes.OK).json(count);
+  }),
+];
+
 export default {
   contacts_get_all,
   contacts_delete,
   contact_post,
+  contacts_count,
 } as const;

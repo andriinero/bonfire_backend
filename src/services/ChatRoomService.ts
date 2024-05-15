@@ -19,7 +19,7 @@ export const CHAT_ROOM_NOT_FOUND_ERR = 'Chat room not found';
 
 const getAllByUserId = async (
   userId: string,
-  query: TQueryOptions<TChatRoom>,
+  query?: TQueryOptions<TChatRoom>,
 ): Promise<TChatRoom[]> => {
   const allChatRooms = await ChatRoomRepo.getAll(
     { participants: userId },
@@ -73,9 +73,25 @@ const getAllByChatRoomId = async (
   return participants;
 };
 
+const getChatRoomCount = async (userId: string): Promise<number> => {
+  const docCount = await ChatRoomRepo.getCount({ participants: userId });
+
+  return docCount;
+};
+
+const getParticipantCount = async (
+  chatRoomId: Types.ObjectId,
+): Promise<number> => {
+  const docCount = await ParticipantRepo.getCount({ _id: chatRoomId });
+
+  return docCount;
+};
+
 export default {
   getAllByUserId,
   getOneById,
   createOne,
   getAllByChatRoomId,
+  getChatRoomCount,
+  getParticipantCount,
 } as const;

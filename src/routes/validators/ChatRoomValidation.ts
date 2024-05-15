@@ -41,8 +41,11 @@ const participantUsernameSanitizer = body(
   })
   .escape();
 
+const userIdBody = [body('userid').trim().custom(isValidObjectId).escape()];
+
 export default {
   chatroomidParam,
   chatRoomNameBody,
   participantUsernameSanitizer,
+  userIdBody,
 } as const;

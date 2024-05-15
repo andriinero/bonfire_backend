@@ -53,10 +53,17 @@ const persists = async (query: TQuery): Promise<boolean> => {
   return !!persistingChatRoom;
 };
 
+const getCount = async (query: TQuery): Promise<number> => {
+  const docCount = await ChatRoom.countDocuments(query).exec();
+
+  return docCount;
+};
+
 export default {
   getAll,
   getOne,
   createOne,
   updateOne,
   persists,
+  getCount,
 } as const;

@@ -78,11 +78,18 @@ const createActionMessage = async (
   return createdMessage;
 };
 
+const getCountByChatRoomId = async (chatRoomId: string): Promise<number> => {
+  const docCount = await MessageRepo.getCount({ chat_room: chatRoomId });
+
+  return docCount;
+};
+
 export default {
   getAllByChatRoomId,
   getOneById,
-  createOne: createUserMessage,
+  createUserMessage,
   createActionMessage,
   updateOneById,
   deleteOneById,
+  getCountByChatRoomId,
 } as const;

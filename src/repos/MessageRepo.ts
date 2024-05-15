@@ -57,6 +57,12 @@ const persists = async (ids: string[]): Promise<boolean> => {
   return ids.length === messages.length;
 };
 
+const getCount = async (query: TQuery): Promise<number> => {
+  const docCount = await Message.countDocuments(query).exec();
+
+  return docCount;
+};
+
 export default {
   getAll,
   getOne,
@@ -64,4 +70,5 @@ export default {
   updateOne,
   deleteOne,
   persists,
+  getCount,
 } as const;

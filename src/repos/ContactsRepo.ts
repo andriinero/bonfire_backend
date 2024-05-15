@@ -26,4 +26,10 @@ const getAll = async (
   return user.contacts ?? [];
 };
 
-export default { getAll } as const;
+const getCount = async (query: TQuery): Promise<number> => {
+  const user = await User.findOne(query).exec();
+
+  return user ? user.contacts.length : 0;
+};
+
+export default { getAll, getCount } as const;

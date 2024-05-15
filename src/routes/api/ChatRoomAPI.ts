@@ -15,6 +15,8 @@ chatRoomRouter.get(Paths.ChatRoom.GET, ChatRoomRoutes.chat_room_get_one);
 
 chatRoomRouter.post(Paths.ChatRoom.POST, ChatRoomRoutes.chat_room_post);
 
+chatRoomRouter.get(Paths.ChatRoom.GET_COUNT, ChatRoomRoutes.chat_room_count);
+
 // PARTICIPANTS //
 
 const participantsBase = Paths.ChatRoom.Participants.BASE;
@@ -22,6 +24,11 @@ const participantsBase = Paths.ChatRoom.Participants.BASE;
 chatRoomRouter.get(
   participantsBase + Paths.ChatRoom.Participants.GET_ALL,
   ChatRoomRoutes.participant_get_all,
+);
+
+chatRoomRouter.get(
+  participantsBase + Paths.ChatRoom.Participants.GET_COUNT,
+  ChatRoomRoutes.participant_count,
 );
 
 apiRouter.use(Paths.ChatRoom.BASE, chatRoomRouter);

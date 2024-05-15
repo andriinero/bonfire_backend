@@ -60,4 +60,15 @@ const deleteContact = async (
   await user.save();
 };
 
-export default { getContacts, createContact, deleteContact } as const;
+const getContactCount = async (userId: Types.ObjectId): Promise<number> => {
+  const docCount = await ContactsRepo.getCount({ _id: userId });
+
+  return docCount;
+};
+
+export default {
+  getContacts,
+  createContact,
+  deleteContact,
+  getContactCount,
+} as const;
