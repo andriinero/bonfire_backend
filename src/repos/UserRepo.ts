@@ -35,8 +35,8 @@ const createOne = async (data: TCreate): Promise<void> => {
   await newUser.save();
 };
 
-const updateOne = async (id: string, data: TUpdate): Promise<void> => {
-  await User.findByIdAndUpdate(id, data, {
+const updateOne = async (query: TQuery, data: TUpdate): Promise<void> => {
+  await User.findOneAndUpdate(query, data, {
     runValidators: true,
     new: true,
   });

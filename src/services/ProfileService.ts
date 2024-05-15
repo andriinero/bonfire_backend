@@ -9,6 +9,23 @@ import { USER_NOT_FOUND_ERR } from './AuthService';
 
 const CONTACT_EXISTS_ERROR = 'Contact with this id already exists';
 
+// ONLINE STATUS //
+
+const updateOnlineStatus = async (
+  userId: Types.ObjectId,
+  isOnline: boolean,
+): Promise<void> => {
+  const persists = await UserRepo.persistOne({ _id: userId });
+
+  if (!persists) {
+    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
+  }
+
+  await UserRepo.updateOne({ _id: userId }, { is_online: isOnline });
+};
+
+// CONTACTS //
+
 const getContacts = async (
   userId: Types.ObjectId,
   query: TQueryOptions<TUserPublic>,
@@ -67,6 +84,7 @@ const getContactCount = async (userId: Types.ObjectId): Promise<number> => {
 };
 
 export default {
+  updateOnlineStatus,
   getContacts,
   createContact,
   deleteContact,

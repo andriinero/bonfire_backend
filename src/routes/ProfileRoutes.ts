@@ -10,6 +10,31 @@ import { IReq, IReqParams } from './types/types';
 import ProfileValidation from './validators/ProfileValidation';
 import Validation from './validators/Validation';
 
+// ONLINE STATUS //
+
+const online_status_put = [
+  authenticateJwt,
+  ProfileValidation.onlineStatusBody,
+  asyncHandler(async (req: IReq<{ isOnline: boolean }>, res: IRes) => {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res
+        .status(HttpStatusCodes.BAD_REQUEST)
+        .json(formatValidationErrors(errors));
+    } else {
+      const { _id } = req.user!;
+      const { isOnline } = req.body;
+
+      await ProfileService.updateOnlineStatus(_id, isOnline);
+
+      res.status(HttpStatusCodes.OK).json({ message: 'Online status updated' });
+    }
+  }),
+];
+
+// CONTACTS //
+
 const contacts_get_all = [
   authenticateJwt,
   ...Validation.defaultQueries,
@@ -86,6 +111,7 @@ const contacts_count = [
 ];
 
 export default {
+  online_status_put,
   contacts_get_all,
   contacts_delete,
   contact_post,

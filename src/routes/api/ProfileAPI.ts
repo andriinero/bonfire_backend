@@ -6,6 +6,10 @@ const apiRouter = Router();
 
 const profileRouter = Router({ mergeParams: true });
 
+// ONLINE STATUS //
+
+profileRouter.put(Paths.Profile.ONLINE_STATUS, ProfileRoutes.online_status_put);
+
 // CONTACTS //
 
 const contactsBase = Paths.Profile.Contacts.BASE;

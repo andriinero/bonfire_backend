@@ -38,6 +38,7 @@ export default {
   },
   Profile: {
     BASE: '/profile',
+    ONLINE_STATUS: '/online-status',
     Contacts: {
       BASE: '/contacts',
       GET_ALL: '/',

@@ -13,7 +13,7 @@ const contactUsernameSanitizer = body(
   // can't create a contact of himself
   .custom((contactUsername, { req }) => {
     const request = req as IReq;
-  const userUsername = request.user?.username;
+    const userUsername = request.user?.username;
 
     return contactUsername !== userUsername;
   })
@@ -30,6 +30,9 @@ const contactUsernameSanitizer = body(
   })
   .escape();
 
+const onlineStatusBody = body('isOnline').trim().isBoolean().escape();
+
 export default {
   contactUsernameSanitizer,
+  onlineStatusBody,
 } as const;
