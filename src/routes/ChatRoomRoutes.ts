@@ -88,10 +88,10 @@ const chat_room_post = [
 
 const chat_room_count = [
   authenticateJwt,
-  ChatRoomValidation.userIdBody,
-  asyncHandler(async (req: IReq<{ userid: string }>, res: IRes) => {
-    const { userid } = req.params;
-    const count = await ChatRoomService.getChatRoomCount(userid);
+  asyncHandler(async (req: IReq, res: IRes) => {
+    const { _id } = req.user!;
+    const userId = _id.toString();
+    const count = await ChatRoomService.getChatRoomPageCount(userId);
 
     res.status(HttpStatusCodes.OK).json(count);
   }),
@@ -135,7 +135,7 @@ const participant_count = [
       const chatRoomId = new Types.ObjectId(chatroomid);
 
       const participantCount =
-        await ChatRoomService.getParticipantCount(chatRoomId);
+        await ChatRoomService.getParticipantPageCount(chatRoomId);
 
       res.status(HttpStatusCodes.OK).json(participantCount);
     }

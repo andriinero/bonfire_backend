@@ -7,7 +7,7 @@ const useridParam = param('userid', 'User id must be valid')
   .escape();
 
 const defaultQueries = [
-  query('limit').default(50).trim().escape(),
+  query('limit').default(25).trim().escape(),
   query('page').default(0).trim().escape(),
 ];
 

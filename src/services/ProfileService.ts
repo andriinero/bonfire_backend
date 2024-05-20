@@ -77,7 +77,7 @@ const deleteContact = async (
   await user.save();
 };
 
-const getContactCount = async (userId: Types.ObjectId): Promise<number> => {
+const getContactPageCount = async (userId: Types.ObjectId): Promise<number> => {
   const docCount = await ContactsRepo.getCount({ _id: userId });
 
   return docCount;
@@ -88,5 +88,5 @@ export default {
   getContacts,
   createContact,
   deleteContact,
-  getContactCount,
+  getContactPageCount,
 } as const;

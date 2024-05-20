@@ -1,3 +1,4 @@
+import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { TChatRoom } from '@src/models/ChatRoom';
 import { TUserPublic } from '@src/models/User';
@@ -73,18 +74,18 @@ const getParticipantsByChatRoomId = async (
   return participants;
 };
 
-const getChatRoomCount = async (userId: string): Promise<number> => {
+const getChatRoomPageCount = async (userId: string): Promise<number> => {
   const docCount = await ChatRoomRepo.getCount({ participants: userId });
 
-  return docCount;
+  return Math.ceil(docCount / EnvVars.Bandwidth.maxDocsPerFetch);
 };
 
-const getParticipantCount = async (
+const getParticipantPageCount = async (
   chatRoomId: Types.ObjectId,
 ): Promise<number> => {
   const docCount = await ParticipantRepo.getCount({ _id: chatRoomId });
 
-  return docCount;
+  return Math.ceil(docCount / EnvVars.Bandwidth.maxDocsPerFetch);
 };
 
 export default {
@@ -92,6 +93,6 @@ export default {
   getChatRoomById,
   createOne,
   getParticipantsByChatRoomId,
-  getChatRoomCount,
-  getParticipantCount,
+  getChatRoomPageCount,
+  getParticipantPageCount,
 } as const;

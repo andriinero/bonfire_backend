@@ -104,7 +104,7 @@ const contacts_count = [
   authenticateJwt,
   asyncHandler(async (req: IReq, res: IRes) => {
     const { _id } = req.user!;
-    const count = await ProfileService.getContactCount(_id);
+    const count = await ProfileService.getContactPageCount(_id);
 
     res.status(HttpStatusCodes.OK).json(count);
   }),

@@ -1,3 +1,4 @@
+import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { MessageType, TMessage } from '@src/models/Message';
 import { RouteError } from '@src/other/classes';
@@ -78,10 +79,12 @@ const createActionMessage = async (
   return createdMessage;
 };
 
-const getCountByChatRoomId = async (chatRoomId: string): Promise<number> => {
+const getPageCountByChatRoomId = async (
+  chatRoomId: string,
+): Promise<number> => {
   const docCount = await MessageRepo.getCount({ chat_room: chatRoomId });
 
-  return docCount;
+  return Math.ceil(docCount / EnvVars.Bandwidth.maxDocsPerFetch);
 };
 
 export default {
@@ -91,5 +94,5 @@ export default {
   createActionMessage,
   updateOneById,
   deleteOneById,
-  getCountByChatRoomId,
+  getPageCountByChatRoomId,
 } as const;

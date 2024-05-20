@@ -79,7 +79,7 @@ const message_count = [
   authenticateJwt,
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
     const { chatroomid } = req.params;
-    const count = await MessageService.getCountByChatRoomId(chatroomid);
+    const count = await MessageService.getPageCountByChatRoomId(chatroomid);
 
     res.status(HttpStatusCodes.OK).json(count);
   }),

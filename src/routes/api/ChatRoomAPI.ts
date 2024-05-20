@@ -11,8 +11,6 @@ const chatRoomRouter = Router();
 
 chatRoomRouter.get(Paths.ChatRoom.GET_ALL, ChatRoomRoutes.chat_room_get_all);
 
-chatRoomRouter.get(Paths.ChatRoom.GET, ChatRoomRoutes.chat_room_get_one);
-
 chatRoomRouter.post(Paths.ChatRoom.POST, ChatRoomRoutes.chat_room_post);
 
 chatRoomRouter.get(Paths.ChatRoom.GET_COUNT, ChatRoomRoutes.chat_room_count);
