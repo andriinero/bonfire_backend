@@ -31,7 +31,7 @@ profileRouter.delete(
 
 profileRouter.get(
   contactsBase + Paths.Profile.Contacts.GET_COUNT,
-  ProfileRoutes.contacts_count,
+  ProfileRoutes.contacts_page_count,
 );
 
 apiRouter.use(Paths.Profile.BASE, profileRouter);

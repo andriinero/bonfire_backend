@@ -1,3 +1,4 @@
+import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { TUserPublic } from '@src/models/User';
 import { RouteError } from '@src/other/classes';
@@ -80,7 +81,7 @@ const deleteContact = async (
 const getContactPageCount = async (userId: Types.ObjectId): Promise<number> => {
   const docCount = await ContactsRepo.getCount({ _id: userId });
 
-  return docCount;
+  return Math.floor(docCount / EnvVars.Bandwidth.maxDocsPerFetch);
 };
 
 export default {

@@ -75,7 +75,7 @@ const message_post = [
   ),
 ];
 
-const message_count = [
+const message_page_count = [
   authenticateJwt,
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
     const { chatroomid } = req.params;
@@ -88,5 +88,5 @@ const message_count = [
 export default {
   message_get_all,
   message_post,
-  message_count,
+  message_page_count,
 } as const;

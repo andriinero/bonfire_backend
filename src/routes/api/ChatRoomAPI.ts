@@ -13,7 +13,10 @@ chatRoomRouter.get(Paths.ChatRoom.GET_ALL, ChatRoomRoutes.chat_room_get_all);
 
 chatRoomRouter.post(Paths.ChatRoom.POST, ChatRoomRoutes.chat_room_post);
 
-chatRoomRouter.get(Paths.ChatRoom.GET_COUNT, ChatRoomRoutes.chat_room_count);
+chatRoomRouter.get(
+  Paths.ChatRoom.GET_COUNT,
+  ChatRoomRoutes.chat_room_page_count,
+);
 
 // PARTICIPANTS //
 
@@ -26,7 +29,7 @@ chatRoomRouter.get(
 
 chatRoomRouter.get(
   participantsBase + Paths.ChatRoom.Participants.GET_COUNT,
-  ChatRoomRoutes.participant_count,
+  ChatRoomRoutes.participant_page_count,
 );
 
 apiRouter.use(Paths.ChatRoom.BASE, chatRoomRouter);

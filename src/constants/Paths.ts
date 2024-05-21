@@ -20,11 +20,11 @@ export default {
     GET: '/:chatroomid',
     POST: '/',
     PUT: '/:chatroomid',
-    GET_COUNT: '/count',
+    GET_COUNT: '/page-count',
     Participants: {
       BASE: '/:chatroomid/participants',
       GET_ALL: '/',
-      GET_COUNT: '/count',
+      GET_COUNT: '/page-count',
     },
   },
   Message: {
@@ -34,7 +34,7 @@ export default {
     POST: '/',
     PUT: '/:messageid',
     DELETE: '/:messageid',
-    GET_COUNT: '/count',
+    GET_COUNT: '/page-count',
   },
   Profile: {
     BASE: '/profile',
@@ -44,7 +44,7 @@ export default {
       GET_ALL: '/',
       POST: '/',
       DELETE: '/:userid',
-      GET_COUNT: '/count',
+      GET_COUNT: '/page-count',
     },
   },
 } as const;

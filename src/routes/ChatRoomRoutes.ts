@@ -86,7 +86,7 @@ const chat_room_post = [
   ),
 ];
 
-const chat_room_count = [
+const chat_room_page_count = [
   authenticateJwt,
   asyncHandler(async (req: IReq, res: IRes) => {
     const { _id } = req.user!;
@@ -120,7 +120,7 @@ const participant_get_all = [
   }),
 ];
 
-const participant_count = [
+const participant_page_count = [
   authenticateJwt,
   ChatRoomValidation.chatroomidParam,
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
@@ -147,6 +147,6 @@ export default {
   chat_room_get_one,
   chat_room_post,
   participant_get_all,
-  chat_room_count,
-  participant_count,
+  chat_room_page_count,
+  participant_page_count,
 } as const;

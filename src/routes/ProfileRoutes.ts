@@ -100,7 +100,7 @@ const contacts_delete = [
   }),
 ];
 
-const contacts_count = [
+const contacts_page_count = [
   authenticateJwt,
   asyncHandler(async (req: IReq, res: IRes) => {
     const { _id } = req.user!;
@@ -115,5 +115,5 @@ export default {
   contacts_get_all,
   contacts_delete,
   contact_post,
-  contacts_count,
+  contacts_page_count,
 } as const;
