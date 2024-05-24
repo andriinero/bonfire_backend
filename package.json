@@ -55,6 +55,7 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "prettier-plugin-organize-imports": "^3.2.4",
+    "socket.io": "^4.7.5",
     "ts-command-line-args": "^2.5.1"
   },
   "devDependencies": {
