@@ -1,5 +1,6 @@
 import { ISocket } from '@src/routes/types/types';
 import ProfileService from '@src/services/ProfileService';
+import logger from 'jet-logger';
 
 const onConnection = (socket: ISocket) => {
   socketInit(socket);
@@ -10,7 +11,7 @@ const onConnection = (socket: ISocket) => {
 const socketInit = async (socket: ISocket) => {
   const user = socket.request.user!;
   await ProfileService.updateOnlineStatus(user._id, true);
-  console.log(
+  logger.info(
     `[${new Date().toString()}] Client with user id ${user?.id} connected`,
   );
 };
@@ -19,7 +20,7 @@ const onDisconnect = (socket: ISocket) => async () => {
   const user = socket.request.user!;
 
   await ProfileService.updateOnlineStatus(user._id, false);
-  console.log(
+  logger.info(
     `[${new Date().toString()}] Client with user id ${user?.id} disconnected`,
   );
 };
