@@ -1,7 +1,7 @@
 import EnvVars from '@src/constants/EnvVars';
-import Message, { TMessage } from '@src/models/Message';
+import Message, { TMessage, TMessageDocument } from '@src/models/Message';
 import { TQueryOptions } from '@src/types/TQueryOptions';
-import { Document, FilterQuery } from 'mongoose';
+import { FilterQuery } from 'mongoose';
 
 type TQuery = FilterQuery<TMessage>;
 
@@ -13,7 +13,7 @@ export type TUpdateMessage = Partial<TMessage>;
 const getAll = async (
   query: TQuery,
   opts?: TQueryOptions<TMessage>,
-): Promise<(Document<unknown, unknown, TMessage> & TMessage)[]> => {
+): Promise<TMessageDocument[]> => {
   const messages = await Message.find(query)
     .limit(opts?.limit as number)
     .sort(opts?.sort)
@@ -23,17 +23,13 @@ const getAll = async (
   return messages;
 };
 
-const getOne = async (
-  query: TQuery,
-): Promise<(Document<unknown, unknown, TMessage> & TMessage) | null> => {
+const getOne = async (query: TQuery): Promise<TMessageDocument | null> => {
   const message = await Message.findOne(query).exec();
 
   return message;
 };
 
-const createOne = async (
-  data: TCreate,
-): Promise<Document<unknown, unknown, TMessage> & TMessage> => {
+const createOne = async (data: TCreate): Promise<TMessageDocument> => {
   const message = new Message(data);
   const savedMessage = await message.save();
 

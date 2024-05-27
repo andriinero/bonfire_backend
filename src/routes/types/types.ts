@@ -1,8 +1,7 @@
-import { TUser } from '@src/models/User';
+import { TUserDocument } from '@src/models/User';
 import * as e from 'express';
 import { ParamsDictionary, Query } from 'express-serve-static-core';
 import { IncomingMessage } from 'http';
-import { Document } from 'mongoose';
 import { Socket } from 'socket.io';
 import { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
@@ -16,7 +15,7 @@ export interface ISocket
     unknown
   > {
   request: IncomingMessage & {
-    user?: Document<unknown, unknown, TUser> & TUser;
+    user?: TUserDocument;
   };
 }
 

@@ -1,7 +1,7 @@
 import EnvVars from '@src/constants/EnvVars';
-import ChatRoom, { TChatRoom } from '@src/models/ChatRoom';
+import ChatRoom, { TChatRoom, TChatRoomDocument } from '@src/models/ChatRoom';
 import { TQueryOptions } from '@src/types/TQueryOptions';
-import { Document, FilterQuery, Types } from 'mongoose';
+import { FilterQuery, Types } from 'mongoose';
 
 type TQuery = FilterQuery<TChatRoom>;
 
@@ -12,7 +12,7 @@ export type TUpdateChatRoom = Partial<TChatRoom>;
 const getAll = async (
   query: TQuery,
   opts?: TQueryOptions<TChatRoom>,
-): Promise<(Document<unknown, unknown, TChatRoom> & TChatRoom)[]> => {
+): Promise<TChatRoomDocument[]> => {
   const allChatRooms = await ChatRoom.find(query)
     .limit(opts?.limit as number)
     .sort(opts?.sort)
@@ -22,9 +22,7 @@ const getAll = async (
   return allChatRooms;
 };
 
-const getOne = async (
-  query: TQuery,
-): Promise<(Document<unknown, unknown, TChatRoom> & TChatRoom) | null> => {
+const getOne = async (query: TQuery): Promise<TChatRoomDocument | null> => {
   const chatRoom = await ChatRoom.findOne(query).exec();
 
   return chatRoom;

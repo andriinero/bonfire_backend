@@ -1,13 +1,13 @@
 import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { TChatRoom } from '@src/models/ChatRoom';
-import { TUserPublic } from '@src/models/User';
+import { TUserPublicDocument } from '@src/models/User';
 import { RouteError } from '@src/other/classes';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import ParticipantRepo from '@src/repos/ParticipantRepo';
 import UserRepo from '@src/repos/UserRepo';
 import { TQueryOptions } from '@src/types/TQueryOptions';
-import { Document, Types } from 'mongoose';
+import { Types } from 'mongoose';
 import { USER_NOT_FOUND_ERR } from './AuthService';
 import MessageService from './MessageService';
 
@@ -68,7 +68,7 @@ const createOne = async (
 
 const getParticipantsByChatRoomId = async (
   chatRoomId: Types.ObjectId,
-): Promise<(Document<unknown, unknown, TUserPublic> & TUserPublic)[]> => {
+): Promise<TUserPublicDocument[]> => {
   const participants = await ParticipantRepo.getAll({ _id: chatRoomId });
 
   return participants;

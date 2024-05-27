@@ -1,4 +1,4 @@
-import { Schema, Types, model } from 'mongoose';
+import { Document, Schema, Types, model } from 'mongoose';
 
 export type TChatRoom = {
   _id: Types.ObjectId;
@@ -6,6 +6,9 @@ export type TChatRoom = {
   participants: Types.ObjectId[];
   created: Date;
 };
+
+export type TChatRoomDocument = Document<unknown, unknown, TChatRoom> &
+  TChatRoom;
 
 const ChatRoomSchema = new Schema<TChatRoom>({
   name: { type: String, minlength: 3, maxlength: 100 },

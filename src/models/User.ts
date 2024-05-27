@@ -1,4 +1,4 @@
-import { Schema, Types, model } from 'mongoose';
+import { Document, Schema, Types, model } from 'mongoose';
 
 export type TUser = {
   _id: Types.ObjectId;
@@ -12,7 +12,12 @@ export type TUser = {
   contacts: Types.ObjectId[];
 };
 
+export type TUserDocument = Document<unknown, unknown, TUser> & TUser;
+
 export type TUserPublic = Omit<TUser, 'password'>;
+
+export type TUserPublicDocument = Document<unknown, unknown, TUserPublic> &
+  TUserPublic;
 
 export const USER_DATA_SELECTION = '-password';
 

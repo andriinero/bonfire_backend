@@ -1,7 +1,7 @@
 import EnvVars from '@src/constants/EnvVars';
-import User, { TUser, TUserPublic } from '@src/models/User';
+import User, { TUser, TUserDocument, TUserPublic } from '@src/models/User';
 import { TQueryOptions } from '@src/types/TQueryOptions';
-import { Document, FilterQuery } from 'mongoose';
+import { FilterQuery } from 'mongoose';
 
 type TQuery = FilterQuery<TUser>;
 
@@ -12,7 +12,7 @@ type TUpdate = Partial<TUser>;
 const getAll = async (
   query: TQuery,
   opts?: TQueryOptions<TUserPublic>,
-): Promise<(Document<unknown, unknown, TUser> & TUser)[]> => {
+): Promise<TUserDocument[]> => {
   const allUsers = await User.find(query)
     .limit(opts?.limit as number)
     .sort(opts?.sort)
@@ -22,9 +22,7 @@ const getAll = async (
   return allUsers;
 };
 
-const getOne = async (
-  query: TQuery,
-): Promise<(Document<unknown, unknown, TUser> & TUser) | null> => {
+const getOne = async (query: TQuery): Promise<TUserDocument | null> => {
   const user = await User.findOne(query).exec();
 
   return user;

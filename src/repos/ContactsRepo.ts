@@ -2,17 +2,17 @@ import EnvVars from '@src/constants/EnvVars';
 import User, {
   TUser,
   TUserPublic,
+  TUserPublicDocument,
   USER_DATA_SELECTION,
 } from '@src/models/User';
 import { TQueryOptions } from '@src/types/TQueryOptions';
-import { Document } from 'mongoose';
 
 type TQuery = Pick<TUser, '_id'>;
 
 const getAll = async (
   query: TQuery,
   opts?: TQueryOptions<TUserPublic>,
-): Promise<(Document<unknown, unknown, TUserPublic> & TUserPublic)[]> => {
+): Promise<TUserPublicDocument[]> => {
   const user = (await User.findOne(query)
     .select('contacts')
     .populate({ path: 'contacts', select: USER_DATA_SELECTION })
@@ -20,7 +20,7 @@ const getAll = async (
     .sort(opts?.sort)
     .skip((opts?.page as number) * EnvVars.Bandwidth.maxDocsPerFetch)
     .exec()) as unknown as {
-    contacts: (Document<unknown, unknown, TUserPublic> & TUserPublic)[];
+    contacts: TUserPublicDocument[];
   };
 
   return user.contacts ?? [];

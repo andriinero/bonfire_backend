@@ -1,4 +1,4 @@
-import { Schema, Types, model } from 'mongoose';
+import { Document, Schema, Types, model } from 'mongoose';
 
 export enum MessageType {
   ACTION = 'action',
@@ -14,6 +14,8 @@ export type TMessage = {
   reply: Types.ObjectId;
   type: MessageType;
 };
+
+export type TMessageDocument = Document<unknown, unknown, TMessage> & TMessage;
 
 const MessageSchema = new Schema<TMessage>({
   chat_room: { type: Schema.Types.ObjectId, required: true, ref: 'ChatRoom' },
