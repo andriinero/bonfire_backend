@@ -28,11 +28,11 @@ import User from './models/User';
 
 import AuthRouter from '@src/routes/api/AuthAPI';
 import { Server } from 'socket.io';
+import socketManager from './listeners/socketManager';
 import { authenticateJwt } from './middlewares/authentication';
 import ChatRoomRouter from './routes/api/ChatRoomAPI';
 import messageRouter from './routes/api/MessageAPI';
 import profileRouter from './routes/api/ProfileAPI';
-import { ISocket } from './routes/types/types';
 
 // **** Variables **** //
 
@@ -48,14 +48,8 @@ const main = async () => {
 main().catch((err: unknown) => logger.err(err, true));
 
 const io = new Server(8080, { cors: { origin: 'http://localhost:5174' } });
-
 io.engine.use(authenticateJwt);
-
-io.on('connection', (socket: ISocket) => {
-  const user = socket.request.user;
-  // FIXME: remove comment
-  console.log(`Client with user id ${user?.id} connected`);
-});
+io.on('connection', socketManager.onConnection);
 
 // Basic middleware
 app.use(cors());
