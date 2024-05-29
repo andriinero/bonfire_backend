@@ -59,7 +59,7 @@ const createOne = async (
   const chatRoomDetails = {
     participants: [currentUserUserId, participantId],
     created: new Date(),
-    fallback_color_class: getRandomColorClass(),
+    color_class: getRandomColorClass(),
   };
   const id = await ChatRoomRepo.createOne(chatRoomDetails);
   await MessageService.createActionMessage({
