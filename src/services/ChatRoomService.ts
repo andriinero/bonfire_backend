@@ -7,6 +7,7 @@ import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import ParticipantRepo from '@src/repos/ParticipantRepo';
 import UserRepo from '@src/repos/UserRepo';
 import { TQueryOptions } from '@src/types/TQueryOptions';
+import { getRandomColorClass } from '@src/util/getRandomColorClass';
 import { Types } from 'mongoose';
 import { USER_NOT_FOUND_ERR } from './AuthService';
 import MessageService from './MessageService';
@@ -58,6 +59,7 @@ const createOne = async (
   const chatRoomDetails = {
     participants: [currentUserUserId, participantId],
     created: new Date(),
+    fallback_color_class: getRandomColorClass(),
   };
   const id = await ChatRoomRepo.createOne(chatRoomDetails);
   await MessageService.createActionMessage({
