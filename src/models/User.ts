@@ -1,3 +1,4 @@
+import { ColorClass } from '@src/constants/misc';
 import { Document, Schema, Types, model } from 'mongoose';
 
 export type TUser = {
@@ -10,6 +11,7 @@ export type TUser = {
   is_online: boolean;
   profile_image: string;
   contacts: Types.ObjectId[];
+  color_class: ColorClass;
 };
 
 export type TUserDocument = Document<unknown, unknown, TUser> & TUser;
@@ -31,6 +33,11 @@ const UserSchema = new Schema<TUser>(
     is_online: { type: Boolean, required: true, default: false },
     profile_image: { type: String },
     contacts: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    color_class: {
+      type: String,
+      required: true,
+      enum: Object.values(ColorClass),
+    },
   },
   { versionKey: false },
 );

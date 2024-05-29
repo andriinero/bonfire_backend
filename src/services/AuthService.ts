@@ -3,6 +3,7 @@ import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { TUser } from '@src/models/User';
 import { RouteError } from '@src/other/classes';
 import UserRepo from '@src/repos/UserRepo';
+import { getRandomColorClass } from '@src/util/getRandomColorClass';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
@@ -67,6 +68,7 @@ const signUp = async (userData: TSignUpBody): Promise<void> => {
     created: new Date(),
     role: 'user' as const,
     is_online: false,
+    color_class: getRandomColorClass(),
   };
 
   await UserRepo.createOne(userDetails);
