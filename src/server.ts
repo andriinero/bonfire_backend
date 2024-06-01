@@ -26,6 +26,7 @@ import {
 import User from './models/User';
 
 import AuthRouter from '@src/routes/api/AuthAPI';
+import { createServer } from 'http';
 import { Server } from 'socket.io';
 import socketManager from './listeners/socketManager';
 import { authenticateJwt } from './middlewares/authentication';
@@ -36,6 +37,10 @@ import profileRouter from './routes/api/ProfileAPI';
 // **** Variables **** //
 
 const app = express();
+const server = createServer(app);
+const io = new Server(server, {
+  cors: { origin: EnvVars.CORS.ORIGIN },
+});
 
 // **** Setup **** //
 
@@ -46,16 +51,13 @@ const main = async () => {
 };
 main().catch((err: unknown) => logger.err(err, true));
 
-const io = new Server(+EnvVars.Port.SOCKET, {
-  cors: { origin: EnvVars.CORS.ORIGIN },
-});
-io.engine.use(authenticateJwt);
-io.on('connection', socketManager.onConnection);
-
 // Basic middleware
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+io.engine.use(authenticateJwt);
+io.on('connection', socketManager.onConnection);
 
 // Show routes called in console during development
 if (EnvVars.NodeEnv === NodeEnvs.Dev.valueOf()) {
@@ -116,4 +118,4 @@ app.use(
 
 // **** Export default **** //
 
-export default app;
+export default server;
