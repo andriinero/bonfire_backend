@@ -84,7 +84,7 @@ const getPageCountByChatRoomId = async (
 ): Promise<number> => {
   const docCount = await MessageRepo.getCount({ chat_room: chatRoomId });
 
-  return Math.floor(docCount / EnvVars.Bandwidth.maxDocsPerFetch);
+  return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);
 };
 
 export default {

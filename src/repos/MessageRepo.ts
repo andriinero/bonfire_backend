@@ -17,7 +17,7 @@ const getAll = async (
   const messages = await Message.find(query)
     .limit(opts?.limit as number)
     .sort(opts?.sort)
-    .skip((opts?.page as number) * EnvVars.Bandwidth.maxDocsPerFetch)
+    .skip((opts?.page as number) * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH)
     .exec();
 
   return messages;

@@ -79,7 +79,7 @@ const getParticipantsByChatRoomId = async (
 const getChatRoomPageCount = async (userId: string): Promise<number> => {
   const docCount = await ChatRoomRepo.getCount({ participants: userId });
 
-  return Math.floor(docCount / EnvVars.Bandwidth.maxDocsPerFetch);
+  return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);
 };
 
 const getParticipantPageCount = async (
@@ -87,7 +87,7 @@ const getParticipantPageCount = async (
 ): Promise<number> => {
   const docCount = await ParticipantRepo.getCount({ _id: chatRoomId });
 
-  return Math.floor(docCount / EnvVars.Bandwidth.maxDocsPerFetch);
+  return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);
 };
 
 export default {

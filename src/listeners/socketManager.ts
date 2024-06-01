@@ -8,7 +8,7 @@ const onConnection = (socket: ISocket) => {
 
   socket.on('disconnect', logDisconnectedUser(socket));
 
-  socket.on('message:send', messageManager.sendMessage);
+  socket.on('message:send', messageManager.sendMessage(socket));
 };
 
 const logConnectedUser = async (socket: ISocket) => {

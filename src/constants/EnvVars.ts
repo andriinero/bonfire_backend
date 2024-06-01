@@ -6,31 +6,22 @@
 
 export default {
   NodeEnv: process.env.NODE_ENV ?? '',
-  Port: process.env.PORT ?? 0,
+  CORS: { ORIGIN: process.env.CORS_ORIGIN },
+  Port: {
+    BASE: process.env.PORT_BASE ?? 0,
+    SOCKET: process.env.PORT_SOCKET ?? 0,
+  },
   MongoDB: {
     URI: process.env.MONGODB_URI ?? '',
   },
-  CookieProps: {
-    Key: 'ExpressGeneratorTs',
-    Secret: process.env.COOKIE_SECRET ?? '',
-    // Casing to match express cookie options
-    Options: {
-      httpOnly: true,
-      signed: true,
-      path: process.env.COOKIE_PATH ?? '',
-      maxAge: Number(process.env.COOKIE_EXP ?? 0),
-      domain: process.env.COOKIE_DOMAIN ?? '',
-      secure: process.env.SECURE_COOKIE === 'true',
-    },
-  },
   Jwt: {
-    Secret: process.env.JWT_SECRET ?? '',
-    Exp: process.env.COOKIE_EXP ?? '', // exp at the same time as the cookie
+    SECRET: process.env.JWT_SECRET ?? '',
+    EXP: process.env.JWT_EXP ?? '', // exp at the same time as the cookie
   },
   Bcrypt: {
-    Salt: process.env.SALT_VALUE ?? '',
+    SALT: process.env.BCRYPT_SALT_VALUE ?? '',
   },
   Bandwidth: {
-    maxDocsPerFetch: 25,
+    MAX_DOCS_PER_FETCH: 25,
   },
 } as const;

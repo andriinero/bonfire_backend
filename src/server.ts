@@ -2,7 +2,6 @@
  * Setup express server.
  */
 
-import cookieParser from 'cookie-parser';
 import express, { NextFunction, Request, Response } from 'express';
 import helmet from 'helmet';
 import logger from 'jet-logger';
@@ -47,7 +46,9 @@ const main = async () => {
 };
 main().catch((err: unknown) => logger.err(err, true));
 
-const io = new Server(8080, { cors: { origin: 'http://localhost:5174' } });
+const io = new Server(+EnvVars.Port.SOCKET, {
+  cors: { origin: EnvVars.CORS.ORIGIN },
+});
 io.engine.use(authenticateJwt);
 io.on('connection', socketManager.onConnection);
 
@@ -55,7 +56,6 @@ io.on('connection', socketManager.onConnection);
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser(EnvVars.CookieProps.Secret));
 
 // Show routes called in console during development
 if (EnvVars.NodeEnv === NodeEnvs.Dev.valueOf()) {
@@ -69,7 +69,7 @@ if (EnvVars.NodeEnv === NodeEnvs.Production.valueOf()) {
 
 const strategyOpts: StrategyOptionsWithoutRequest = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: EnvVars.Jwt.Secret,
+  secretOrKey: EnvVars.Jwt.SECRET,
 };
 
 passport.use(

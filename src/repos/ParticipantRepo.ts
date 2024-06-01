@@ -18,7 +18,7 @@ const getAll = async (
     .populate({ path: 'participants', select: USER_DATA_SELECTION })
     .limit(opts?.limit as number)
     .sort(opts?.sort)
-    .skip((opts?.page as number) * EnvVars.Bandwidth.maxDocsPerFetch)
+    .skip((opts?.page as number) * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH)
     .exec()) as unknown as {
     participants: TUserPublicDocument[];
   };

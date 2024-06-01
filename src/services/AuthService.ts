@@ -1,5 +1,6 @@
 import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
+import { ColorClass } from '@src/constants/misc';
 import { TUser } from '@src/models/User';
 import { RouteError } from '@src/other/classes';
 import UserRepo from '@src/repos/UserRepo';
@@ -16,6 +17,7 @@ type AuthPayload = {
   email: string;
   role: string;
   profile_image: string;
+  color_class: ColorClass;
 };
 
 type TSignUpBody = {
@@ -25,9 +27,16 @@ type TSignUpBody = {
 };
 
 const getAuthData = (user: TUser): AuthPayload => {
-  const { _id, username, email, role, profile_image } = user;
+  const { _id, username, email, role, profile_image, color_class } = user;
 
-  return { sub: _id.toString(), username, email, role, profile_image };
+  return {
+    sub: _id.toString(),
+    username,
+    email,
+    role,
+    profile_image,
+    color_class,
+  };
 };
 
 const signIn = async (email: string, password: string): Promise<string> => {
@@ -48,10 +57,11 @@ const signIn = async (email: string, password: string): Promise<string> => {
     email: user.email,
     role: user.role,
     profile_image: user.profile_image,
+    color_class: user.color_class,
   };
 
-  const token = jwt.sign(jwtPayload, EnvVars.Jwt.Secret, {
-    expiresIn: EnvVars.Jwt.Exp,
+  const token = jwt.sign(jwtPayload, EnvVars.Jwt.SECRET, {
+    expiresIn: EnvVars.Jwt.EXP,
   });
 
   return token;
@@ -60,7 +70,7 @@ const signIn = async (email: string, password: string): Promise<string> => {
 const signUp = async (userData: TSignUpBody): Promise<void> => {
   const hashedPassword = await bcrypt.hash(
     userData.password,
-    +EnvVars.Bcrypt.Salt,
+    +EnvVars.Bcrypt.SALT,
   );
   const userDetails = {
     ...userData,

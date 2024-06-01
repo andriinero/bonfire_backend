@@ -81,7 +81,7 @@ const deleteContact = async (
 const getContactPageCount = async (userId: Types.ObjectId): Promise<number> => {
   const docCount = await ContactsRepo.getCount({ _id: userId });
 
-  return Math.floor(docCount / EnvVars.Bandwidth.maxDocsPerFetch);
+  return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);
 };
 
 export default {

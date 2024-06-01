@@ -1,6 +1,5 @@
-import { Router } from 'express';
-
 import Paths from '@src/constants/Paths';
+import { Router } from 'express';
 import ChatRoomRoutes from '../ChatRoomRoutes';
 
 const apiRouter = Router();
