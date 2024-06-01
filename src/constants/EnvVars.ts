@@ -5,12 +5,10 @@
 /* eslint-disable node/no-process-env */
 
 export default {
+  HOST: process.env.HOSTNAME ?? 'localhost',
   NodeEnv: process.env.NODE_ENV ?? '',
   CORS: { ORIGIN: process.env.CORS_ORIGIN },
-  Port: {
-    BASE: process.env.PORT_BASE ?? 0,
-    SOCKET: process.env.PORT_SOCKET ?? 0,
-  },
+  PORT: parseInt(process.env.PORT_BASE ?? '3000'),
   MongoDB: {
     URI: process.env.MONGODB_URI ?? '',
   },
@@ -19,7 +17,7 @@ export default {
     EXP: process.env.JWT_EXP ?? '', // exp at the same time as the cookie
   },
   Bcrypt: {
-    SALT: process.env.BCRYPT_SALT_VALUE ?? '',
+    SALT: parseInt(process.env.BCRYPT_SALT_VALUE!),
   },
   Bandwidth: {
     MAX_DOCS_PER_FETCH: 25,

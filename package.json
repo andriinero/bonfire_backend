@@ -59,6 +59,7 @@
     "ts-command-line-args": "^2.5.1"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.5.7",
     "@types/cookie-parser": "^1.4.7",
     "@types/express": "^4.17.21",
     "@types/find": "^0.2.4",
