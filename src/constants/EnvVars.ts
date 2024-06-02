@@ -8,7 +8,7 @@ export default {
   HOSTNAME: process.env.HOSTNAME ?? 'localhost',
   NodeEnv: process.env.NODE_ENV ?? '',
   CORS: { ORIGIN: process.env.CORS_ORIGIN },
-  PORT: parseInt(process.env.PORT_BASE ?? '3000'),
+  PORT: parseInt(process.env.PORT ?? '3000'),
   MongoDB: {
     URI: process.env.MONGODB_URI ?? '',
   },
