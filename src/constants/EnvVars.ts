@@ -5,7 +5,7 @@
 /* eslint-disable node/no-process-env */
 
 export default {
-  HOST: process.env.HOSTNAME ?? 'localhost',
+  HOSTNAME: process.env.HOSTNAME ?? 'localhost',
   NodeEnv: process.env.NODE_ENV ?? '',
   CORS: { ORIGIN: process.env.CORS_ORIGIN },
   PORT: parseInt(process.env.PORT_BASE ?? '3000'),
