@@ -30,9 +30,6 @@ const contactUsernameSanitizer = body(
   })
   .escape();
 
-const onlineStatusBody = body('isOnline').trim().isBoolean().escape();
-
 export default {
   contactUsernameSanitizer,
-  onlineStatusBody,
 } as const;
