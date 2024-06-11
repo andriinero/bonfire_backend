@@ -25,6 +25,8 @@ export default {
       BASE: '/:chatroomid/participants',
       GET_ALL: '/',
       GET_COUNT: '/page-count',
+      POST: '/',
+      DELETE: '/',
     },
   },
   Message: {

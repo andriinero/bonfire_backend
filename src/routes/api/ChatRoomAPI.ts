@@ -31,6 +31,16 @@ chatRoomRouter.get(
   ChatRoomRoutes.participant_page_count,
 );
 
+chatRoomRouter.post(
+  participantsBase + Paths.ChatRoom.Participants.GET_COUNT,
+  () => {},
+);
+
+chatRoomRouter.delete(
+  participantsBase + Paths.ChatRoom.Participants.GET_COUNT,
+  () => {},
+);
+
 apiRouter.use(Paths.ChatRoom.BASE, chatRoomRouter);
 
 export default apiRouter;

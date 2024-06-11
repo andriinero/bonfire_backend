@@ -1,5 +1,6 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { authenticateJwt } from '@src/middlewares/authentication';
+import ChatRoomParticipantService from '@src/services/ChatRoomParticipantService';
 import ChatRoomService from '@src/services/ChatRoomService';
 import { formatValidationErrors } from '@src/util/misc';
 import asyncHandler from 'express-async-handler';
@@ -22,10 +23,7 @@ const chat_room_get_all = [
     const userId = _id.toString();
     const query = req.query;
 
-    const allChatRooms = await ChatRoomService.getChatRoomsByUserId(
-      userId,
-      query,
-    );
+    const allChatRooms = await ChatRoomService.getByUserId(userId, query);
 
     res.status(HttpStatusCodes.OK).json(allChatRooms);
   }),
@@ -54,7 +52,7 @@ const chat_room_get_one = [
           userId,
         };
 
-        const allChatRooms = await ChatRoomService.getChatRoomById(query);
+        const allChatRooms = await ChatRoomService.getById(query);
 
         res.status(HttpStatusCodes.OK).json(allChatRooms);
       }
@@ -91,7 +89,7 @@ const chat_room_page_count = [
   asyncHandler(async (req: IReq, res: IRes) => {
     const { _id } = req.user!;
     const userId = _id.toString();
-    const count = await ChatRoomService.getChatRoomPageCount(userId);
+    const count = await ChatRoomService.getPageCount(userId);
 
     res.status(HttpStatusCodes.OK).json(count);
   }),
@@ -113,7 +111,9 @@ const participant_get_all = [
       const chatRoomId = new Types.ObjectId(chatroomid);
 
       const participants =
-        await ChatRoomService.getParticipantsByChatRoomId(chatRoomId);
+        await ChatRoomParticipantService.getParticipantsByChatRoomId(
+          chatRoomId,
+        );
 
       res.status(HttpStatusCodes.OK).json(participants);
     }
@@ -135,7 +135,7 @@ const participant_page_count = [
       const chatRoomId = new Types.ObjectId(chatroomid);
 
       const participantCount =
-        await ChatRoomService.getParticipantPageCount(chatRoomId);
+        await ChatRoomParticipantService.getParticipantPageCount(chatRoomId);
 
       res.status(HttpStatusCodes.OK).json(participantCount);
     }

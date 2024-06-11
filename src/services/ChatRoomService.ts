@@ -1,10 +1,8 @@
 import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { TChatRoom } from '@src/models/ChatRoom';
-import { TUserPublicDocument } from '@src/models/User';
 import { RouteError } from '@src/other/classes';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
-import ParticipantRepo from '@src/repos/ParticipantRepo';
 import UserRepo from '@src/repos/UserRepo';
 import { TQueryOptions } from '@src/types/TQueryOptions';
 import { getRandomColorClass } from '@src/util/getRandomColorClass';
@@ -19,7 +17,7 @@ type TChatRoomQuery = {
 
 export const CHAT_ROOM_NOT_FOUND_ERR = 'Chat room not found';
 
-const getChatRoomsByUserId = async (
+const getByUserId = async (
   userId: string,
   query?: TQueryOptions<TChatRoom>,
 ): Promise<TChatRoom[]> => {
@@ -31,7 +29,7 @@ const getChatRoomsByUserId = async (
   return allChatRooms;
 };
 
-const getChatRoomById = async ({
+const getById = async ({
   roomId,
   userId,
 }: TChatRoomQuery): Promise<TChatRoom> => {
@@ -68,33 +66,15 @@ const createOne = async (
   });
 };
 
-const getParticipantsByChatRoomId = async (
-  chatRoomId: Types.ObjectId,
-): Promise<TUserPublicDocument[]> => {
-  const participants = await ParticipantRepo.getAll({ _id: chatRoomId });
-
-  return participants;
-};
-
-const getChatRoomPageCount = async (userId: string): Promise<number> => {
+const getPageCount = async (userId: string): Promise<number> => {
   const docCount = await ChatRoomRepo.getCount({ participants: userId });
 
   return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);
 };
 
-const getParticipantPageCount = async (
-  chatRoomId: Types.ObjectId,
-): Promise<number> => {
-  const docCount = await ParticipantRepo.getCount({ _id: chatRoomId });
-
-  return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);
-};
-
 export default {
-  getChatRoomsByUserId,
-  getChatRoomById,
+  getByUserId,
+  getById,
   createOne,
-  getParticipantsByChatRoomId,
-  getChatRoomPageCount,
-  getParticipantPageCount,
+  getPageCount,
 } as const;
