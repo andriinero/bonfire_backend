@@ -32,7 +32,7 @@ const get = [
 ];
 
 const sign_in_post = [
-  ...AuthValidation.signInData,
+  ...AuthValidation.body.signInDataValidators,
   asyncHandler(async (req: IReq<TSignInBody>, res: IRes): Promise<void> => {
     const errors = validationResult(req);
 
@@ -50,7 +50,7 @@ const sign_in_post = [
 ];
 
 const sign_up_post = [
-  ...AuthValidation.signUpData,
+  ...AuthValidation.body.signUpDataValidators,
   asyncHandler(async (req: IReq<TSignUpBody>, res: IRes) => {
     const errors = validationResult(req);
 

@@ -19,7 +19,7 @@ type TMessagePostBody = {
 const message_get_all = [
   authenticateJwt,
   ...Validation.defaultQueries,
-  ChatRoomValidation.chatroomidParam,
+  ChatRoomValidation.params.validateIdParam,
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
     const errors = validationResult(req);
 

@@ -1,16 +1,16 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { RouteError } from '@src/other/classes';
 import UserRepo from '@src/repos/UserRepo';
-import { body } from 'express-validator';
+import { body as reqBody } from 'express-validator';
 import { IReq } from '../types/types';
 
-const signInData = [
-  body('email').trim().escape(),
-  body('password').trim().escape(),
+const signInDataValidators = [
+  reqBody('email').trim().escape(),
+  reqBody('password').trim().escape(),
 ];
 
-const signUpData = [
-  body('username', 'Username must be valid')
+const signUpDataValidators = [
+  reqBody('username', 'Username must be valid')
     .trim()
     .custom(async (value: string) => {
       const userByUsername = await UserRepo.persistOne({ username: value });
@@ -22,7 +22,7 @@ const signUpData = [
         );
     })
     .escape(),
-  body('email', 'Email must be valid')
+  reqBody('email', 'Email must be valid')
     .trim()
     .isEmail()
     .custom(async (value: string) => {
@@ -35,8 +35,8 @@ const signUpData = [
         );
     })
     .escape(),
-  body('password').trim().escape(),
-  body('confirmPassword', "Passwords don't match")
+  reqBody('password').trim().escape(),
+  reqBody('confirmPassword', "Passwords don't match")
     .trim()
     .custom((value: string, { req }) => {
       const request = req as IReq<{ password: string }>;
@@ -46,4 +46,6 @@ const signUpData = [
     .escape(),
 ];
 
-export default { signInData, signUpData } as const;
+const body = { signInDataValidators, signUpDataValidators };
+
+export default { body } as const;
