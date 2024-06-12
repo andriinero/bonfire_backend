@@ -146,7 +146,7 @@ const participant_post = [
           chatRoomId: chatRoomObjectId,
         });
 
-        res.status(HttpStatusCodes.OK).json();
+        res.status(HttpStatusCodes.OK).json({ message: 'Participant added' });
       }
     },
   ),
@@ -180,7 +180,7 @@ const participant_delete = [
           chatRoomId: chatRoomObjectId,
         });
 
-        res.status(HttpStatusCodes.OK).json();
+        res.status(HttpStatusCodes.OK).json({ message: 'Participant removed' });
       }
     },
   ),
