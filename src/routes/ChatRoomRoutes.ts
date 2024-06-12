@@ -111,12 +111,51 @@ const participant_get_all = [
       const chatRoomId = new Types.ObjectId(chatroomid);
 
       const participants =
-        await ChatRoomParticipantService.getParticipantsByChatRoomId(
-          chatRoomId,
-        );
+        await ChatRoomParticipantService.getByChatRoomId(chatRoomId);
 
       res.status(HttpStatusCodes.OK).json(participants);
     }
+  }),
+];
+
+const participant_post = [
+  authenticateJwt,
+  ChatRoomValidation.chatroomidParam,
+  ChatRoomValidation.participantUsernameSanitizer,
+  asyncHandler(
+    (
+      req: IReqParams<
+        { chatRoomId: string },
+        { participantUsername: Types.ObjectId }
+      >,
+      res: IRes,
+    ) => {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        res
+          .status(HttpStatusCodes.BAD_REQUEST)
+          .json(formatValidationErrors(errors));
+      } else {
+        const { participantUsername: participantId } = req.body;
+        const { chatRoomId } = req.params;
+        const chatRoomObjectId = new Types.ObjectId(chatRoomId);
+
+        ChatRoomParticipantService.addParticipant({
+          userId: participantId,
+          chatRoomId: chatRoomObjectId,
+        });
+
+        res.status(HttpStatusCodes.OK).json();
+      }
+    },
+  ),
+];
+
+const participant_delete = [
+  authenticateJwt,
+  asyncHandler((_, res: IRes) => {
+    res.status(HttpStatusCodes.NOT_FOUND).json({ message: 'Route not found' });
   }),
 ];
 
@@ -135,7 +174,7 @@ const participant_page_count = [
       const chatRoomId = new Types.ObjectId(chatroomid);
 
       const participantCount =
-        await ChatRoomParticipantService.getParticipantPageCount(chatRoomId);
+        await ChatRoomParticipantService.getPageCount(chatRoomId);
 
       res.status(HttpStatusCodes.OK).json(participantCount);
     }
@@ -147,6 +186,8 @@ export default {
   chat_room_get_one,
   chat_room_post,
   participant_get_all,
+  participant_post,
+  participant_delete,
   chat_room_page_count,
   participant_page_count,
 } as const;

@@ -22,7 +22,7 @@ const participantUsernameSanitizer = body(
   'Participant username must be valid',
 )
   .trim()
-  // can't create chat where the only participant is user himself
+  // can't create chat with the user himself
   .custom((participantUsername, { req }) => {
     const request = req as IReq;
     const userUsername = request.user?.username;

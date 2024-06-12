@@ -6,6 +6,7 @@ import {
   USER_DATA_SELECTION,
 } from '@src/models/User';
 import { TQueryOptions } from '@src/types/TQueryOptions';
+import { Types } from 'mongoose';
 
 type TQuery = Pick<TChatRoom, '_id'>;
 
@@ -26,6 +27,33 @@ const getAll = async (
   return chatRoom.participants ?? [];
 };
 
+const addParticipant = async ({
+  userId,
+  chatRoomId,
+}: {
+  userId: Types.ObjectId;
+  chatRoomId: Types.ObjectId;
+}): Promise<void> => {
+  const chatRoom = await ChatRoom.findOne({ _id: chatRoomId }).exec();
+  chatRoom?.participants.push(userId);
+  await chatRoom?.save();
+};
+
+const persistsInChatRoom = async ({
+  userId,
+  chatRoomId,
+}: {
+  userId: Types.ObjectId;
+  chatRoomId: Types.ObjectId;
+}): Promise<boolean> => {
+  const foundParticipantCount = await ChatRoom.countDocuments({
+    _id: chatRoomId,
+    participants: userId,
+  }).exec();
+
+  return foundParticipantCount > 0;
+};
+
 const getCount = async (query: TQuery): Promise<number> => {
   const chatRoom = await ChatRoom.findById(query._id).exec();
 
@@ -34,5 +62,7 @@ const getCount = async (query: TQuery): Promise<number> => {
 
 export default {
   getAll,
+  addParticipant,
+  persistsInChatRoom,
   getCount,
 } as const;

@@ -33,12 +33,12 @@ chatRoomRouter.get(
 
 chatRoomRouter.post(
   participantsBase + Paths.ChatRoom.Participants.GET_COUNT,
-  () => {},
+  ChatRoomRoutes.participant_post,
 );
 
 chatRoomRouter.delete(
   participantsBase + Paths.ChatRoom.Participants.GET_COUNT,
-  () => {},
+  ChatRoomRoutes.participant_delete,
 );
 
 apiRouter.use(Paths.ChatRoom.BASE, chatRoomRouter);
