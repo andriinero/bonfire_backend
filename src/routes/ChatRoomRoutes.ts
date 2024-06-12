@@ -154,9 +154,36 @@ const participant_post = [
 
 const participant_delete = [
   authenticateJwt,
-  asyncHandler((_, res: IRes) => {
-    res.status(HttpStatusCodes.NOT_FOUND).json({ message: 'Route not found' });
-  }),
+  ChatRoomValidation.params.validateIdParam,
+  ChatRoomValidation.sanitizers.checkUsernameOwnershipAndTransformToObjectId,
+  asyncHandler(
+    (
+      req: IReqParams<
+        { chatRoomId: string },
+        { participantUsername: Types.ObjectId }
+      >,
+      res: IRes,
+    ) => {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        res
+          .status(HttpStatusCodes.BAD_REQUEST)
+          .json(formatValidationErrors(errors));
+      } else {
+        const { participantUsername: participantId } = req.body;
+        const { chatRoomId } = req.params;
+        const chatRoomObjectId = new Types.ObjectId(chatRoomId);
+
+        ChatRoomParticipantService.removeParticipant({
+          userId: participantId,
+          chatRoomId: chatRoomObjectId,
+        });
+
+        res.status(HttpStatusCodes.OK).json();
+      }
+    },
+  ),
 ];
 
 const participant_page_count = [

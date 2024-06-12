@@ -39,6 +39,23 @@ const addParticipant = async ({
   await chatRoom?.save();
 };
 
+const removeParticipant = async ({
+  userId,
+  chatRoomId,
+}: {
+  userId: Types.ObjectId;
+  chatRoomId: Types.ObjectId;
+}): Promise<void> => {
+  const chatRoom = await ChatRoom.findOne({ _id: chatRoomId }).exec();
+  const participantIndex = chatRoom?.participants.findIndex((p) =>
+    p.equals(userId),
+  );
+  if (participantIndex && participantIndex > -1)
+    chatRoom?.participants.splice(participantIndex, 1);
+
+  await chatRoom?.save();
+};
+
 const persistsInChatRoom = async ({
   userId,
   chatRoomId,
@@ -63,6 +80,7 @@ const getCount = async (query: TQuery): Promise<number> => {
 export default {
   getAll,
   addParticipant,
+  removeParticipant,
   persistsInChatRoom,
   getCount,
 } as const;

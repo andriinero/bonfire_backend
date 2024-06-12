@@ -10,6 +10,7 @@ import { USER_NOT_FOUND_ERR } from './AuthService';
 import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
 
 const PARTICIPANT_ALREADY_IN_CHAT_ROOM_ERR = 'This user has already been added';
+const PARTICIPANT_NOT_FOUND_ERR = 'Participant not found';
 
 const getByChatRoomId = async (
   chatRoomId: Types.ObjectId,
@@ -47,7 +48,33 @@ const addParticipant = async ({
   await ParticipantRepo.addParticipant({ userId, chatRoomId });
 };
 
-const removeParticipant = async () => {};
+const removeParticipant = async ({
+  userId,
+  chatRoomId,
+}: {
+  userId: Types.ObjectId;
+  chatRoomId: Types.ObjectId;
+}) => {
+  const userPersists = await UserRepo.persistOne({ _id: userId });
+  if (!userPersists)
+    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
+
+  const chatRoomPersists = await ChatRoomRepo.persists({ _id: chatRoomId });
+  if (!chatRoomPersists)
+    throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
+
+  const participantPersists = await ParticipantRepo.persistsInChatRoom({
+    userId,
+    chatRoomId,
+  });
+  if (!participantPersists)
+    throw new RouteError(
+      HttpStatusCodes.BAD_REQUEST,
+      PARTICIPANT_NOT_FOUND_ERR,
+    );
+
+  await ParticipantRepo.removeParticipant({ userId, chatRoomId });
+};
 
 const getPageCount = async (chatRoomId: Types.ObjectId): Promise<number> => {
   const docCount = await ParticipantRepo.getCount({ _id: chatRoomId });
