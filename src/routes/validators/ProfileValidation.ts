@@ -2,20 +2,20 @@ import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { RouteError } from '@src/other/classes';
 import UserRepo from '@src/repos/UserRepo';
 import { USER_NOT_FOUND_ERR } from '@src/services/AuthService';
-import { body } from 'express-validator';
+import { body as reqBody } from 'express-validator';
 import { IReq } from '../types/types';
 
-const contactUsernameSanitizer = body(
+const checkUsernameOwnershipAndTransformToObjectId = reqBody(
   'contactUsername',
   'Contact username must be valid',
 )
   .trim()
   // can't create a contact of himself
-  .custom((contactUsername, { req }) => {
+  .custom((value, { req }) => {
     const request = req as IReq;
     const userUsername = request.user?.username;
 
-    return contactUsername !== userUsername;
+    return value !== userUsername;
   })
   .customSanitizer(async (contactUsername: string) => {
     const contact = await UserRepo.getOne({
@@ -30,6 +30,6 @@ const contactUsernameSanitizer = body(
   })
   .escape();
 
-export default {
-  contactUsernameSanitizer,
-} as const;
+const stanitizers = { checkUsernameOwnershipAndTransformToObjectId };
+
+export default { stanitizers } as const;

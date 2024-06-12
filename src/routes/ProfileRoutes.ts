@@ -34,7 +34,7 @@ const contacts_get_all = [
 
 const contact_post = [
   authenticateJwt,
-  ProfileValidation.contactUsernameSanitizer,
+  ProfileValidation.stanitizers.checkUsernameOwnershipAndTransformToObjectId,
   asyncHandler(
     async (req: IReq<{ contactUsername: Types.ObjectId }>, res: IRes) => {
       const errors = validationResult(req);
