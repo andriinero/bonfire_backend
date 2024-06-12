@@ -2,22 +2,22 @@ import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { RouteError } from '@src/other/classes';
 import UserRepo from '@src/repos/UserRepo';
 import { USER_NOT_FOUND_ERR } from '@src/services/AuthService';
-import { body, param } from 'express-validator';
+import { body as reqBody, param as reqParam } from 'express-validator';
 import { isValidObjectId } from 'mongoose';
 import { IReq } from '../types/types';
 
-const chatroomidParam = param('chatroomid', 'Chat room id must be valid')
+const validateIdParam = reqParam('chatroomid', 'Chat room id must be valid')
   .trim()
   .custom(isValidObjectId)
   .escape();
 
-const chatRoomNameBody = body('name', 'Chat room name must be valid')
+const validateNameBody = reqBody('name', 'Chat room name must be valid')
   .trim()
   .optional()
   .isLength({ min: 3, max: 100 })
   .escape();
 
-const participantUsernameSanitizer = body(
+const checkUsernameOwnershipAndTransformToObjectId = reqBody(
   'participantUsername',
   'Participant username must be valid',
 )
@@ -41,11 +41,18 @@ const participantUsernameSanitizer = body(
   })
   .escape();
 
-const userIdBody = [body('userid').trim().custom(isValidObjectId).escape()];
+const validateUserIdBody = [
+  reqBody('userid').trim().custom(isValidObjectId).escape(),
+];
+
+const body = { validateNameBody, validateUserIdBody };
+
+const params = { validateIdParam };
+
+const sanitizers = { checkUsernameOwnershipAndTransformToObjectId };
 
 export default {
-  chatroomidParam,
-  chatRoomNameBody,
-  participantUsernameSanitizer,
-  userIdBody,
+  body,
+  params,
+  sanitizers,
 } as const;

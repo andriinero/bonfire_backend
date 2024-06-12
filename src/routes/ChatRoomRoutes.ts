@@ -31,7 +31,7 @@ const chat_room_get_all = [
 
 const chat_room_get_one = [
   authenticateJwt,
-  ChatRoomValidation.chatroomidParam,
+  ChatRoomValidation.params.validateIdParam,
   asyncHandler(
     async (req: IReqParams<TCharRoomParam>, res: IRes): Promise<void> => {
       const errors = validationResult(req);
@@ -62,7 +62,7 @@ const chat_room_get_one = [
 
 const chat_room_post = [
   authenticateJwt,
-  ChatRoomValidation.participantUsernameSanitizer,
+  ChatRoomValidation.sanitizers.checkUsernameOwnershipAndTransformToObjectId,
   asyncHandler(
     async (req: IReq<{ participantUsername: Types.ObjectId }>, res: IRes) => {
       const errors = validationResult(req);
@@ -120,8 +120,8 @@ const participant_get_all = [
 
 const participant_post = [
   authenticateJwt,
-  ChatRoomValidation.chatroomidParam,
-  ChatRoomValidation.participantUsernameSanitizer,
+  ChatRoomValidation.params.validateIdParam,
+  ChatRoomValidation.sanitizers.checkUsernameOwnershipAndTransformToObjectId,
   asyncHandler(
     (
       req: IReqParams<
@@ -161,7 +161,7 @@ const participant_delete = [
 
 const participant_page_count = [
   authenticateJwt,
-  ChatRoomValidation.chatroomidParam,
+  ChatRoomValidation.params.validateIdParam,
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
     const errors = validationResult(req);
 
