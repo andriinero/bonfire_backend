@@ -14,7 +14,7 @@ import Validation from './validators/Validation';
 
 const contacts_get_all = [
   authenticateJwt,
-  ...Validation.defaultQueries,
+  ...Validation.queries.defaultQueriesValidators,
   asyncHandler(async (req: IReq, res: IRes) => {
     const errors = validationResult(req);
 
@@ -58,7 +58,7 @@ const contact_post = [
 
 const contacts_delete = [
   authenticateJwt,
-  Validation.useridParam,
+  Validation.params.validateUserIdParam,
   asyncHandler(async (req: IReqParams<{ userid: string }>, res: IRes) => {
     const errors = validationResult(req);
 

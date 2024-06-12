@@ -1,17 +1,21 @@
-import { param, query } from 'express-validator';
+import { param as reqParam, query as reqQuery } from 'express-validator';
 import { isValidObjectId } from 'mongoose';
 
-const useridParam = param('userid', 'User id must be valid')
+const validateUserIdParam = reqParam('userid', 'User id must be valid')
   .trim()
   .custom(isValidObjectId)
   .escape();
 
-const defaultQueries = [
-  query('limit').default(25).trim().escape(),
-  query('page').default(0).trim().escape(),
+const defaultQueriesValidators = [
+  reqQuery('limit').default(25).trim().escape(),
+  reqQuery('page').default(0).trim().escape(),
 ];
 
+const params = { validateUserIdParam };
+
+const queries = { defaultQueriesValidators };
+
 export default {
-  useridParam,
-  defaultQueries,
+  params,
+  queries,
 } as const;

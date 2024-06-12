@@ -17,7 +17,7 @@ type TCharRoomParam = {
 
 const chat_room_get_all = [
   authenticateJwt,
-  ...Validation.defaultQueries,
+  ...Validation.queries.defaultQueriesValidators,
   asyncHandler(async (req: IReq, res: IRes): Promise<void> => {
     const { _id } = req.user!;
     const userId = _id.toString();
