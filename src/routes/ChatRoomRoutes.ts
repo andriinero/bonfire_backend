@@ -157,11 +157,10 @@ const participant_post = [
 const participant_delete = [
   authenticateJwt,
   ChatRoomValidation.params.validateIdParam,
-  ChatRoomValidation.sanitizers.checkUsernameOwnershipAndTransformToObjectId,
   asyncHandler(
     (
       req: IReqParams<
-        { chatRoomId: string },
+        { chatroomid: string },
         { participantUsername: Types.ObjectId }
       >,
       res: IRes,
@@ -173,12 +172,13 @@ const participant_delete = [
           .status(HttpStatusCodes.BAD_REQUEST)
           .json(formatValidationErrors(errors));
       } else {
-        const { participantUsername: participantId } = req.body;
-        const { chatRoomId } = req.params;
-        const chatRoomObjectId = new Types.ObjectId(chatRoomId);
+        const { _id, username } = req.user!;
+        const { chatroomid } = req.params;
+        const chatRoomObjectId = new Types.ObjectId(chatroomid);
 
         ChatRoomParticipantService.removeParticipant({
-          userId: participantId,
+          currentUsername: username,
+          userId: _id,
           chatRoomId: chatRoomObjectId,
         });
 

@@ -56,9 +56,11 @@ const addParticipant = async ({
 };
 
 const removeParticipant = async ({
+  currentUsername,
   userId,
   chatRoomId,
 }: {
+  currentUsername: string;
   userId: Types.ObjectId;
   chatRoomId: Types.ObjectId;
 }) => {
@@ -81,6 +83,10 @@ const removeParticipant = async ({
     );
 
   await ParticipantRepo.removeParticipant({ userId, chatRoomId });
+  await MessageService.createActionMessage({
+    body: `${currentUsername} has left the chat`,
+    chat_room: chatRoomId,
+  });
 };
 
 const getPageCount = async (chatRoomId: Types.ObjectId): Promise<number> => {
