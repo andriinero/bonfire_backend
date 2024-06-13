@@ -46,9 +46,9 @@ const updateOne = async (
 };
 
 const persists = async (query: TQuery): Promise<boolean> => {
-  const persistingChatRoom = await ChatRoom.findOne(query).exec();
+  const persistingChatRoom = await ChatRoom.countDocuments(query).exec();
 
-  return !!persistingChatRoom;
+  return persistingChatRoom > 0;
 };
 
 const getCount = async (query: TQuery): Promise<number> => {

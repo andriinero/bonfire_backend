@@ -8,6 +8,7 @@ import UserRepo from '@src/repos/UserRepo';
 import { Types } from 'mongoose';
 import { USER_NOT_FOUND_ERR } from './AuthService';
 import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
+import MessageService from './MessageService';
 
 const PARTICIPANT_ALREADY_IN_CHAT_ROOM_ERR = 'This user has already been added';
 const PARTICIPANT_NOT_FOUND_ERR = 'Participant not found';
@@ -21,14 +22,16 @@ const getByChatRoomId = async (
 };
 
 const addParticipant = async ({
-  userId,
+  currentUsername,
+  participantId,
   chatRoomId,
 }: {
-  userId: Types.ObjectId;
+  currentUsername: string;
+  participantId: Types.ObjectId;
   chatRoomId: Types.ObjectId;
 }) => {
-  const userPersists = await UserRepo.persistOne({ _id: userId });
-  if (!userPersists)
+  const user = await UserRepo.getOne({ _id: participantId });
+  if (!user)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
 
   const chatRoomPersists = await ChatRoomRepo.persists({ _id: chatRoomId });
@@ -36,7 +39,7 @@ const addParticipant = async ({
     throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
 
   const participantPersists = await ParticipantRepo.persistsInChatRoom({
-    userId,
+    userId: participantId,
     chatRoomId,
   });
   if (participantPersists)
@@ -45,7 +48,11 @@ const addParticipant = async ({
       PARTICIPANT_ALREADY_IN_CHAT_ROOM_ERR,
     );
 
-  await ParticipantRepo.addParticipant({ userId, chatRoomId });
+  await ParticipantRepo.addParticipant({ userId: participantId, chatRoomId });
+  await MessageService.createActionMessage({
+    body: `${currentUsername} has added ${user.username}`,
+    chat_room: chatRoomId,
+  });
 };
 
 const removeParticipant = async ({

@@ -125,7 +125,7 @@ const participant_post = [
   asyncHandler(
     (
       req: IReqParams<
-        { chatRoomId: string },
+        { chatroomid: string },
         { participantUsername: Types.ObjectId }
       >,
       res: IRes,
@@ -137,12 +137,14 @@ const participant_post = [
           .status(HttpStatusCodes.BAD_REQUEST)
           .json(formatValidationErrors(errors));
       } else {
+        const { username } = req.user!;
         const { participantUsername: participantId } = req.body;
-        const { chatRoomId } = req.params;
-        const chatRoomObjectId = new Types.ObjectId(chatRoomId);
+        const { chatroomid } = req.params;
+        const chatRoomObjectId = new Types.ObjectId(chatroomid);
 
         ChatRoomParticipantService.addParticipant({
-          userId: participantId,
+          currentUsername: username,
+          participantId: participantId,
           chatRoomId: chatRoomObjectId,
         });
 

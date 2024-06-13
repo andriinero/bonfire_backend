@@ -32,12 +32,12 @@ chatRoomRouter.get(
 );
 
 chatRoomRouter.post(
-  participantsBase + Paths.ChatRoom.Participants.GET_COUNT,
+  participantsBase + Paths.ChatRoom.Participants.POST,
   ChatRoomRoutes.participant_post,
 );
 
 chatRoomRouter.delete(
-  participantsBase + Paths.ChatRoom.Participants.GET_COUNT,
+  participantsBase + Paths.ChatRoom.Participants.DELETE,
   ChatRoomRoutes.participant_delete,
 );
 
