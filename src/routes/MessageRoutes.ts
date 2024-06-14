@@ -1,12 +1,16 @@
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { authenticateJwt } from '@src/middlewares/authentication';
-import MessageService from '@src/services/MessageService';
-import { formatValidationErrors } from '@src/util/misc';
 import asyncHandler from 'express-async-handler';
-import { validationResult } from 'express-validator';
 import { Types } from 'mongoose';
+
+import { authenticateJwt } from '@src/middlewares/authentication';
+import { formatValidationErrors } from '@src/util/misc';
+import { validationResult } from 'express-validator';
+
+import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { IRes } from './types/express/misc';
 import { IReqParams } from './types/types';
+
+import MessageService from '@src/services/MessageService';
+
 import ChatRoomValidation from './validators/ChatRoomValidation';
 import Validation from './validators/Validation';
 

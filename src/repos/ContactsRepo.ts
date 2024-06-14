@@ -1,4 +1,5 @@
 import EnvVars from '@src/constants/EnvVars';
+
 import User, {
   TUser,
   TUserPublic,
@@ -9,10 +10,7 @@ import { TQueryOptions } from '@src/types/TQueryOptions';
 
 type TQuery = Pick<TUser, '_id'>;
 
-const getAll = async (
-  query: TQuery,
-  opts?: TQueryOptions<TUserPublic>,
-): Promise<TUserPublicDocument[]> => {
+const getAll = async (query: TQuery, opts?: TQueryOptions<TUserPublic>) => {
   const user = (await User.findOne(query)
     .select('contacts')
     .populate({ path: 'contacts', select: USER_DATA_SELECTION })
@@ -26,7 +24,7 @@ const getAll = async (
   return user.contacts ?? [];
 };
 
-const getCount = async (query: TQuery): Promise<number> => {
+const getCount = async (query: TQuery) => {
   const user = await User.findOne(query).exec();
 
   return user ? user.contacts.length : 0;

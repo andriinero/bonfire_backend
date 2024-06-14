@@ -1,8 +1,10 @@
+import { body as reqBody } from 'express-validator';
+
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { RouteError } from '@src/other/classes';
-import UserRepo from '@src/repos/UserRepo';
-import { body as reqBody } from 'express-validator';
 import { IReq } from '../types/types';
+
+import UserRepo from '@src/repos/UserRepo';
 
 const signInDataValidators = [
   reqBody('email').trim().escape(),

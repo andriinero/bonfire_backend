@@ -1,12 +1,16 @@
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { authenticateJwt } from '@src/middlewares/authentication';
-import ProfileService from '@src/services/ProfileService';
-import { formatValidationErrors } from '@src/util/misc';
 import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
 import { Types } from 'mongoose';
+
+import { authenticateJwt } from '@src/middlewares/authentication';
+import { formatValidationErrors } from '@src/util/misc';
+
+import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { IRes } from './types/express/misc';
 import { IReq, IReqParams } from './types/types';
+
+import ProfileService from '@src/services/ProfileService';
+
 import ProfileValidation from './validators/ProfileValidation';
 import Validation from './validators/Validation';
 

@@ -1,12 +1,16 @@
+import { Types } from 'mongoose';
+
 import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { TChatRoom } from '@src/models/ChatRoom';
 import { RouteError } from '@src/other/classes';
+import { getRandomColorClass } from '@src/util/getRandomColorClass';
+
+import { TQueryOptions } from '@src/types/TQueryOptions';
+
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import UserRepo from '@src/repos/UserRepo';
-import { TQueryOptions } from '@src/types/TQueryOptions';
-import { getRandomColorClass } from '@src/util/getRandomColorClass';
-import { Types } from 'mongoose';
+
 import { USER_NOT_FOUND_ERR } from './AuthService';
 import MessageService from './MessageService';
 
@@ -20,7 +24,7 @@ export const CHAT_ROOM_NOT_FOUND_ERR = 'Chat room not found';
 const getByUserId = async (
   userId: string,
   query?: TQueryOptions<TChatRoom>,
-): Promise<TChatRoom[]> => {
+) => {
   const allChatRooms = await ChatRoomRepo.getAll(
     { participants: userId },
     query,
@@ -29,10 +33,7 @@ const getByUserId = async (
   return allChatRooms;
 };
 
-const getById = async ({
-  roomId,
-  userId,
-}: TChatRoomQuery): Promise<TChatRoom> => {
+const getById = async ({ roomId, userId }: TChatRoomQuery) => {
   const foundChatRoom = await ChatRoomRepo.getOne({
     _id: roomId,
     participants: userId,
@@ -47,7 +48,7 @@ const getById = async ({
 const createOne = async (
   currentUserUserId: Types.ObjectId,
   participantId: Types.ObjectId,
-): Promise<void> => {
+) => {
   const persist = await UserRepo.persistOne({ _id: participantId });
 
   if (!persist) {
@@ -66,7 +67,7 @@ const createOne = async (
   });
 };
 
-const getPageCount = async (userId: string): Promise<number> => {
+const getPageCount = async (userId: string) => {
   const docCount = await ChatRoomRepo.getCount({ participants: userId });
 
   return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);

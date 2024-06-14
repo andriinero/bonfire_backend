@@ -1,12 +1,16 @@
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { authenticateJwt } from '@src/middlewares/authentication';
-import { TUser } from '@src/models/User';
-import AuthService from '@src/services/AuthService';
-import { formatValidationErrors } from '@src/util/misc';
 import asyncHandler from 'express-async-handler';
+
+import { authenticateJwt } from '@src/middlewares/authentication';
+import { formatValidationErrors } from '@src/util/misc';
 import { validationResult } from 'express-validator';
+
+import HttpStatusCodes from '@src/constants/HttpStatusCodes';
+import { TUser } from '@src/models/User';
 import { IRes } from './types/express/misc';
 import { IReq } from './types/types';
+
+import AuthService from '@src/services/AuthService';
+
 import AuthValidation from './validators/AuthValidation';
 
 type TSignInBody = {

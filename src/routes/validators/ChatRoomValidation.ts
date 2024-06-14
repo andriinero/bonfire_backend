@@ -1,10 +1,13 @@
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { RouteError } from '@src/other/classes';
-import UserRepo from '@src/repos/UserRepo';
-import { USER_NOT_FOUND_ERR } from '@src/services/AuthService';
 import { body as reqBody, param as reqParam } from 'express-validator';
 import { isValidObjectId } from 'mongoose';
+
+import HttpStatusCodes from '@src/constants/HttpStatusCodes';
+import { RouteError } from '@src/other/classes';
 import { IReq } from '../types/types';
+
+import UserRepo from '@src/repos/UserRepo';
+
+import { USER_NOT_FOUND_ERR } from '@src/services/AuthService';
 
 const validateIdParam = reqParam('chatroomid', 'Chat room id must be valid')
   .trim()

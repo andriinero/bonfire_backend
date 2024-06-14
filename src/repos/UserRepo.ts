@@ -1,7 +1,9 @@
+import { FilterQuery } from 'mongoose';
+
 import EnvVars from '@src/constants/EnvVars';
+
 import User, { TUser, TUserDocument, TUserPublic } from '@src/models/User';
 import { TQueryOptions } from '@src/types/TQueryOptions';
-import { FilterQuery } from 'mongoose';
 
 type TQuery = FilterQuery<TUser>;
 
@@ -22,41 +24,41 @@ const getAll = async (
   return allUsers;
 };
 
-const getOne = async (query: TQuery): Promise<TUserDocument | null> => {
+const getOne = async (query: TQuery) => {
   const user = await User.findOne(query).exec();
 
   return user;
 };
 
-const createOne = async (data: TCreate): Promise<void> => {
+const createOne = async (data: TCreate) => {
   const newUser = new User(data);
   await newUser.save();
 };
 
-const updateOne = async (query: TQuery, data: TUpdate): Promise<void> => {
+const updateOne = async (query: TQuery, data: TUpdate) => {
   await User.findOneAndUpdate(query, data, {
     runValidators: true,
     new: true,
   });
 };
 
-const deleteOne = async (id: string): Promise<void> => {
+const deleteOne = async (id: string) => {
   await User.findByIdAndDelete(id);
 };
 
-const persistOne = async (query: TQuery): Promise<boolean> => {
+const persistOne = async (query: TQuery) => {
   const persistingUser = await User.findOne(query).exec();
 
   return !!persistingUser;
 };
 
-const persistMany = async (ids: string[]): Promise<boolean> => {
+const persistMany = async (ids: string[]) => {
   const persistingUsers = await User.find({ _id: { $in: ids } }).exec();
 
   return persistingUsers.length === ids.length;
 };
 
-const count = async (query: TQuery): Promise<number> => {
+const count = async (query: TQuery) => {
   const docCount = await User.countDocuments(query).exec();
 
   return docCount;

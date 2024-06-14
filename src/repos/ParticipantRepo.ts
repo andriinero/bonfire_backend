@@ -1,19 +1,19 @@
+import { Types } from 'mongoose';
+
 import EnvVars from '@src/constants/EnvVars';
+
+import { TQueryOptions } from '@src/types/TQueryOptions';
+
 import ChatRoom, { TChatRoom } from '@src/models/ChatRoom';
 import {
   TUserPublic,
   TUserPublicDocument,
   USER_DATA_SELECTION,
 } from '@src/models/User';
-import { TQueryOptions } from '@src/types/TQueryOptions';
-import { Types } from 'mongoose';
 
 type TQuery = Pick<TChatRoom, '_id'>;
 
-const getAll = async (
-  query: TQuery,
-  opts?: TQueryOptions<TUserPublic>,
-): Promise<TUserPublicDocument[]> => {
+const getAll = async (query: TQuery, opts?: TQueryOptions<TUserPublic>) => {
   const chatRoom = (await ChatRoom.findById(query._id)
     .select('participants')
     .populate({ path: 'participants', select: USER_DATA_SELECTION })
@@ -33,7 +33,7 @@ const addParticipant = async ({
 }: {
   userId: Types.ObjectId;
   chatRoomId: Types.ObjectId;
-}): Promise<void> => {
+}) => {
   const chatRoom = await ChatRoom.findOne({ _id: chatRoomId }).exec();
   chatRoom?.participants.push(userId);
   await chatRoom?.save();
@@ -45,7 +45,7 @@ const removeParticipant = async ({
 }: {
   userId: Types.ObjectId;
   chatRoomId: Types.ObjectId;
-}): Promise<void> => {
+}) => {
   const chatRoom = await ChatRoom.findOne({ _id: chatRoomId }).exec();
   const participantIndex = chatRoom?.participants.findIndex((p) =>
     p.equals(userId),
@@ -62,7 +62,7 @@ const persistsInChatRoom = async ({
 }: {
   userId: Types.ObjectId;
   chatRoomId: Types.ObjectId;
-}): Promise<boolean> => {
+}) => {
   const foundParticipantCount = await ChatRoom.countDocuments({
     _id: chatRoomId,
     participants: userId,
@@ -71,7 +71,7 @@ const persistsInChatRoom = async ({
   return foundParticipantCount > 0;
 };
 
-const getCount = async (query: TQuery): Promise<number> => {
+const getCount = async (query: TQuery) => {
   const chatRoom = await ChatRoom.findById(query._id).exec();
 
   return chatRoom ? chatRoom.participants.length : 0;

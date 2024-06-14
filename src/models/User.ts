@@ -1,5 +1,6 @@
-import { ColorClass } from '@src/constants/misc';
 import { Document, Schema, Types, model } from 'mongoose';
+
+import { ColorClass } from '@src/constants/misc';
 
 export type TUser = {
   _id: Types.ObjectId;

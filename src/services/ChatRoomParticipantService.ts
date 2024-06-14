@@ -1,11 +1,13 @@
+import { Types } from 'mongoose';
+
 import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { TUserPublicDocument } from '@src/models/User';
 import { RouteError } from '@src/other/classes';
+
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import ParticipantRepo from '@src/repos/ParticipantRepo';
 import UserRepo from '@src/repos/UserRepo';
-import { Types } from 'mongoose';
+
 import { USER_NOT_FOUND_ERR } from './AuthService';
 import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
 import MessageService from './MessageService';
@@ -13,9 +15,7 @@ import MessageService from './MessageService';
 const PARTICIPANT_ALREADY_IN_CHAT_ROOM_ERR = 'This user has already been added';
 const PARTICIPANT_NOT_FOUND_ERR = 'Participant not found';
 
-const getByChatRoomId = async (
-  chatRoomId: Types.ObjectId,
-): Promise<TUserPublicDocument[]> => {
+const getByChatRoomId = async (chatRoomId: Types.ObjectId) => {
   const participants = await ParticipantRepo.getAll({ _id: chatRoomId });
 
   return participants;
@@ -89,7 +89,7 @@ const removeParticipant = async ({
   });
 };
 
-const getPageCount = async (chatRoomId: Types.ObjectId): Promise<number> => {
+const getPageCount = async (chatRoomId: Types.ObjectId) => {
   const docCount = await ParticipantRepo.getCount({ _id: chatRoomId });
 
   return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);

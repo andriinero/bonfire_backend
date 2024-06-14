@@ -1,5 +1,6 @@
-import { TUserDocument } from '@src/models/User';
 import * as e from 'express';
+
+import { TUserDocument } from '@src/models/User';
 import { ParamsDictionary, Query } from 'express-serve-static-core';
 import { IncomingMessage } from 'http';
 import { Socket } from 'socket.io';

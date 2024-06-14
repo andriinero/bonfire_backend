@@ -1,7 +1,9 @@
-import EnvVars from '@src/constants/EnvVars';
-import Message, { TMessage, TMessageDocument } from '@src/models/Message';
-import { TQueryOptions } from '@src/types/TQueryOptions';
 import { FilterQuery } from 'mongoose';
+
+import EnvVars from '@src/constants/EnvVars';
+
+import Message, { TMessage } from '@src/models/Message';
+import { TQueryOptions } from '@src/types/TQueryOptions';
 
 type TQuery = FilterQuery<TMessage>;
 
@@ -10,10 +12,7 @@ type TCreate = Pick<TMessage, 'body' | 'type' | 'created' | 'chat_room'> &
 
 export type TUpdateMessage = Partial<TMessage>;
 
-const getAll = async (
-  query: TQuery,
-  opts?: TQueryOptions<TMessage>,
-): Promise<TMessageDocument[]> => {
+const getAll = async (query: TQuery, opts?: TQueryOptions<TMessage>) => {
   const messages = await Message.find(query)
     .limit(opts?.limit as number)
     .sort(opts?.sort)
@@ -23,37 +22,34 @@ const getAll = async (
   return messages;
 };
 
-const getOne = async (query: TQuery): Promise<TMessageDocument | null> => {
+const getOne = async (query: TQuery) => {
   const message = await Message.findOne(query).exec();
 
   return message;
 };
 
-const createOne = async (data: TCreate): Promise<TMessageDocument> => {
+const createOne = async (data: TCreate) => {
   const message = new Message(data);
   const savedMessage = await message.save();
 
   return savedMessage;
 };
 
-const updateOne = async (
-  query: TQuery,
-  messageData: TUpdateMessage,
-): Promise<void> => {
+const updateOne = async (query: TQuery, messageData: TUpdateMessage) => {
   await Message.findOneAndUpdate(query, messageData, { runValidators: true });
 };
 
-const deleteOne = async (query: TQuery): Promise<void> => {
+const deleteOne = async (query: TQuery) => {
   await Message.deleteOne(query);
 };
 
-const persists = async (ids: string[]): Promise<boolean> => {
+const persists = async (ids: string[]) => {
   const messages = await Message.find({ _id: { $in: ids } }).exec();
 
   return ids.length === messages.length;
 };
 
-const getCount = async (query: TQuery): Promise<number> => {
+const getCount = async (query: TQuery) => {
   const docCount = await Message.countDocuments(query).exec();
 
   return docCount;

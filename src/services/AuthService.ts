@@ -1,12 +1,15 @@
-import EnvVars from '@src/constants/EnvVars';
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { ColorClass } from '@src/constants/misc';
-import { TUser } from '@src/models/User';
-import { RouteError } from '@src/other/classes';
-import UserRepo from '@src/repos/UserRepo';
-import { getRandomColorClass } from '@src/util/getRandomColorClass';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+
+import EnvVars from '@src/constants/EnvVars';
+import HttpStatusCodes from '@src/constants/HttpStatusCodes';
+import { RouteError } from '@src/other/classes';
+import { getRandomColorClass } from '@src/util/getRandomColorClass';
+
+import { ColorClass } from '@src/constants/misc';
+import { TUser } from '@src/models/User';
+
+import UserRepo from '@src/repos/UserRepo';
 
 export const AUTHENTICATION_ERR = 'Incorrect credentials';
 export const USER_NOT_FOUND_ERR = 'User not found';
@@ -39,7 +42,7 @@ const getAuthData = (user: TUser): AuthPayload => {
   };
 };
 
-const signIn = async (email: string, password: string): Promise<string> => {
+const signIn = async (email: string, password: string) => {
   const user = await UserRepo.getOne({ email });
 
   if (!user) {
@@ -67,7 +70,7 @@ const signIn = async (email: string, password: string): Promise<string> => {
   return token;
 };
 
-const signUp = async (userData: TSignUpBody): Promise<void> => {
+const signUp = async (userData: TSignUpBody) => {
   const hashedPassword = await bcrypt.hash(
     userData.password,
     +EnvVars.Bcrypt.SALT,

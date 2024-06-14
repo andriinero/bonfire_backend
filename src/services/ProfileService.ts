@@ -1,12 +1,16 @@
+import { Types } from 'mongoose';
+
 import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { TUserPublic } from '@src/models/User';
 import { RouteError } from '@src/other/classes';
+
+import { TUserPublic } from '@src/models/User';
+import { TQueryOptions } from '@src/types/TQueryOptions';
+
+import { USER_NOT_FOUND_ERR } from './AuthService';
+
 import ContactsRepo from '@src/repos/ContactsRepo';
 import UserRepo from '@src/repos/UserRepo';
-import { TQueryOptions } from '@src/types/TQueryOptions';
-import { Types } from 'mongoose';
-import { USER_NOT_FOUND_ERR } from './AuthService';
 
 const CONTACT_EXISTS_ERROR = 'Contact with this id already exists';
 
@@ -15,7 +19,7 @@ const CONTACT_EXISTS_ERROR = 'Contact with this id already exists';
 const updateOnlineStatus = async (
   userId: Types.ObjectId,
   isOnline: boolean,
-): Promise<void> => {
+) => {
   const persists = await UserRepo.persistOne({ _id: userId });
 
   if (!persists) {
@@ -30,7 +34,7 @@ const updateOnlineStatus = async (
 const getContacts = async (
   userId: Types.ObjectId,
   query: TQueryOptions<TUserPublic>,
-): Promise<TUserPublic[]> => {
+) => {
   const contacts = await ContactsRepo.getAll({ _id: userId }, query);
 
   return contacts;
@@ -39,7 +43,7 @@ const getContacts = async (
 const createContact = async (
   currentUserId: Types.ObjectId,
   contactId: Types.ObjectId,
-): Promise<void> => {
+) => {
   const currentUser = await UserRepo.getOne({ _id: currentUserId });
 
   if (!currentUser) {
@@ -59,7 +63,7 @@ const createContact = async (
 const deleteContact = async (
   currentUserId: Types.ObjectId,
   contactId: Types.ObjectId,
-): Promise<void> => {
+) => {
   const user = await UserRepo.getOne({ _id: currentUserId });
 
   if (!user) {
@@ -78,7 +82,7 @@ const deleteContact = async (
   await user.save();
 };
 
-const getContactPageCount = async (userId: Types.ObjectId): Promise<number> => {
+const getContactPageCount = async (userId: Types.ObjectId) => {
   const docCount = await ContactsRepo.getCount({ _id: userId });
 
   return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);

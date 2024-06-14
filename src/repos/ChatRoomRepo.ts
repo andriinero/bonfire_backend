@@ -1,7 +1,7 @@
 import EnvVars from '@src/constants/EnvVars';
-import ChatRoom, { TChatRoom, TChatRoomDocument } from '@src/models/ChatRoom';
+import ChatRoom, { TChatRoom } from '@src/models/ChatRoom';
 import { TQueryOptions } from '@src/types/TQueryOptions';
-import { FilterQuery, Types } from 'mongoose';
+import { FilterQuery } from 'mongoose';
 
 type TQuery = FilterQuery<TChatRoom>;
 
@@ -9,10 +9,7 @@ type TCreate = Omit<TChatRoom, '_id' | 'name'>;
 
 export type TUpdateChatRoom = Partial<TChatRoom>;
 
-const getAll = async (
-  query: TQuery,
-  opts?: TQueryOptions<TChatRoom>,
-): Promise<TChatRoomDocument[]> => {
+const getAll = async (query: TQuery, opts?: TQueryOptions<TChatRoom>) => {
   const allChatRooms = await ChatRoom.find(query)
     .limit(opts?.limit as number)
     .sort(opts?.sort)
@@ -22,36 +19,33 @@ const getAll = async (
   return allChatRooms;
 };
 
-const getOne = async (query: TQuery): Promise<TChatRoomDocument | null> => {
+const getOne = async (query: TQuery) => {
   const chatRoom = await ChatRoom.findOne(query).exec();
 
   return chatRoom;
 };
 
-const createOne = async (data: TCreate): Promise<Types.ObjectId> => {
+const createOne = async (data: TCreate) => {
   const newChatRoom = new ChatRoom(data);
   await newChatRoom.save();
 
   return newChatRoom._id;
 };
 
-const updateOne = async (
-  query: TQuery,
-  newData: TUpdateChatRoom,
-): Promise<void> => {
+const updateOne = async (query: TQuery, newData: TUpdateChatRoom) => {
   await ChatRoom.findOneAndUpdate(query, newData, {
     runValidators: true,
     new: true,
   }).exec();
 };
 
-const persists = async (query: TQuery): Promise<boolean> => {
+const persists = async (query: TQuery) => {
   const persistingChatRoom = await ChatRoom.countDocuments(query).exec();
 
   return persistingChatRoom > 0;
 };
 
-const getCount = async (query: TQuery): Promise<number> => {
+const getCount = async (query: TQuery) => {
   const docCount = await ChatRoom.countDocuments(query).exec();
 
   return docCount;
