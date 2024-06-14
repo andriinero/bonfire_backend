@@ -1,11 +1,11 @@
 import asyncHandler from 'express-async-handler';
-import { Types } from 'mongoose';
 
 import { authenticateJwt } from '@src/middlewares/authentication';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { IRes } from './types/express/misc';
-import { IReq, IReqParams } from './types/types';
+import type { Types } from 'mongoose';
+import type { IRes } from './types/express/misc';
+import type { IReq, IReqParams } from './types/types';
 
 import ChatRoomService from '@src/services/ChatRoomService';
 import ParticipantService from '@src/services/ParticipantService';
@@ -55,9 +55,7 @@ const chat_room_get_one = [
 
 const chat_room_post = [
   authenticateJwt,
-  validate(
-    ChatRoomValidation.sanitizers.usernameOwnership('participantUsername'),
-  ),
+  validate(Validation.usernameOwnership('participantUsername')),
   asyncHandler(
     async (req: IReq<{ participantUsername: string }>, res: IRes) => {
       const currentUserId = req.user!._id;
@@ -97,9 +95,7 @@ const participant_get_all = [
 const participant_post = [
   authenticateJwt,
   validate(ChatRoomValidation.params.idParamSchema),
-  validate(
-    ChatRoomValidation.sanitizers.usernameOwnership('participantUsername'),
-  ),
+  validate(Validation.usernameOwnership('participantUsername')),
   asyncHandler(
     async (
       req: IReqParams<{ chatroomid: string }, { participantUsername: string }>,

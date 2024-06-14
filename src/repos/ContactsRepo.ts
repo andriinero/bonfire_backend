@@ -1,14 +1,11 @@
 import EnvVars from '@src/constants/EnvVars';
 
-import User, {
-  TUser,
-  TUserPublic,
-  TUserPublicDocument,
-  USER_DATA_SELECTION,
-} from '@src/models/User';
-import { TQueryOptions } from '@src/types/TQueryOptions';
+import type { TUser, TUserPublic, TUserPublicDocument } from '@src/models/User';
+import User, { USER_DATA_SELECTION } from '@src/models/User';
+import type { TQueryOptions } from '@src/types/TQueryOptions';
+import type { FilterQuery } from 'mongoose';
 
-type TQuery = Pick<TUser, '_id'>;
+type TQuery = FilterQuery<TUser>;
 
 const getAll = async (query: TQuery, opts?: TQueryOptions<TUserPublic>) => {
   const user = (await User.findOne(query)

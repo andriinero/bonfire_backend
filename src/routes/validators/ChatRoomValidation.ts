@@ -15,18 +15,6 @@ const nameBodySchema = z.object({
   }),
 });
 
-const usernameOwnership = (fieldName: string) =>
-  z
-    .object({
-      user: z.object({ username: z.string() }),
-      body: z.object({
-        [fieldName]: z.string().trim(),
-      }),
-    })
-    .refine(({ body, user: { username } }) => username !== body[fieldName], {
-      message: "You can't select yourself",
-    });
-
 const userIdBodySchema = z.object({
   body: z.object({
     userid: z
@@ -40,10 +28,7 @@ const body = { nameBodySchema, userIdBodySchema };
 
 const params = { idParamSchema };
 
-const sanitizers = { usernameOwnership };
-
 export default {
   body,
   params,
-  sanitizers,
 } as const;

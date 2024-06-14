@@ -1,23 +1,22 @@
+import EnvVars from '@src/constants/EnvVars';
+import { RouteError } from '@src/other/classes';
 import { Types } from 'mongoose';
 
-import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { RouteError } from '@src/other/classes';
-
-import { TUserPublic } from '@src/models/User';
-import { TQueryOptions } from '@src/types/TQueryOptions';
-
-import { USER_NOT_FOUND_ERR } from './AuthService';
+import type { TUserPublic } from '@src/models/User';
+import type { TQueryOptions } from '@src/types/TQueryOptions';
 
 import ContactsRepo from '@src/repos/ContactsRepo';
 import UserRepo from '@src/repos/UserRepo';
+
+import { USER_NOT_FOUND_ERR } from './AuthService';
 
 const CONTACT_EXISTS_ERROR = 'Contact with this id already exists';
 
 // ONLINE STATUS //
 
 const updateOnlineStatus = async (
-  userId: Types.ObjectId,
+  userId: Types.ObjectId | string,
   isOnline: boolean,
 ) => {
   const persists = await UserRepo.persistOne({ _id: userId });
@@ -32,7 +31,7 @@ const updateOnlineStatus = async (
 // CONTACTS //
 
 const getContacts = async (
-  userId: Types.ObjectId,
+  userId: Types.ObjectId | string,
   query: TQueryOptions<TUserPublic>,
 ) => {
   const contacts = await ContactsRepo.getAll({ _id: userId }, query);
@@ -41,31 +40,28 @@ const getContacts = async (
 };
 
 const createContact = async (
-  currentUserId: Types.ObjectId,
-  contactId: Types.ObjectId,
+  currentUserId: Types.ObjectId | string,
+  contactId: Types.ObjectId | string,
 ) => {
   const currentUser = await UserRepo.getOne({ _id: currentUserId });
-
   if (!currentUser) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
   }
 
   const contactExists = currentUser.contacts.some((c) => c.equals(contactId));
-
   if (contactExists) {
     throw new RouteError(HttpStatusCodes.BAD_REQUEST, CONTACT_EXISTS_ERROR);
   }
 
-  currentUser.contacts.push(contactId);
+  currentUser.contacts.push(new Types.ObjectId(contactId));
   await currentUser.save();
 };
 
 const deleteContact = async (
-  currentUserId: Types.ObjectId,
-  contactId: Types.ObjectId,
+  currentUserId: Types.ObjectId | string,
+  contactId: Types.ObjectId | string,
 ) => {
   const user = await UserRepo.getOne({ _id: currentUserId });
-
   if (!user) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
   }
@@ -73,7 +69,6 @@ const deleteContact = async (
   const foundContactIndex = user.contacts.findIndex((c) =>
     c._id.equals(contactId),
   );
-
   if (foundContactIndex < 0) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
   }

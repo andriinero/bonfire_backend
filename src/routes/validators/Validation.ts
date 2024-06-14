@@ -27,6 +27,18 @@ export const validate =
     }
   };
 
+const usernameOwnership = (fieldName: string) =>
+  z
+    .object({
+      user: z.object({ username: z.string() }),
+      body: z.object({
+        [fieldName]: z.string().trim(),
+      }),
+    })
+    .refine(({ body, user: { username } }) => username !== body[fieldName], {
+      message: "You can't select yourself",
+    });
+
 const validateUserIdParam = reqParam('userid', 'User id must be valid')
   .trim()
   .custom(isValidObjectId)
@@ -45,4 +57,5 @@ export default {
   params,
   queries,
   validate,
+  usernameOwnership,
 } as const;
