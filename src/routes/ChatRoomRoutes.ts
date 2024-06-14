@@ -9,8 +9,8 @@ import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { IRes } from './types/express/misc';
 import { IReq, IReqParams } from './types/types';
 
-import ChatRoomParticipantService from '@src/services/ChatRoomParticipantService';
 import ChatRoomService from '@src/services/ChatRoomService';
+import ChatRoomParticipantService from '@src/services/ParticipantService';
 
 import ChatRoomValidation from './validators/ChatRoomValidation';
 import Validation from './validators/Validation';

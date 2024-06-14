@@ -48,7 +48,7 @@ const addParticipant = async ({
       PARTICIPANT_ALREADY_IN_CHAT_ROOM_ERR,
     );
 
-  await ParticipantRepo.addParticipant({ userId: participantId, chatRoomId });
+  await ParticipantRepo.add({ userId: participantId, chatRoomId });
   await MessageService.createActionMessage({
     body: `${currentUsername} has added ${user.username}`,
     chat_room: chatRoomId,
@@ -82,7 +82,7 @@ const removeParticipant = async ({
       PARTICIPANT_NOT_FOUND_ERR,
     );
 
-  await ParticipantRepo.removeParticipant({ userId, chatRoomId });
+  await ParticipantRepo.remove({ userId, chatRoomId });
   await MessageService.createActionMessage({
     body: `${currentUsername} has left the chat`,
     chat_room: chatRoomId,
@@ -90,7 +90,9 @@ const removeParticipant = async ({
 };
 
 const getPageCount = async (chatRoomId: Types.ObjectId) => {
-  const docCount = await ParticipantRepo.getCount({ _id: chatRoomId });
+  const docCount = await ParticipantRepo.getCountInChatRoom({
+    _id: chatRoomId,
+  });
 
   return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);
 };

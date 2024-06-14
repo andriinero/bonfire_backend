@@ -2,14 +2,13 @@ import { Types } from 'mongoose';
 
 import EnvVars from '@src/constants/EnvVars';
 
-import { TQueryOptions } from '@src/types/TQueryOptions';
-
 import ChatRoom, { TChatRoom } from '@src/models/ChatRoom';
 import {
   TUserPublic,
   TUserPublicDocument,
   USER_DATA_SELECTION,
 } from '@src/models/User';
+import { TQueryOptions } from '@src/types/TQueryOptions';
 
 type TQuery = Pick<TChatRoom, '_id'>;
 
@@ -27,7 +26,7 @@ const getAll = async (query: TQuery, opts?: TQueryOptions<TUserPublic>) => {
   return chatRoom.participants ?? [];
 };
 
-const addParticipant = async ({
+const add = async ({
   userId,
   chatRoomId,
 }: {
@@ -39,7 +38,7 @@ const addParticipant = async ({
   await chatRoom?.save();
 };
 
-const removeParticipant = async ({
+const remove = async ({
   userId,
   chatRoomId,
 }: {
@@ -71,7 +70,7 @@ const persistsInChatRoom = async ({
   return foundParticipantCount > 0;
 };
 
-const getCount = async (query: TQuery) => {
+const getCountInChatRoom = async (query: TQuery) => {
   const chatRoom = await ChatRoom.findById(query._id).exec();
 
   return chatRoom ? chatRoom.participants.length : 0;
@@ -79,8 +78,8 @@ const getCount = async (query: TQuery) => {
 
 export default {
   getAll,
-  addParticipant,
-  removeParticipant,
+  add,
+  remove,
   persistsInChatRoom,
-  getCount,
+  getCountInChatRoom,
 } as const;
