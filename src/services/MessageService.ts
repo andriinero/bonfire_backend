@@ -2,21 +2,21 @@ import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { RouteError } from '@src/other/classes';
 
-import { MessageType, TMessage } from '@src/models/Message';
-
-import { TQueryOptions } from '@src/types/TQueryOptions';
-import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
+import type { TMessage } from '@src/models/Message';
+import { MessageType } from '@src/models/Message';
+import type { TUpdateMessage } from '@src/repos/MessageRepo';
+import type { TQueryOptions } from '@src/types/TQueryOptions';
+import type { Types } from 'mongoose';
 
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
-import MessageRepo, { TUpdateMessage } from '@src/repos/MessageRepo';
-import { Types } from 'mongoose';
+import MessageRepo from '@src/repos/MessageRepo';
 
-type TCreateUserMessage = Omit<TMessage, '_id' | 'created' | 'type'>;
+import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
 
 export const MESSAGE_NOT_FOUND_ERR = 'Message not found';
 
 const getAllByChatRoomId = async (
-  chatRoomId: string,
+  chatRoomId: Types.ObjectId | string,
   query: TQueryOptions<TMessage>,
 ) => {
   const persists = await ChatRoomRepo.persists({ _id: chatRoomId });
@@ -32,7 +32,7 @@ const getAllByChatRoomId = async (
   return messages;
 };
 
-const getOneById = async (id: string) => {
+const getOneById = async (id: Types.ObjectId | string) => {
   const message = await MessageRepo.getOne({ _id: id });
   if (!message) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, MESSAGE_NOT_FOUND_ERR);
@@ -41,22 +41,29 @@ const getOneById = async (id: string) => {
   return message;
 };
 
-const createUserMessage = async (data: TCreateUserMessage) => {
+const createUserMessage = async (data: {
+  body: string;
+  chat_room: Types.ObjectId | string;
+}) => {
   const messageDetails = {
     ...data,
     created: new Date(),
     type: MessageType.MESSAGE,
   };
+
   const createdMessage = await MessageRepo.createOne(messageDetails);
 
   return createdMessage;
 };
 
-const updateOneById = async (id: string, data: TUpdateMessage) => {
+const updateOneById = async (
+  id: Types.ObjectId | string,
+  data: TUpdateMessage,
+) => {
   await MessageRepo.updateOne({ _id: id }, data);
 };
 
-const deleteOneById = async (id: string) => {
+const deleteOneById = async (id: Types.ObjectId | string) => {
   await MessageRepo.deleteOne({ _id: id });
 };
 
@@ -69,12 +76,15 @@ const createActionMessage = async (data: {
     created: new Date(),
     type: MessageType.ACTION,
   };
+
   const createdMessage = await MessageRepo.createOne(messageDetails);
 
   return createdMessage;
 };
 
-const getPageCountByChatRoomId = async (chatRoomId: string) => {
+const getPageCountByChatRoomId = async (
+  chatRoomId: Types.ObjectId | string,
+) => {
   const docCount = await MessageRepo.getCount({ chat_room: chatRoomId });
 
   return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);

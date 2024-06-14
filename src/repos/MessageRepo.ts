@@ -1,9 +1,9 @@
-import { FilterQuery, Types } from 'mongoose';
-
 import EnvVars from '@src/constants/EnvVars';
 
-import Message, { TMessage } from '@src/models/Message';
-import { TQueryOptions } from '@src/types/TQueryOptions';
+import type { TMessage } from '@src/models/Message';
+import Message from '@src/models/Message';
+import type { TQueryOptions } from '@src/types/TQueryOptions';
+import type { FilterQuery, Types } from 'mongoose';
 
 type TQuery = FilterQuery<TMessage>;
 
@@ -45,7 +45,7 @@ const deleteOne = async (query: TQuery) => {
   await Message.deleteOne(query);
 };
 
-const persists = async (ids: string[]) => {
+const persists = async (ids: (Types.ObjectId | string)[]) => {
   const messages = await Message.find({ _id: { $in: ids } }).exec();
 
   return ids.length === messages.length;
