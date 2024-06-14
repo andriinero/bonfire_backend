@@ -12,11 +12,7 @@ export const validate =
   (schema: AnyZodObject | ZodEffects<AnyZodObject>) =>
   async (req: IReq, res: IRes, next: NextFunction) => {
     try {
-      await schema.parseAsync({
-        body: req.body,
-        params: req.params,
-        query: req.query,
-      });
+      await schema.parseAsync(req);
       next();
     } catch (error) {
       let err = error as unknown;

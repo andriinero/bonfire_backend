@@ -1,58 +1,46 @@
-import { body as reqBody, param as reqParam } from 'express-validator';
 import { isValidObjectId } from 'mongoose';
+import { z } from 'zod';
 
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { RouteError } from '@src/other/classes';
-import { IReq } from '../types/types';
+const idParamSchema = z.object({
+  params: z.object({
+    chatroomid: z.string().trim().refine(isValidObjectId, {
+      message: 'Invalid chat room id',
+    }),
+  }),
+});
 
-import UserRepo from '@src/repos/UserRepo';
+const nameBodySchema = z.object({
+  body: z.object({
+    name: z.string().trim().min(3).max(100),
+  }),
+});
 
-import { USER_NOT_FOUND_ERR } from '@src/services/AuthService';
-
-const validateIdParam = reqParam('chatroomid', 'Chat room id must be valid')
-  .trim()
-  .custom(isValidObjectId)
-  .escape();
-
-const validateNameBody = reqBody('name', 'Chat room name must be valid')
-  .trim()
-  .optional()
-  .isLength({ min: 3, max: 100 })
-  .escape();
-
-const checkUsernameOwnershipAndTransformToObjectId = reqBody(
-  'participantUsername',
-  'Participant username must be valid',
-)
-  .trim()
-  // can't create chat with the user himself
-  .custom((participantUsername, { req }) => {
-    const request = req as IReq;
-    const userUsername = request.user?.username;
-
-    return participantUsername !== userUsername;
-  })
-  .customSanitizer(async (participantUsername: string) => {
-    const participant = await UserRepo.getOne({
-      username: participantUsername,
+const usernameOwnership = (fieldName: string) =>
+  z
+    .object({
+      user: z.object({ username: z.string() }),
+      body: z.object({
+        [fieldName]: z.string().trim(),
+      }),
+    })
+    .refine(({ body, user: { username } }) => username !== body[fieldName], {
+      message: "You can't select yourself",
     });
 
-    if (!participant)
-      throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
+const userIdBodySchema = z.object({
+  body: z.object({
+    userid: z
+      .string()
+      .trim()
+      .refine(isValidObjectId, { message: 'Invalid user id' }),
+  }),
+});
 
-    return participant?._id;
-  })
-  .escape();
+const body = { nameBodySchema, userIdBodySchema };
 
-const validateUserIdBody = [
-  reqBody('userid').trim().custom(isValidObjectId).escape(),
-];
+const params = { idParamSchema };
 
-const body = { validateNameBody, validateUserIdBody };
-
-const params = { validateIdParam };
-
-const sanitizers = { checkUsernameOwnershipAndTransformToObjectId };
+const sanitizers = { usernameOwnership };
 
 export default {
   body,

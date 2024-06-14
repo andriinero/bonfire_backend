@@ -47,16 +47,16 @@ const getById = async ({ roomId, userId }: TChatRoomQuery) => {
 
 const createOne = async (
   currentUserUserId: Types.ObjectId,
-  participantId: Types.ObjectId,
+  participantUsername: string,
 ) => {
-  const persist = await UserRepo.persistOne({ _id: participantId });
+  const participant = await UserRepo.getOne({ username: participantUsername });
 
-  if (!persist) {
+  if (!participant) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
   }
 
   const chatRoomDetails = {
-    participants: [currentUserUserId, participantId],
+    participants: [currentUserUserId, participant._id],
     created: new Date(),
     color_class: getRandomColorClass(),
   };

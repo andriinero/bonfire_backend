@@ -13,7 +13,7 @@ import ChatRoomService from '@src/services/ChatRoomService';
 import ChatRoomParticipantService from '@src/services/ParticipantService';
 
 import ChatRoomValidation from './validators/ChatRoomValidation';
-import Validation from './validators/Validation';
+import Validation, { validate } from './validators/Validation';
 
 type TCharRoomParam = {
   chatroomid: string;
@@ -35,7 +35,7 @@ const chat_room_get_all = [
 
 const chat_room_get_one = [
   authenticateJwt,
-  ChatRoomValidation.params.validateIdParam,
+  validate(ChatRoomValidation.params.idParamSchema),
   asyncHandler(
     async (req: IReqParams<TCharRoomParam>, res: IRes): Promise<void> => {
       const errors = validationResult(req);
@@ -66,9 +66,11 @@ const chat_room_get_one = [
 
 const chat_room_post = [
   authenticateJwt,
-  ChatRoomValidation.sanitizers.checkUsernameOwnershipAndTransformToObjectId,
+  validate(
+    ChatRoomValidation.sanitizers.usernameOwnership('participantUsername'),
+  ),
   asyncHandler(
-    async (req: IReq<{ participantUsername: Types.ObjectId }>, res: IRes) => {
+    async (req: IReq<{ participantUsername: string }>, res: IRes) => {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
@@ -124,8 +126,10 @@ const participant_get_all = [
 
 const participant_post = [
   authenticateJwt,
-  ChatRoomValidation.params.validateIdParam,
-  ChatRoomValidation.sanitizers.checkUsernameOwnershipAndTransformToObjectId,
+  validate(ChatRoomValidation.params.idParamSchema),
+  validate(
+    ChatRoomValidation.sanitizers.usernameOwnership('participantUsername'),
+  ),
   asyncHandler(
     (
       req: IReqParams<
@@ -160,7 +164,7 @@ const participant_post = [
 
 const participant_delete = [
   authenticateJwt,
-  ChatRoomValidation.params.validateIdParam,
+  validate(ChatRoomValidation.params.idParamSchema),
   asyncHandler(
     (
       req: IReqParams<
@@ -194,7 +198,7 @@ const participant_delete = [
 
 const participant_page_count = [
   authenticateJwt,
-  ChatRoomValidation.params.validateIdParam,
+  validate(ChatRoomValidation.params.idParamSchema),
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
     const errors = validationResult(req);
 

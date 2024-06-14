@@ -12,7 +12,7 @@ import { IReqParams } from './types/types';
 import MessageService from '@src/services/MessageService';
 
 import ChatRoomValidation from './validators/ChatRoomValidation';
-import Validation from './validators/Validation';
+import Validation, { validate } from './validators/Validation';
 
 type TMessagePostBody = {
   user: string;
@@ -23,7 +23,7 @@ type TMessagePostBody = {
 const message_get_all = [
   authenticateJwt,
   ...Validation.queries.defaultQueriesValidators,
-  ChatRoomValidation.params.validateIdParam,
+  validate(ChatRoomValidation.params.idParamSchema),
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
     const errors = validationResult(req);
 
