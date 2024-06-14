@@ -1,16 +1,14 @@
 import asyncHandler from 'express-async-handler';
-import { validationResult } from 'express-validator';
 import { Types } from 'mongoose';
 
 import { authenticateJwt } from '@src/middlewares/authentication';
-import { formatValidationErrors } from '@src/util/misc';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { IRes } from './types/express/misc';
 import { IReq, IReqParams } from './types/types';
 
 import ChatRoomService from '@src/services/ChatRoomService';
-import ChatRoomParticipantService from '@src/services/ParticipantService';
+import ParticipantService from '@src/services/ParticipantService';
 
 import ChatRoomValidation from './validators/ChatRoomValidation';
 import Validation, { validate } from './validators/Validation';
@@ -23,11 +21,13 @@ const chat_room_get_all = [
   authenticateJwt,
   ...Validation.queries.defaultQueriesValidators,
   asyncHandler(async (req: IReq, res: IRes): Promise<void> => {
-    const { _id } = req.user!;
-    const userId = _id.toString();
+    const currentUserId = req.user!._id;
     const query = req.query;
 
-    const allChatRooms = await ChatRoomService.getByUserId(userId, query);
+    const allChatRooms = await ChatRoomService.getByUserId(
+      currentUserId,
+      query,
+    );
 
     res.status(HttpStatusCodes.OK).json(allChatRooms);
   }),
@@ -38,28 +38,17 @@ const chat_room_get_one = [
   validate(ChatRoomValidation.params.idParamSchema),
   asyncHandler(
     async (req: IReqParams<TCharRoomParam>, res: IRes): Promise<void> => {
-      const errors = validationResult(req);
+      const currentUserId = req.user!._id;
+      const { chatroomid } = req.params;
 
-      if (!errors.isEmpty()) {
-        res
-          .status(HttpStatusCodes.BAD_REQUEST)
-          .json(formatValidationErrors(errors));
-      } else {
-        const { chatroomid } = req.params;
-        const { _id } = req.user!._id;
+      const query = {
+        userId: currentUserId,
+        roomId: chatroomid,
+      };
 
-        const roomId = chatroomid;
-        const userId = _id.toString();
+      const allChatRooms = await ChatRoomService.getById(query);
 
-        const query = {
-          roomId,
-          userId,
-        };
-
-        const allChatRooms = await ChatRoomService.getById(query);
-
-        res.status(HttpStatusCodes.OK).json(allChatRooms);
-      }
+      res.status(HttpStatusCodes.OK).json(allChatRooms);
     },
   ),
 ];
@@ -71,21 +60,12 @@ const chat_room_post = [
   ),
   asyncHandler(
     async (req: IReq<{ participantUsername: string }>, res: IRes) => {
-      const errors = validationResult(req);
+      const currentUserId = req.user!._id;
+      const { participantUsername } = req.body;
 
-      if (!errors.isEmpty()) {
-        res
-          .status(HttpStatusCodes.BAD_REQUEST)
-          .json(formatValidationErrors(errors));
-      } else {
-        const user = req.user!;
-        const currentUserId = user._id;
-        const { participantUsername } = req.body;
+      await ChatRoomService.createOne(currentUserId, participantUsername);
 
-        await ChatRoomService.createOne(currentUserId, participantUsername);
-
-        res.sendStatus(HttpStatusCodes.OK);
-      }
+      res.status(HttpStatusCodes.OK).json({ message: 'Chat room created' });
     },
   ),
 ];
@@ -93,9 +73,9 @@ const chat_room_post = [
 const chat_room_page_count = [
   authenticateJwt,
   asyncHandler(async (req: IReq, res: IRes) => {
-    const { _id } = req.user!;
-    const userId = _id.toString();
-    const count = await ChatRoomService.getPageCount(userId);
+    const currentUserId = req.user!._id;
+
+    const count = await ChatRoomService.getPageCount(currentUserId);
 
     res.status(HttpStatusCodes.OK).json(count);
   }),
@@ -106,21 +86,11 @@ const chat_room_page_count = [
 const participant_get_all = [
   authenticateJwt,
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
-    const errors = validationResult(req);
+    const { chatroomid } = req.params;
 
-    if (!errors.isEmpty()) {
-      res
-        .status(HttpStatusCodes.BAD_REQUEST)
-        .json(formatValidationErrors(errors));
-    } else {
-      const { chatroomid } = req.params;
-      const chatRoomId = new Types.ObjectId(chatroomid);
+    const participants = await ParticipantService.getByChatRoomId(chatroomid);
 
-      const participants =
-        await ChatRoomParticipantService.getByChatRoomId(chatRoomId);
-
-      res.status(HttpStatusCodes.OK).json(participants);
-    }
+    res.status(HttpStatusCodes.OK).json(participants);
   }),
 ];
 
@@ -131,29 +101,21 @@ const participant_post = [
     ChatRoomValidation.sanitizers.usernameOwnership('participantUsername'),
   ),
   asyncHandler(
-    (
+    async (
       req: IReqParams<{ chatroomid: string }, { participantUsername: string }>,
       res: IRes,
     ) => {
-      const errors = validationResult(req);
+      const { username } = req.user!;
+      const { participantUsername } = req.body;
+      const { chatroomid } = req.params;
 
-      if (!errors.isEmpty()) {
-        res
-          .status(HttpStatusCodes.BAD_REQUEST)
-          .json(formatValidationErrors(errors));
-      } else {
-        const { username } = req.user!;
-        const { participantUsername } = req.body;
-        const { chatroomid } = req.params;
+      await ParticipantService.addParticipant({
+        currentUsername: username,
+        participantUsername,
+        chatRoomId: chatroomid,
+      });
 
-        ChatRoomParticipantService.addParticipant({
-          currentUsername: username,
-          participantUsername,
-          chatRoomId: chatroomid,
-        });
-
-        res.status(HttpStatusCodes.OK).json({ message: 'Participant added' });
-      }
+      res.status(HttpStatusCodes.OK).json({ message: 'Participant added' });
     },
   ),
 ];
@@ -162,32 +124,23 @@ const participant_delete = [
   authenticateJwt,
   validate(ChatRoomValidation.params.idParamSchema),
   asyncHandler(
-    (
+    async (
       req: IReqParams<
         { chatroomid: string },
         { participantUsername: Types.ObjectId }
       >,
       res: IRes,
     ) => {
-      const errors = validationResult(req);
+      const { _id, username } = req.user!;
+      const { chatroomid } = req.params;
 
-      if (!errors.isEmpty()) {
-        res
-          .status(HttpStatusCodes.BAD_REQUEST)
-          .json(formatValidationErrors(errors));
-      } else {
-        const { _id, username } = req.user!;
-        const { chatroomid } = req.params;
-        const chatRoomObjectId = new Types.ObjectId(chatroomid);
+      await ParticipantService.removeParticipant({
+        currentUsername: username,
+        userId: _id,
+        chatRoomId: chatroomid,
+      });
 
-        ChatRoomParticipantService.removeParticipant({
-          currentUsername: username,
-          userId: _id,
-          chatRoomId: chatRoomObjectId,
-        });
-
-        res.status(HttpStatusCodes.OK).json({ message: 'Participant removed' });
-      }
+      res.status(HttpStatusCodes.OK).json({ message: 'Participant removed' });
     },
   ),
 ];
@@ -196,21 +149,11 @@ const participant_page_count = [
   authenticateJwt,
   validate(ChatRoomValidation.params.idParamSchema),
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
-    const errors = validationResult(req);
+    const { chatroomid } = req.params;
 
-    if (!errors.isEmpty()) {
-      res
-        .status(HttpStatusCodes.BAD_REQUEST)
-        .json(formatValidationErrors(errors));
-    } else {
-      const { chatroomid } = req.params;
-      const chatRoomId = new Types.ObjectId(chatroomid);
+    const participantCount = await ParticipantService.getPageCount(chatroomid);
 
-      const participantCount =
-        await ChatRoomParticipantService.getPageCount(chatRoomId);
-
-      res.status(HttpStatusCodes.OK).json(participantCount);
-    }
+    res.status(HttpStatusCodes.OK).json(participantCount);
   }),
 ];
 

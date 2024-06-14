@@ -15,14 +15,14 @@ import { USER_NOT_FOUND_ERR } from './AuthService';
 import MessageService from './MessageService';
 
 type TChatRoomQuery = {
-  userId: string;
-  roomId: string;
+  userId: Types.ObjectId | string;
+  roomId: Types.ObjectId | string;
 };
 
 export const CHAT_ROOM_NOT_FOUND_ERR = 'Chat room not found';
 
 const getByUserId = async (
-  userId: string,
+  userId: Types.ObjectId | string,
   query?: TQueryOptions<TChatRoom>,
 ) => {
   const allChatRooms = await ChatRoomRepo.getAll(
@@ -38,36 +38,34 @@ const getById = async ({ roomId, userId }: TChatRoomQuery) => {
     _id: roomId,
     participants: userId,
   });
-  if (!foundChatRoom) {
+  if (!foundChatRoom)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
-  }
 
   return foundChatRoom;
 };
 
 const createOne = async (
-  currentUserUserId: Types.ObjectId,
+  currentUserUserId: Types.ObjectId | string,
   participantUsername: string,
 ) => {
   const participant = await UserRepo.getOne({ username: participantUsername });
-
-  if (!participant) {
+  if (!participant)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
-  }
 
   const chatRoomDetails = {
     participants: [currentUserUserId, participant._id],
     created: new Date(),
     color_class: getRandomColorClass(),
   };
-  const id = await ChatRoomRepo.createOne(chatRoomDetails);
+  const createdChatRoomId = await ChatRoomRepo.createOne(chatRoomDetails);
+
   await MessageService.createActionMessage({
-    chat_room: id,
+    chat_room: createdChatRoomId,
     body: 'chat room created',
   });
 };
 
-const getPageCount = async (userId: string) => {
+const getPageCount = async (userId: Types.ObjectId | string) => {
   const docCount = await ChatRoomRepo.getCount({ participants: userId });
 
   return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);

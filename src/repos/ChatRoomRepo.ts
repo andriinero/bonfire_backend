@@ -1,11 +1,13 @@
 import EnvVars from '@src/constants/EnvVars';
 import ChatRoom, { TChatRoom } from '@src/models/ChatRoom';
 import { TQueryOptions } from '@src/types/TQueryOptions';
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, Types } from 'mongoose';
 
 type TQuery = FilterQuery<TChatRoom>;
 
-type TCreate = Omit<TChatRoom, '_id' | 'name'>;
+type TCreate = Omit<TChatRoom, '_id' | 'name' | 'participants'> & {
+  participants: (Types.ObjectId | string)[];
+};
 
 export type TUpdateChatRoom = Partial<TChatRoom>;
 
