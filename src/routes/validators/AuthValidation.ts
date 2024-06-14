@@ -1,53 +1,53 @@
-import { body as reqBody } from 'express-validator';
-
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { RouteError } from '@src/other/classes';
-import { IReq } from '../types/types';
+import { z } from 'zod';
 
 import UserRepo from '@src/repos/UserRepo';
 
-const signInDataValidators = [
-  reqBody('email').trim().escape(),
-  reqBody('password').trim().escape(),
-];
+const signInDataSchema = z.object({
+  body: z.object({ email: z.string().trim(), password: z.string().trim() }),
+});
 
-const signUpDataValidators = [
-  reqBody('username', 'Username must be valid')
-    .trim()
-    .custom(async (value: string) => {
-      const userByUsername = await UserRepo.persistOne({ username: value });
+const signUpDataSchema = z
+  .object({
+    body: z.object({
+      username: z
+        .string({ message: 'Username must be valid' })
+        .trim()
+        .refine(
+          async (value) => {
+            const usernamePersists = await UserRepo.persistOne({
+              username: value,
+            });
 
-      if (userByUsername)
-        throw new RouteError(
-          HttpStatusCodes.BAD_REQUEST,
-          'User with this username already exists',
-        );
-    })
-    .escape(),
-  reqBody('email', 'Email must be valid')
-    .trim()
-    .isEmail()
-    .custom(async (value: string) => {
-      const userByEmail = await UserRepo.persistOne({ email: value });
+            return !usernamePersists;
+          },
+          { message: 'User with this username already exists' },
+        ),
+      email: z
+        .string({ message: 'Email must be valid' })
+        .trim()
+        .email()
+        .refine(
+          async (value) => {
+            const emailPersists = await UserRepo.persistOne({
+              email: value,
+            });
 
-      if (userByEmail)
-        throw new RouteError(
-          HttpStatusCodes.BAD_REQUEST,
-          'User with this email already exists',
-        );
-    })
-    .escape(),
-  reqBody('password').trim().escape(),
-  reqBody('confirmPassword', "Passwords don't match")
-    .trim()
-    .custom((value: string, { req }) => {
-      const request = req as IReq<{ password: string }>;
+            return !emailPersists;
+          },
+          { message: 'User with this email already exists' },
+        ),
+      password: z.string().trim(),
+      confirmPassword: z.string().trim(),
+    }),
+  })
+  .refine(
+    ({ body: { password, confirmPassword } }) => password === confirmPassword,
+    { message: "Passwords don't match" },
+  );
 
-      return value === request.body.password;
-    })
-    .escape(),
-];
-
-const body = { signInDataValidators, signUpDataValidators };
+const body = {
+  signInDataSchema,
+  signUpDataSchema,
+};
 
 export default { body } as const;

@@ -3,8 +3,10 @@ import asyncHandler from 'express-async-handler';
 import { authenticateJwt } from '@src/middlewares/authentication';
 import { formatValidationErrors } from '@src/util/misc';
 import { validationResult } from 'express-validator';
+import { validate } from './validators/Validation';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
+
 import { TUser } from '@src/models/User';
 import { IRes } from './types/express/misc';
 import { IReq } from './types/types';
@@ -36,7 +38,7 @@ const get = [
 ];
 
 const sign_in_post = [
-  ...AuthValidation.body.signInDataValidators,
+  validate(AuthValidation.body.signInDataSchema),
   asyncHandler(async (req: IReq<TSignInBody>, res: IRes): Promise<void> => {
     const errors = validationResult(req);
 
@@ -54,7 +56,7 @@ const sign_in_post = [
 ];
 
 const sign_up_post = [
-  ...AuthValidation.body.signUpDataValidators,
+  validate(AuthValidation.body.signUpDataSchema),
   asyncHandler(async (req: IReq<TSignUpBody>, res: IRes) => {
     const errors = validationResult(req);
 
