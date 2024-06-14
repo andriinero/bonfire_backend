@@ -2,7 +2,7 @@ import { Types } from 'mongoose';
 
 import EnvVars from '@src/constants/EnvVars';
 
-import ChatRoom, { TChatRoom } from '@src/models/ChatRoom';
+import ChatRoom from '@src/models/ChatRoom';
 import {
   TUserPublic,
   TUserPublicDocument,
@@ -10,10 +10,11 @@ import {
 } from '@src/models/User';
 import { TQueryOptions } from '@src/types/TQueryOptions';
 
-type TQuery = Pick<TChatRoom, '_id'>;
-
-const getAll = async (query: TQuery, opts?: TQueryOptions<TUserPublic>) => {
-  const chatRoom = (await ChatRoom.findById(query._id)
+const getAllByChatRoomId = async (
+  id: Types.ObjectId | string,
+  opts?: TQueryOptions<TUserPublic>,
+) => {
+  const chatRoom = (await ChatRoom.findById(id)
     .select('participants')
     .populate({ path: 'participants', select: USER_DATA_SELECTION })
     .limit(opts?.limit as number)
@@ -30,11 +31,11 @@ const add = async ({
   userId,
   chatRoomId,
 }: {
-  userId: Types.ObjectId;
-  chatRoomId: Types.ObjectId;
+  userId: Types.ObjectId | string;
+  chatRoomId: Types.ObjectId | string;
 }) => {
   const chatRoom = await ChatRoom.findOne({ _id: chatRoomId }).exec();
-  chatRoom?.participants.push(userId);
+  chatRoom?.participants.push(new Types.ObjectId(userId));
   await chatRoom?.save();
 };
 
@@ -42,8 +43,8 @@ const remove = async ({
   userId,
   chatRoomId,
 }: {
-  userId: Types.ObjectId;
-  chatRoomId: Types.ObjectId;
+  userId: Types.ObjectId | string;
+  chatRoomId: Types.ObjectId | string;
 }) => {
   const chatRoom = await ChatRoom.findOne({ _id: chatRoomId }).exec();
   const participantIndex = chatRoom?.participants.findIndex((p) =>
@@ -59,8 +60,8 @@ const persistsInChatRoom = async ({
   userId,
   chatRoomId,
 }: {
-  userId: Types.ObjectId;
-  chatRoomId: Types.ObjectId;
+  userId: Types.ObjectId | string;
+  chatRoomId: Types.ObjectId | string;
 }) => {
   const foundParticipantCount = await ChatRoom.countDocuments({
     _id: chatRoomId,
@@ -70,14 +71,14 @@ const persistsInChatRoom = async ({
   return foundParticipantCount > 0;
 };
 
-const getCountInChatRoom = async (query: TQuery) => {
-  const chatRoom = await ChatRoom.findById(query._id).exec();
+const getCountInChatRoom = async (id: Types.ObjectId | string) => {
+  const chatRoom = await ChatRoom.findById(id).exec();
 
   return chatRoom ? chatRoom.participants.length : 0;
 };
 
 export default {
-  getAll,
+  getAllByChatRoomId,
   add,
   remove,
   persistsInChatRoom,

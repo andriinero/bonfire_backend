@@ -1,4 +1,4 @@
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, Types } from 'mongoose';
 
 import EnvVars from '@src/constants/EnvVars';
 
@@ -7,8 +7,10 @@ import { TQueryOptions } from '@src/types/TQueryOptions';
 
 type TQuery = FilterQuery<TMessage>;
 
-type TCreate = Pick<TMessage, 'body' | 'type' | 'created' | 'chat_room'> &
-  Partial<Pick<TMessage, 'user' | 'reply'>>;
+type TCreate = Pick<TMessage, 'body' | 'type' | 'created'> &
+  Partial<Pick<TMessage, 'user' | 'reply'>> & {
+    chat_room: Types.ObjectId | string;
+  };
 
 export type TUpdateMessage = Partial<TMessage>;
 

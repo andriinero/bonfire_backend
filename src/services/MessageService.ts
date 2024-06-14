@@ -9,13 +9,9 @@ import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
 
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import MessageRepo, { TUpdateMessage } from '@src/repos/MessageRepo';
+import { Types } from 'mongoose';
 
 type TCreateUserMessage = Omit<TMessage, '_id' | 'created' | 'type'>;
-
-type TCreateActionMessage = Omit<
-  TMessage,
-  '_id' | 'created' | 'user' | 'reply' | 'type'
->;
 
 export const MESSAGE_NOT_FOUND_ERR = 'Message not found';
 
@@ -64,7 +60,10 @@ const deleteOneById = async (id: string) => {
   await MessageRepo.deleteOne({ _id: id });
 };
 
-const createActionMessage = async (data: TCreateActionMessage) => {
+const createActionMessage = async (data: {
+  body: string;
+  chat_room: Types.ObjectId | string;
+}) => {
   const messageDetails = {
     ...data,
     created: new Date(),

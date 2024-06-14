@@ -15,32 +15,32 @@ import MessageService from './MessageService';
 const PARTICIPANT_ALREADY_IN_CHAT_ROOM_ERR = 'This user has already been added';
 const PARTICIPANT_NOT_FOUND_ERR = 'Participant not found';
 
-const getByChatRoomId = async (chatRoomId: Types.ObjectId) => {
-  const participants = await ParticipantRepo.getAll({ _id: chatRoomId });
+const getByChatRoomId = async (chatRoomId: Types.ObjectId | string) => {
+  const participants = await ParticipantRepo.getAllByChatRoomId(chatRoomId);
 
   return participants;
 };
 
 const addParticipant = async ({
   currentUsername,
-  participantId,
+  participantUsername,
   chatRoomId,
 }: {
   currentUsername: string;
-  participantId: Types.ObjectId;
-  chatRoomId: Types.ObjectId;
+  participantUsername: string;
+  chatRoomId: string;
 }) => {
-  const user = await UserRepo.getOne({ _id: participantId });
-  if (!user)
+  const participant = await UserRepo.getOne({ username: participantUsername });
+  if (!participant)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
 
-  const chatRoomPersists = await ChatRoomRepo.persists({ _id: chatRoomId });
-  if (!chatRoomPersists)
+  const chatRoom = await ChatRoomRepo.getOne({ _id: chatRoomId });
+  if (!chatRoom)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
 
   const participantPersists = await ParticipantRepo.persistsInChatRoom({
-    userId: participantId,
-    chatRoomId,
+    userId: participant._id,
+    chatRoomId: chatRoom._id,
   });
   if (participantPersists)
     throw new RouteError(
@@ -48,10 +48,13 @@ const addParticipant = async ({
       PARTICIPANT_ALREADY_IN_CHAT_ROOM_ERR,
     );
 
-  await ParticipantRepo.add({ userId: participantId, chatRoomId });
+  await ParticipantRepo.add({
+    userId: participant._id,
+    chatRoomId: chatRoom._id,
+  });
   await MessageService.createActionMessage({
-    body: `${currentUsername} has added ${user.username}`,
-    chat_room: chatRoomId,
+    body: `${currentUsername} has added ${participant.username}`,
+    chat_room: chatRoom._id,
   });
 };
 
@@ -61,8 +64,8 @@ const removeParticipant = async ({
   chatRoomId,
 }: {
   currentUsername: string;
-  userId: Types.ObjectId;
-  chatRoomId: Types.ObjectId;
+  userId: Types.ObjectId | string;
+  chatRoomId: Types.ObjectId | string;
 }) => {
   const userPersists = await UserRepo.persistOne({ _id: userId });
   if (!userPersists)
@@ -89,10 +92,8 @@ const removeParticipant = async ({
   });
 };
 
-const getPageCount = async (chatRoomId: Types.ObjectId) => {
-  const docCount = await ParticipantRepo.getCountInChatRoom({
-    _id: chatRoomId,
-  });
+const getPageCount = async (chatRoomId: Types.ObjectId | string) => {
+  const docCount = await ParticipantRepo.getCountInChatRoom(chatRoomId);
 
   return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);
 };
