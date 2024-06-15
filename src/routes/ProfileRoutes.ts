@@ -1,5 +1,4 @@
 import asyncHandler from 'express-async-handler';
-import type { Types } from 'mongoose';
 
 import { authenticateJwt } from '@src/middlewares/authentication';
 
@@ -9,7 +8,7 @@ import type { IReq, IReqParams } from './types/types';
 
 import ProfileService from '@src/services/ProfileService';
 
-import Validation from './validators/Validation';
+import Validation, { validate } from './validators/Validation';
 
 // CONTACTS //
 
@@ -28,22 +27,20 @@ const contacts_get_all = [
 
 const contact_post = [
   authenticateJwt,
-  Validation.usernameOwnership('contactUsername'),
-  asyncHandler(
-    async (req: IReq<{ contactUsername: Types.ObjectId }>, res: IRes) => {
-      const currentUserId = req.user!._id;
-      const { contactUsername } = req.body;
+  validate(Validation.usernameOwnership('contactUsername')),
+  asyncHandler(async (req: IReq<{ contactUsername: string }>, res: IRes) => {
+    const currentUserId = req.user!._id;
+    const { contactUsername } = req.body;
 
-      await ProfileService.createContact(currentUserId, contactUsername);
+    await ProfileService.createContact(currentUserId, contactUsername);
 
-      res.status(HttpStatusCodes.CREATED).json({ message: 'Contact created' });
-    },
-  ),
+    res.status(HttpStatusCodes.CREATED).json({ message: 'Contact created' });
+  }),
 ];
 
 const contacts_delete = [
   authenticateJwt,
-  Validation.params.validateUserIdParam,
+  validate(Validation.params.userIdParamSchema),
   asyncHandler(async (req: IReqParams<{ userid: string }>, res: IRes) => {
     const currentUserId = req.user!._id;
     const { userid } = req.params;

@@ -1,10 +1,10 @@
 import EnvVars from '@src/constants/EnvVars';
 import { RouteError } from '@src/other/classes';
-import { Types } from 'mongoose';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import type { TUserPublic } from '@src/models/User';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
+import type { Types } from 'mongoose';
 
 import ContactsRepo from '@src/repos/ContactsRepo';
 import UserRepo from '@src/repos/UserRepo';
@@ -41,19 +41,23 @@ const getContacts = async (
 
 const createContact = async (
   currentUserId: Types.ObjectId | string,
-  contactId: Types.ObjectId | string,
+  contactUsername: string,
 ) => {
   const currentUser = await UserRepo.getOne({ _id: currentUserId });
-  if (!currentUser) {
+  if (!currentUser)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
-  }
 
-  const contactExists = currentUser.contacts.some((c) => c.equals(contactId));
-  if (contactExists) {
+  const newContact = await UserRepo.getOne({ username: contactUsername });
+  if (!newContact)
+    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
+
+  const contactExists = currentUser.contacts.some((c) =>
+    c.equals(contactUsername),
+  );
+  if (contactExists)
     throw new RouteError(HttpStatusCodes.BAD_REQUEST, CONTACT_EXISTS_ERROR);
-  }
 
-  currentUser.contacts.push(new Types.ObjectId(contactId));
+  currentUser.contacts.push(newContact._id);
   await currentUser.save();
 };
 

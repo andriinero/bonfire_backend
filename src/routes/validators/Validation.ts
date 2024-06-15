@@ -1,4 +1,4 @@
-import { param as reqParam, query as reqQuery } from 'express-validator';
+import { query as reqQuery } from 'express-validator';
 import { isValidObjectId } from 'mongoose';
 import { z } from 'zod';
 
@@ -39,17 +39,22 @@ const usernameOwnership = (fieldName: string) =>
       message: "You can't select yourself",
     });
 
-const validateUserIdParam = reqParam('userid', 'User id must be valid')
-  .trim()
-  .custom(isValidObjectId)
-  .escape();
+const userIdParamSchema = z.object({
+  params: z.object({
+    userid: z
+      .string()
+      .trim()
+      .refine(isValidObjectId, { message: 'User id must be valid' }),
+  }),
+});
 
+//TODO: refactor
 const defaultQueriesValidators = [
   reqQuery('limit').default(25).trim().escape(),
   reqQuery('page').default(0).trim().escape(),
 ];
 
-const params = { validateUserIdParam };
+const params = { userIdParamSchema };
 
 const queries = { defaultQueriesValidators };
 
