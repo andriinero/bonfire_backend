@@ -3,8 +3,8 @@ import { RouteError } from '@src/other/classes';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import type { TUserPublic } from '@src/models/User';
+import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
-import type { Types } from 'mongoose';
 
 import ContactsRepo from '@src/repos/ContactsRepo';
 import UserRepo from '@src/repos/UserRepo';
@@ -15,10 +15,7 @@ const CONTACT_EXISTS_ERROR = 'Contact with this id already exists';
 
 // ONLINE STATUS //
 
-const updateOnlineStatus = async (
-  userId: Types.ObjectId | string,
-  isOnline: boolean,
-) => {
+const updateOnlineStatus = async (userId: TIdQuery, isOnline: boolean) => {
   const persists = await UserRepo.persistOne({ _id: userId });
 
   if (!persists) {
@@ -31,7 +28,7 @@ const updateOnlineStatus = async (
 // CONTACTS //
 
 const getContacts = async (
-  userId: Types.ObjectId | string,
+  userId: TIdQuery,
   query: TQueryOptions<TUserPublic>,
 ) => {
   const contacts = await ContactsRepo.getAll({ _id: userId }, query);
@@ -40,7 +37,7 @@ const getContacts = async (
 };
 
 const createContact = async (
-  currentUserId: Types.ObjectId | string,
+  currentUserId: TIdQuery,
   contactUsername: string,
 ) => {
   const currentUser = await UserRepo.getOne({ _id: currentUserId });
@@ -61,10 +58,7 @@ const createContact = async (
   await currentUser.save();
 };
 
-const deleteContact = async (
-  currentUserId: Types.ObjectId | string,
-  contactId: Types.ObjectId | string,
-) => {
+const deleteContact = async (currentUserId: TIdQuery, contactId: TIdQuery) => {
   const user = await UserRepo.getOne({ _id: currentUserId });
   if (!user) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
@@ -81,7 +75,7 @@ const deleteContact = async (
   await user.save();
 };
 
-const getContactPageCount = async (userId: Types.ObjectId) => {
+const getContactPageCount = async (userId: TIdQuery) => {
   const docCount = await ContactsRepo.getCount({ _id: userId });
 
   return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);

@@ -1,8 +1,8 @@
-import { Types } from 'mongoose';
-
 import EnvVars from '@src/constants/EnvVars';
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { RouteError } from '@src/other/classes';
+
+import HttpStatusCodes from '@src/constants/HttpStatusCodes';
+import type { TIdQuery } from '@src/types/IdQuery';
 
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import ParticipantRepo from '@src/repos/ParticipantRepo';
@@ -15,7 +15,7 @@ import MessageService from './MessageService';
 const PARTICIPANT_ALREADY_IN_CHAT_ROOM_ERR = 'This user has already been added';
 const PARTICIPANT_NOT_FOUND_ERR = 'Participant not found';
 
-const getByChatRoomId = async (chatRoomId: Types.ObjectId | string) => {
+const getByChatRoomId = async (chatRoomId: TIdQuery) => {
   const participants = await ParticipantRepo.getAllByChatRoomId(chatRoomId);
 
   return participants;
@@ -64,8 +64,8 @@ const removeParticipant = async ({
   chatRoomId,
 }: {
   currentUsername: string;
-  userId: Types.ObjectId | string;
-  chatRoomId: Types.ObjectId | string;
+  userId: TIdQuery;
+  chatRoomId: TIdQuery;
 }) => {
   const userPersists = await UserRepo.persistOne({ _id: userId });
   if (!userPersists)
@@ -92,7 +92,7 @@ const removeParticipant = async ({
   });
 };
 
-const getPageCount = async (chatRoomId: Types.ObjectId | string) => {
+const getPageCount = async (chatRoomId: TIdQuery) => {
   const docCount = await ParticipantRepo.getCountInChatRoom(chatRoomId);
 
   return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);

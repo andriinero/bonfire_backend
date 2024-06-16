@@ -3,7 +3,6 @@ import asyncHandler from 'express-async-handler';
 import { authenticateJwt } from '@src/middlewares/authentication';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import type { Types } from 'mongoose';
 import type { IRes } from './types/express/misc';
 import type { IReq, IReqParams } from './types/types';
 
@@ -119,26 +118,18 @@ const participant_post = [
 const participant_delete = [
   authenticateJwt,
   validate(ChatRoomValidation.params.idParamSchema),
-  asyncHandler(
-    async (
-      req: IReqParams<
-        { chatroomid: string },
-        { participantUsername: Types.ObjectId }
-      >,
-      res: IRes,
-    ) => {
-      const { _id, username } = req.user!;
-      const { chatroomid } = req.params;
+  asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
+    const { _id, username } = req.user!;
+    const { chatroomid } = req.params;
 
-      await ParticipantService.removeParticipant({
-        currentUsername: username,
-        userId: _id,
-        chatRoomId: chatroomid,
-      });
+    await ParticipantService.removeParticipant({
+      currentUsername: username,
+      userId: _id,
+      chatRoomId: chatroomid,
+    });
 
-      res.status(HttpStatusCodes.OK).json({ message: 'Participant removed' });
-    },
-  ),
+    res.status(HttpStatusCodes.OK).json({ message: 'Participant removed' });
+  }),
 ];
 
 const participant_page_count = [

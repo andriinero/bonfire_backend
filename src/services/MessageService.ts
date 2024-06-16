@@ -5,8 +5,8 @@ import { RouteError } from '@src/other/classes';
 import type { TMessage } from '@src/models/Message';
 import { MessageType } from '@src/models/Message';
 import type { TUpdateMessage } from '@src/repos/MessageRepo';
+import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
-import type { Types } from 'mongoose';
 
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import MessageRepo from '@src/repos/MessageRepo';
@@ -16,7 +16,7 @@ import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
 export const MESSAGE_NOT_FOUND_ERR = 'Message not found';
 
 const getAllByChatRoomId = async (
-  chatRoomId: Types.ObjectId | string,
+  chatRoomId: TIdQuery,
   query: TQueryOptions<TMessage>,
 ) => {
   const persists = await ChatRoomRepo.persists({ _id: chatRoomId });
@@ -32,7 +32,7 @@ const getAllByChatRoomId = async (
   return messages;
 };
 
-const getOneById = async (id: Types.ObjectId | string) => {
+const getOneById = async (id: TIdQuery) => {
   const message = await MessageRepo.getOne({ _id: id });
   if (!message) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, MESSAGE_NOT_FOUND_ERR);
@@ -43,7 +43,7 @@ const getOneById = async (id: Types.ObjectId | string) => {
 
 const createUserMessage = async (data: {
   body: string;
-  chat_room: Types.ObjectId | string;
+  chat_room: TIdQuery;
 }) => {
   const messageDetails = {
     ...data,
@@ -56,20 +56,17 @@ const createUserMessage = async (data: {
   return createdMessage;
 };
 
-const updateOneById = async (
-  id: Types.ObjectId | string,
-  data: TUpdateMessage,
-) => {
+const updateOneById = async (id: TIdQuery, data: TUpdateMessage) => {
   await MessageRepo.updateOne({ _id: id }, data);
 };
 
-const deleteOneById = async (id: Types.ObjectId | string) => {
+const deleteOneById = async (id: TIdQuery) => {
   await MessageRepo.deleteOne({ _id: id });
 };
 
 const createActionMessage = async (data: {
   body: string;
-  chat_room: Types.ObjectId | string;
+  chat_room: TIdQuery;
 }) => {
   const messageDetails = {
     ...data,
@@ -82,9 +79,7 @@ const createActionMessage = async (data: {
   return createdMessage;
 };
 
-const getPageCountByChatRoomId = async (
-  chatRoomId: Types.ObjectId | string,
-) => {
+const getPageCountByChatRoomId = async (chatRoomId: TIdQuery) => {
   const docCount = await MessageRepo.getCount({ chat_room: chatRoomId });
 
   return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);

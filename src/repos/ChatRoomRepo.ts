@@ -1,12 +1,16 @@
 import EnvVars from '@src/constants/EnvVars';
-import ChatRoom, { TChatRoom } from '@src/models/ChatRoom';
-import { TQueryOptions } from '@src/types/TQueryOptions';
-import { FilterQuery, Types } from 'mongoose';
+
+import type { TChatRoom } from '@src/models/ChatRoom';
+import type { TIdQuery } from '@src/types/IdQuery';
+import type { TQueryOptions } from '@src/types/TQueryOptions';
+import type { FilterQuery } from 'mongoose';
+
+import ChatRoom from '@src/models/ChatRoom';
 
 type TQuery = FilterQuery<TChatRoom>;
 
 type TCreate = Omit<TChatRoom, '_id' | 'name' | 'participants'> & {
-  participants: (Types.ObjectId | string)[];
+  participants: TIdQuery[];
 };
 
 export type TUpdateChatRoom = Partial<TChatRoom>;

@@ -2,16 +2,15 @@ import { Types } from 'mongoose';
 
 import EnvVars from '@src/constants/EnvVars';
 
+import type { TUserPublic, TUserPublicDocument } from '@src/models/User';
+import type { TIdQuery } from '@src/types/IdQuery';
+import type { TQueryOptions } from '@src/types/TQueryOptions';
+
 import ChatRoom from '@src/models/ChatRoom';
-import {
-  TUserPublic,
-  TUserPublicDocument,
-  USER_DATA_SELECTION,
-} from '@src/models/User';
-import { TQueryOptions } from '@src/types/TQueryOptions';
+import { USER_DATA_SELECTION } from '@src/models/User';
 
 const getAllByChatRoomId = async (
-  id: Types.ObjectId | string,
+  id: TIdQuery,
   opts?: TQueryOptions<TUserPublic>,
 ) => {
   const chatRoom = (await ChatRoom.findById(id)
@@ -31,8 +30,8 @@ const add = async ({
   userId,
   chatRoomId,
 }: {
-  userId: Types.ObjectId | string;
-  chatRoomId: Types.ObjectId | string;
+  userId: TIdQuery;
+  chatRoomId: TIdQuery;
 }) => {
   const chatRoom = await ChatRoom.findOne({ _id: chatRoomId }).exec();
   chatRoom?.participants.push(new Types.ObjectId(userId));
@@ -43,8 +42,8 @@ const remove = async ({
   userId,
   chatRoomId,
 }: {
-  userId: Types.ObjectId | string;
-  chatRoomId: Types.ObjectId | string;
+  userId: TIdQuery;
+  chatRoomId: TIdQuery;
 }) => {
   const chatRoom = await ChatRoom.findOne({ _id: chatRoomId }).exec();
   const participantIndex = chatRoom?.participants.findIndex((p) =>
@@ -60,8 +59,8 @@ const persistsInChatRoom = async ({
   userId,
   chatRoomId,
 }: {
-  userId: Types.ObjectId | string;
-  chatRoomId: Types.ObjectId | string;
+  userId: TIdQuery;
+  chatRoomId: TIdQuery;
 }) => {
   const foundParticipantCount = await ChatRoom.countDocuments({
     _id: chatRoomId,
@@ -71,7 +70,7 @@ const persistsInChatRoom = async ({
   return foundParticipantCount > 0;
 };
 
-const getCountInChatRoom = async (id: Types.ObjectId | string) => {
+const getCountInChatRoom = async (id: TIdQuery) => {
   const chatRoom = await ChatRoom.findById(id).exec();
 
   return chatRoom ? chatRoom.participants.length : 0;

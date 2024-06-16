@@ -1,15 +1,17 @@
 import EnvVars from '@src/constants/EnvVars';
 
 import type { TMessage } from '@src/models/Message';
-import Message from '@src/models/Message';
+import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
-import type { FilterQuery, Types } from 'mongoose';
+import type { FilterQuery } from 'mongoose';
+
+import Message from '@src/models/Message';
 
 type TQuery = FilterQuery<TMessage>;
 
 type TCreate = Pick<TMessage, 'body' | 'type' | 'created'> &
   Partial<Pick<TMessage, 'user' | 'reply'>> & {
-    chat_room: Types.ObjectId | string;
+    chat_room: TIdQuery;
   };
 
 export type TUpdateMessage = Partial<TMessage>;
@@ -45,7 +47,7 @@ const deleteOne = async (query: TQuery) => {
   await Message.deleteOne(query);
 };
 
-const persists = async (ids: (Types.ObjectId | string)[]) => {
+const persists = async (ids: TIdQuery[]) => {
   const messages = await Message.find({ _id: { $in: ids } }).exec();
 
   return ids.length === messages.length;

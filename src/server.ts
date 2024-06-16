@@ -2,34 +2,32 @@
  * Setup express server.
  */
 
-import express, { NextFunction, Request, Response } from 'express';
+import cors from 'cors';
+import express from 'express';
 import helmet from 'helmet';
+import { createServer } from 'http';
 import logger from 'jet-logger';
+import mongoose from 'mongoose';
 import morgan from 'morgan';
-
-import Paths from '@src/constants/Paths';
+import passport from 'passport';
+import { ExtractJwt, Strategy as JWTStrategy } from 'passport-jwt';
+import { Server } from 'socket.io';
 
 import EnvVars from '@src/constants/EnvVars';
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-
+import Paths from '@src/constants/Paths';
 import { NodeEnvs } from '@src/constants/misc';
 import { RouteError } from '@src/other/classes';
-import cors from 'cors';
-import mongoose from 'mongoose';
-import passport from 'passport';
-import {
-  ExtractJwt,
-  Strategy as JWTStrategy,
-  StrategyOptionsWithoutRequest,
-} from 'passport-jwt';
+import { authenticateJwt } from './middlewares/authentication';
+
+import HttpStatusCodes from '@src/constants/HttpStatusCodes';
+import type { NextFunction, Request, Response } from 'express';
+import type { StrategyOptionsWithoutRequest } from 'passport-jwt';
 
 import User from './models/User';
 
-import AuthRouter from '@src/routes/api/AuthAPI';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
 import socketManager from './listeners/socketManager';
-import { authenticateJwt } from './middlewares/authentication';
+
+import AuthRouter from '@src/routes/api/AuthAPI';
 import ChatRoomRouter from './routes/api/ChatRoomAPI';
 import messageRouter from './routes/api/MessageAPI';
 import profileRouter from './routes/api/ProfileAPI';

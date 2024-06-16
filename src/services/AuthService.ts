@@ -2,12 +2,12 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import EnvVars from '@src/constants/EnvVars';
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { RouteError } from '@src/other/classes';
 import { getRandomColorClass } from '@src/util/getRandomColorClass';
 
-import { ColorClass } from '@src/constants/misc';
-import { TUser } from '@src/models/User';
+import HttpStatusCodes from '@src/constants/HttpStatusCodes';
+import type { ColorClass } from '@src/constants/misc';
+import type { TUser } from '@src/models/User';
 
 import UserRepo from '@src/repos/UserRepo';
 
