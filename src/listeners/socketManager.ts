@@ -1,4 +1,4 @@
-import { ISocket } from '@src/routes/types/types';
+import type { ISocket } from '@src/routes/types/types';
 
 import messageManager from './messageManager';
 

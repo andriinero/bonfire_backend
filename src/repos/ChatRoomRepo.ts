@@ -13,8 +13,6 @@ type TCreate = Omit<TChatRoom, '_id' | 'name' | 'participants'> & {
   participants: TIdQuery[];
 };
 
-export type TUpdateChatRoom = Partial<TChatRoom>;
-
 const getAll = async (query: TQuery, opts?: TQueryOptions<TChatRoom>) => {
   const allChatRooms = await ChatRoom.find(query)
     .limit(opts?.limit as number)
@@ -38,13 +36,6 @@ const createOne = async (data: TCreate) => {
   return newChatRoom._id;
 };
 
-const updateOne = async (query: TQuery, newData: TUpdateChatRoom) => {
-  await ChatRoom.findOneAndUpdate(query, newData, {
-    runValidators: true,
-    new: true,
-  }).exec();
-};
-
 const persists = async (query: TQuery) => {
   const persistingChatRoom = await ChatRoom.countDocuments(query).exec();
 
@@ -61,7 +52,6 @@ export default {
   getAll,
   getOne,
   createOne,
-  updateOne,
   persists,
   getCount,
 } as const;
