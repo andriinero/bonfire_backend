@@ -1,9 +1,10 @@
 import EnvVars from '@src/constants/EnvVars';
 
 import type { TUser, TUserPublic, TUserPublicDocument } from '@src/models/User';
-import User, { USER_DATA_SELECTION } from '@src/models/User';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 import type { FilterQuery } from 'mongoose';
+
+import User, { USER_DATA_SELECTION } from '@src/models/User';
 
 type TQuery = FilterQuery<TUser>;
 

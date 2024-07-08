@@ -49,7 +49,7 @@ const createContact = async (
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
 
   const contactExists = currentUser.contacts.some((c) =>
-    c.equals(contactUsername),
+    c.equals(newContact._id),
   );
   if (contactExists)
     throw new RouteError(HttpStatusCodes.BAD_REQUEST, CONTACT_EXISTS_ERROR);
