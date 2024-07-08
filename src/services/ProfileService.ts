@@ -1,3 +1,5 @@
+import { Types } from 'mongoose';
+
 import EnvVars from '@src/constants/EnvVars';
 import { RouteError } from '@src/other/classes';
 
@@ -66,12 +68,10 @@ const deleteContact = async (currentUserId: TIdQuery, contactId: TIdQuery) => {
   const foundContactIndex = user.contacts.findIndex((c) =>
     c._id.equals(contactId),
   );
-  if (foundContactIndex < 0) {
+  if (foundContactIndex < 0)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
-  }
 
-  user.contacts.splice(foundContactIndex, 1);
-  await user.save();
+  ContactsRepo.remove(user._id, new Types.ObjectId(contactId));
 };
 
 const getContactPageCount = async (userId: TIdQuery) => {

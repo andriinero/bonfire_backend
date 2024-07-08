@@ -29,10 +29,20 @@ const add = async (userId: TIdQuery, contactId: Types.ObjectId) => {
   await currentUser?.save();
 };
 
+const remove = async (userId: TIdQuery, contactId: Types.ObjectId) => {
+  const currentUser = await User.findOne({ _id: userId });
+  const contactIndex = currentUser?.contacts.findIndex((c) =>
+    c.equals(contactId),
+  );
+  if (contactIndex && contactIndex > -1)
+    currentUser?.contacts.splice(contactIndex, 1);
+  await currentUser?.save();
+};
+
 const getCount = async (query: TQuery) => {
   const user = await User.findOne(query).exec();
 
   return user ? user.contacts.length : 0;
 };
 
-export default { getAll, add, getCount } as const;
+export default { getAll, add, remove, getCount } as const;
