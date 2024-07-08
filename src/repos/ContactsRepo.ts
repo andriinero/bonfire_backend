@@ -1,8 +1,9 @@
 import EnvVars from '@src/constants/EnvVars';
 
 import type { TUser, TUserPublic, TUserPublicDocument } from '@src/models/User';
+import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
-import type { FilterQuery } from 'mongoose';
+import type { FilterQuery, Types } from 'mongoose';
 
 import User, { USER_DATA_SELECTION } from '@src/models/User';
 
@@ -22,10 +23,16 @@ const getAll = async (query: TQuery, opts?: TQueryOptions<TUserPublic>) => {
   return user.contacts ?? [];
 };
 
+const add = async (userId: TIdQuery, contactId: Types.ObjectId) => {
+  const currentUser = await User.findOne({ _id: userId });
+  currentUser?.contacts.push(contactId);
+  await currentUser?.save();
+};
+
 const getCount = async (query: TQuery) => {
   const user = await User.findOne(query).exec();
 
   return user ? user.contacts.length : 0;
 };
 
-export default { getAll, getCount } as const;
+export default { getAll, add, getCount } as const;

@@ -54,8 +54,7 @@ const createContact = async (
   if (contactExists)
     throw new RouteError(HttpStatusCodes.BAD_REQUEST, CONTACT_EXISTS_ERROR);
 
-  currentUser.contacts.push(newContact._id);
-  await currentUser.save();
+  await ContactsRepo.add(currentUser._id, newContact._id);
 };
 
 const deleteContact = async (currentUserId: TIdQuery, contactId: TIdQuery) => {
