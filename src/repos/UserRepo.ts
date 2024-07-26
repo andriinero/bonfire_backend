@@ -1,6 +1,6 @@
 import EnvVars from '@src/constants/EnvVars';
 
-import type { TUser, TUserDocument, TUserPublic } from '@src/models/User';
+import type { TUser, TUserPublic } from '@src/models/User';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 import type { FilterQuery } from 'mongoose';
 
@@ -12,10 +12,7 @@ type TCreate = Omit<TUser, '_id' | 'profile_image' | 'contacts'>;
 
 type TUpdate = Partial<TUser>;
 
-const getAll = async (
-  query: TQuery,
-  opts?: TQueryOptions<TUserPublic>,
-): Promise<TUserDocument[]> => {
+const getAll = async (query: TQuery, opts?: TQueryOptions<TUserPublic>) => {
   const allUsers = await User.find(query)
     .limit(opts?.limit as number)
     .sort(opts?.sort)
