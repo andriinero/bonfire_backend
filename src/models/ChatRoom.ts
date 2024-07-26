@@ -1,6 +1,8 @@
-import { Document, Schema, Types, model } from 'mongoose';
+import { model, Schema } from 'mongoose';
 
 import { ColorClass } from '@src/constants/misc';
+
+import type { Types } from 'mongoose';
 
 export type TChatRoom = {
   _id: Types.ObjectId;
@@ -9,9 +11,6 @@ export type TChatRoom = {
   created: Date;
   color_class: ColorClass;
 };
-
-export type TChatRoomDocument = Document<unknown, unknown, TChatRoom> &
-  TChatRoom;
 
 const ChatRoomSchema = new Schema<TChatRoom>({
   name: { type: String, minlength: 3, maxlength: 100 },
