@@ -34,8 +34,9 @@ const remove = async (userId: TIdQuery, contactId: Types.ObjectId) => {
   const contactIndex = currentUser?.contacts.findIndex((c) =>
     c.equals(contactId),
   );
-  if (contactIndex && contactIndex > -1)
+  if (typeof contactIndex !== 'undefined' && contactIndex > -1)
     currentUser?.contacts.splice(contactIndex, 1);
+
   await currentUser?.save();
 };
 

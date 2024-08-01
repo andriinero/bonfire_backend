@@ -71,7 +71,7 @@ const deleteContact = async (currentUserId: TIdQuery, contactId: TIdQuery) => {
   if (foundContactIndex < 0)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
 
-  ContactsRepo.remove(user._id, new Types.ObjectId(contactId));
+  await ContactsRepo.remove(user._id, new Types.ObjectId(contactId));
 };
 
 const getContactPageCount = async (userId: TIdQuery) => {
