@@ -79,10 +79,14 @@ Note that some endpoints may require proper authentication or authorization.
   - DELETE `/api/profile/contacts/:userid`
 
 #### Page Count Endpoints
-- Chat Rooms `/api/chat-rooms/page-count`
-- Participants `/api/chat-rooms/:chatroomid/participants/page-count`
-- Messages `/api/chat-rooms/:chatroomid/messages/page-count`
-- Contacts `/api/profile/contacts/page-count`
+- Chat Rooms
+  - GET `/api/chat-rooms/page-count`
+- Participants 
+  - GET `/api/chat-rooms/:chatroomid/participants/page-count`
+- Messages
+  - GET `/api/chat-rooms/:chatroomid/messages/page-count`
+- Contacts
+  - GET `/api/profile/contacts/page-count`
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
