@@ -1,6 +1,9 @@
-import { TUser } from '@src/models/User';
+import type { TUserSchema } from '@src/models/User';
 
-export const getChatRoomName = (excludeId: string, participants: TUser[]) => {
+export const getChatRoomName = (
+  excludeId: string,
+  participants: TUserSchema[],
+) => {
   let result = '';
   const count = participants.length;
   const otherParticipantNames = participants

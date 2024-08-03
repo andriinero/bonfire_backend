@@ -4,7 +4,7 @@ import EnvVars from '@src/constants/EnvVars';
 import { RouteError } from '@src/other/classes';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import type { TUserPublic } from '@src/models/User';
+import type { TUserDTO } from '@src/repos/UserRepo';
 import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 
@@ -31,7 +31,7 @@ const updateOnlineStatus = async (userId: TIdQuery, isOnline: boolean) => {
 
 const getContacts = async (
   userId: TIdQuery,
-  query: TQueryOptions<TUserPublic>,
+  query: TQueryOptions<TUserDTO>,
 ) => {
   const contacts = await ContactsRepo.getAll({ _id: userId }, query);
 

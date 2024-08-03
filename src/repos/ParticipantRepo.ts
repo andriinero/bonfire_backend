@@ -2,16 +2,17 @@ import { Types } from 'mongoose';
 
 import EnvVars from '@src/constants/EnvVars';
 
-import type { TUserPublic, TUserPublicDocument } from '@src/models/User';
+import type { TUserDTO, TUserDTODocument } from '@src/repos/UserRepo';
 import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 
 import ChatRoom from '@src/models/ChatRoom';
-import { USER_DATA_SELECTION } from '@src/models/User';
+
+import { USER_DATA_SELECTION } from './UserRepo';
 
 const getAllByChatRoomId = async (
   id: TIdQuery,
-  opts?: TQueryOptions<TUserPublic>,
+  opts?: TQueryOptions<TUserDTO>,
 ) => {
   const chatRoom = (await ChatRoom.findById(id)
     .select('participants')
@@ -20,7 +21,7 @@ const getAllByChatRoomId = async (
     .sort(opts?.sort)
     .skip((opts?.page as number) * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH)
     .exec()) as unknown as {
-    participants: TUserPublicDocument[];
+    participants: TUserDTODocument[];
   };
 
   return chatRoom.participants ?? [];

@@ -1,15 +1,18 @@
 import EnvVars from '@src/constants/EnvVars';
 
-import type { TUser, TUserPublic, TUserPublicDocument } from '@src/models/User';
+import type { TUserSchema } from '@src/models/User';
+import type { TUserDTO, TUserDTODocument } from '@src/repos/UserRepo';
 import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 import type { FilterQuery, Types } from 'mongoose';
 
-import User, { USER_DATA_SELECTION } from '@src/models/User';
+import User from '@src/models/User';
 
-type TQuery = FilterQuery<TUser>;
+import { USER_DATA_SELECTION } from './UserRepo';
 
-const getAll = async (query: TQuery, opts?: TQueryOptions<TUserPublic>) => {
+type TQuery = FilterQuery<TUserSchema>;
+
+const getAll = async (query: TQuery, opts?: TQueryOptions<TUserDTO>) => {
   const user = (await User.findOne(query)
     .select('contacts')
     .populate({ path: 'contacts', select: USER_DATA_SELECTION })
@@ -17,7 +20,7 @@ const getAll = async (query: TQuery, opts?: TQueryOptions<TUserPublic>) => {
     .sort(opts?.sort)
     .skip((opts?.page as number) * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH)
     .exec()) as unknown as {
-    contacts: TUserPublicDocument[];
+    contacts: TUserDTODocument[];
   };
 
   return user.contacts ?? [];

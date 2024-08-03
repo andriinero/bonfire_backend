@@ -1,6 +1,5 @@
-import { Response } from 'supertest';
-
-import { TUser } from '@src/models/User';
+import type { TUserSchema } from '@src/models/User';
+import type { Response } from 'supertest';
 
 // Misc
 export type TReqBody = Record<string, unknown>;
@@ -11,6 +10,6 @@ export type TApiCb = (res: TRes) => void;
 // typescript errors.
 type TBody = {
   [key: string]: unknown;
-  user?: TUser;
-  users?: TUser[];
+  user?: TUserSchema;
+  users?: TUserSchema[];
 };

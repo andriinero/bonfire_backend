@@ -7,9 +7,9 @@ import { validate } from './validators/Validation';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 
-import { TUser } from '@src/models/User';
-import { IRes } from './types/express/misc';
-import { IReq } from './types/types';
+import type { TUserSchema } from '@src/models/User';
+import type { IRes } from './types/express/misc';
+import type { IReq } from './types/types';
 
 import AuthService from '@src/services/AuthService';
 
@@ -30,7 +30,7 @@ type TSignUpBody = {
 const get = [
   authenticateJwt,
   (req: IReq, res: IRes): void => {
-    const user = req.user as TUser;
+    const user = req.user as TUserSchema;
     const data = AuthService.getAuthData(user);
 
     res.status(HttpStatusCodes.OK).json(data);

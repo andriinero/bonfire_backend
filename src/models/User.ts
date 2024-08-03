@@ -4,7 +4,7 @@ import { ColorClass } from '@src/constants/misc';
 
 import type { Document, Types } from 'mongoose';
 
-export type TUser = {
+export type TUserSchema = {
   _id: Types.ObjectId;
   username: string;
   email: string;
@@ -17,16 +17,10 @@ export type TUser = {
   color_class: ColorClass;
 };
 
-export type TUserDocument = Document<unknown, unknown, TUser> & TUser;
+export type TUserSchemaDocument = Document<unknown, unknown, TUserSchema> &
+  TUserSchema;
 
-export type TUserPublic = Omit<TUser, 'password'>;
-
-export type TUserPublicDocument = Document<unknown, unknown, TUserPublic> &
-  TUserPublic;
-
-export const USER_DATA_SELECTION = '-password';
-
-const UserSchema = new Schema<TUser>(
+const UserSchema = new Schema<TUserSchema>(
   {
     username: { type: String, required: true, minlength: 3, maxlength: 100 },
     email: { type: String, required: true, minlength: 3, maxlength: 100 },
@@ -45,6 +39,6 @@ const UserSchema = new Schema<TUser>(
   { versionKey: false },
 );
 
-const User = model<TUser>('User', UserSchema);
+const User = model<TUserSchema>('User', UserSchema);
 
 export default User;

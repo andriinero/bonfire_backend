@@ -1,18 +1,24 @@
 import EnvVars from '@src/constants/EnvVars';
 
-import type { TUser, TUserPublic } from '@src/models/User';
+import type { TUserSchema } from '@src/models/User';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
-import type { FilterQuery } from 'mongoose';
+import type { Document, FilterQuery } from 'mongoose';
 
 import User from '@src/models/User';
 
-type TQuery = FilterQuery<TUser>;
+type TQuery = FilterQuery<TUserSchema>;
 
-type TCreate = Omit<TUser, '_id' | 'profile_image' | 'contacts'>;
+type TCreate = Omit<TUserSchema, '_id' | 'profile_image' | 'contacts'>;
 
-type TUpdate = Partial<TUser>;
+type TUpdate = Partial<TUserSchema>;
 
-const getAll = async (query: TQuery, opts?: TQueryOptions<TUserPublic>) => {
+export type TUserDTO = Omit<TUserSchema, 'password'>;
+
+export type TUserDTODocument = Document<unknown, unknown, TUserDTO> & TUserDTO;
+
+export const USER_DATA_SELECTION = '-password';
+
+const getAll = async (query: TQuery, opts?: TQueryOptions<TUserDTO>) => {
   const allUsers = await User.find(query)
     .limit(opts?.limit as number)
     .sort(opts?.sort)

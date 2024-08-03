@@ -1,5 +1,6 @@
-import { TUserDocument } from '@src/models/User';
 import 'express';
+
+import type { TUserSchemaDocument } from '@src/models/User';
 
 // **** Declaration Merging **** //
 
@@ -11,6 +12,6 @@ declare module 'express' {
 
 declare global {
   namespace Express {
-    export interface User extends TUserDocument {}
+    export interface User extends TUserSchemaDocument {}
   }
 }

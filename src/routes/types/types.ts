@@ -1,10 +1,9 @@
-import * as e from 'express';
-
-import { TUserDocument } from '@src/models/User';
-import { ParamsDictionary, Query } from 'express-serve-static-core';
-import { IncomingMessage } from 'http';
-import { Socket } from 'socket.io';
-import { DefaultEventsMap } from 'socket.io/dist/typed-events';
+import type { TUserSchemaDocument } from '@src/models/User';
+import type * as e from 'express';
+import type { ParamsDictionary, Query } from 'express-serve-static-core';
+import type { IncomingMessage } from 'http';
+import type { Socket } from 'socket.io';
+import type { DefaultEventsMap } from 'socket.io/dist/typed-events';
 
 // **** Express **** //
 //
@@ -16,7 +15,7 @@ export interface ISocket
     unknown
   > {
   request: IncomingMessage & {
-    user?: TUserDocument;
+    user?: TUserSchemaDocument;
   };
 }
 

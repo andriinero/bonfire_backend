@@ -7,7 +7,7 @@ import { getRandomColorClass } from '@src/util/getRandomColorClass';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import type { ColorClass } from '@src/constants/misc';
-import type { TUser } from '@src/models/User';
+import type { TUserSchema } from '@src/models/User';
 
 import UserRepo from '@src/repos/UserRepo';
 
@@ -29,7 +29,7 @@ type TSignUpBody = {
   password: string;
 };
 
-const getAuthData = (user: TUser): AuthPayload => {
+const getAuthData = (user: TUserSchema): AuthPayload => {
   const { _id, username, email, role, profile_image, color_class } = user;
 
   return {
