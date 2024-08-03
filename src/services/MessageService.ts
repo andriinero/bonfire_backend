@@ -2,9 +2,8 @@ import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { RouteError } from '@src/other/classes';
 
-import type { TMessage } from '@src/models/Message';
+import type { TMessageSchema } from '@src/models/Message';
 import { MessageType } from '@src/models/Message';
-import type { TUpdateMessage } from '@src/repos/MessageRepo';
 import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 
@@ -17,7 +16,7 @@ export const MESSAGE_NOT_FOUND_ERR = 'Message not found';
 
 const getAllByChatRoomId = async (
   chatRoomId: TIdQuery,
-  query: TQueryOptions<TMessage>,
+  query: TQueryOptions<TMessageSchema>,
 ) => {
   const persists = await ChatRoomRepo.persists({ _id: chatRoomId });
   if (!persists) {
@@ -56,7 +55,7 @@ const createUserMessage = async (data: {
   return createdMessage;
 };
 
-const updateOneById = async (id: TIdQuery, data: TUpdateMessage) => {
+const updateOneById = async (id: TIdQuery, data: Partial<TMessageSchema>) => {
   await MessageRepo.updateOne({ _id: id }, data);
 };
 

@@ -3,7 +3,7 @@ import { RouteError } from '@src/other/classes';
 import { getRandomColorClass } from '@src/util/getRandomColorClass';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import type { TChatRoom } from '@src/models/ChatRoom';
+import type { TChatRoomSchema } from '@src/models/ChatRoom';
 import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 
@@ -22,7 +22,7 @@ export const CHAT_ROOM_NOT_FOUND_ERR = 'Chat room not found';
 
 const getByUserId = async (
   userId: TIdQuery,
-  query?: TQueryOptions<TChatRoom>,
+  query?: TQueryOptions<TChatRoomSchema>,
 ) => {
   const allChatRooms = await ChatRoomRepo.getAll(
     { participants: userId },

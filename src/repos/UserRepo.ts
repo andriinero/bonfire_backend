@@ -8,9 +8,9 @@ import User from '@src/models/User';
 
 type TQuery = FilterQuery<TUserSchema>;
 
-type TCreate = Omit<TUserSchema, '_id' | 'profile_image' | 'contacts'>;
+type TCreateOne = Omit<TUserSchema, '_id' | 'profile_image' | 'contacts'>;
 
-type TUpdate = Partial<TUserSchema>;
+type TUpdateOne = Partial<TUserSchema>;
 
 export type TUserDTO = Omit<TUserSchema, 'password'>;
 
@@ -34,12 +34,12 @@ const getOne = async (query: TQuery) => {
   return user;
 };
 
-const createOne = async (data: TCreate) => {
+const createOne = async (data: TCreateOne) => {
   const newUser = new User(data);
   await newUser.save();
 };
 
-const updateOne = async (query: TQuery, data: TUpdate) => {
+const updateOne = async (query: TQuery, data: TUpdateOne) => {
   await User.findOneAndUpdate(query, data, {
     runValidators: true,
     new: true,

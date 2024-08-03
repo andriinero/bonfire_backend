@@ -4,7 +4,7 @@ import { ColorClass } from '@src/constants/misc';
 
 import type { Types } from 'mongoose';
 
-export type TChatRoom = {
+export type TChatRoomSchema = {
   _id: Types.ObjectId;
   name?: string;
   participants: Types.ObjectId[];
@@ -12,7 +12,7 @@ export type TChatRoom = {
   color_class: ColorClass;
 };
 
-const ChatRoomSchema = new Schema<TChatRoom>({
+const ChatRoomSchema = new Schema<TChatRoomSchema>({
   name: { type: String, minlength: 3, maxlength: 100 },
   participants: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   created: { type: Date, required: true, default: new Date() },
@@ -23,6 +23,6 @@ const ChatRoomSchema = new Schema<TChatRoom>({
   },
 });
 
-const ChatRoom = model<TChatRoom>('ChatRoom', ChatRoomSchema);
+const ChatRoom = model<TChatRoomSchema>('ChatRoom', ChatRoomSchema);
 
 export default ChatRoom;

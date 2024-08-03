@@ -1,19 +1,19 @@
 import EnvVars from '@src/constants/EnvVars';
 
-import type { TChatRoom } from '@src/models/ChatRoom';
+import type { TChatRoomSchema } from '@src/models/ChatRoom';
 import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 import type { FilterQuery } from 'mongoose';
 
 import ChatRoom from '@src/models/ChatRoom';
 
-type TQuery = FilterQuery<TChatRoom>;
+type TQuery = FilterQuery<TChatRoomSchema>;
 
-type TCreate = Omit<TChatRoom, '_id' | 'name' | 'participants'> & {
+type TCreateOne = Omit<TChatRoomSchema, '_id' | 'name' | 'participants'> & {
   participants: TIdQuery[];
 };
 
-const getAll = async (query: TQuery, opts?: TQueryOptions<TChatRoom>) => {
+const getAll = async (query: TQuery, opts?: TQueryOptions<TChatRoomSchema>) => {
   const allChatRooms = await ChatRoom.find(query)
     .limit(opts?.limit as number)
     .sort(opts?.sort)
@@ -29,7 +29,7 @@ const getOne = async (query: TQuery) => {
   return chatRoom;
 };
 
-const createOne = async (data: TCreate) => {
+const createOne = async (data: TCreateOne) => {
   const newChatRoom = new ChatRoom(data);
   await newChatRoom.save();
 

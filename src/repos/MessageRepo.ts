@@ -1,22 +1,20 @@
 import EnvVars from '@src/constants/EnvVars';
 
-import type { TMessage } from '@src/models/Message';
+import type { TMessageSchema } from '@src/models/Message';
 import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 import type { FilterQuery } from 'mongoose';
 
 import Message from '@src/models/Message';
 
-type TQuery = FilterQuery<TMessage>;
+type TQuery = FilterQuery<TMessageSchema>;
 
-type TCreate = Pick<TMessage, 'body' | 'type' | 'created'> &
-  Partial<Pick<TMessage, 'user' | 'reply'>> & {
+type TCreateOne = Pick<TMessageSchema, 'body' | 'type' | 'created'> &
+  Partial<Pick<TMessageSchema, 'user' | 'reply'>> & {
     chat_room: TIdQuery;
   };
 
-export type TUpdateMessage = Partial<TMessage>;
-
-const getAll = async (query: TQuery, opts?: TQueryOptions<TMessage>) => {
+const getAll = async (query: TQuery, opts?: TQueryOptions<TMessageSchema>) => {
   const messages = await Message.find(query)
     .limit(opts?.limit as number)
     .sort(opts?.sort)
@@ -32,14 +30,17 @@ const getOne = async (query: TQuery) => {
   return message;
 };
 
-const createOne = async (data: TCreate) => {
+const createOne = async (data: TCreateOne) => {
   const message = new Message(data);
   const savedMessage = await message.save();
 
   return savedMessage;
 };
 
-const updateOne = async (query: TQuery, messageData: TUpdateMessage) => {
+const updateOne = async (
+  query: TQuery,
+  messageData: Partial<TMessageSchema>,
+) => {
   await Message.findOneAndUpdate(query, messageData, { runValidators: true });
 };
 

@@ -7,7 +7,7 @@ export enum MessageType {
   MESSAGE = 'message',
 }
 
-export type TMessage = {
+export type TMessageSchema = {
   _id: Types.ObjectId;
   chat_room: Types.ObjectId;
   user: Types.ObjectId;
@@ -17,7 +17,7 @@ export type TMessage = {
   type: MessageType;
 };
 
-const MessageSchema = new Schema<TMessage>({
+const MessageSchema = new Schema<TMessageSchema>({
   chat_room: { type: Schema.Types.ObjectId, required: true, ref: 'ChatRoom' },
   user: { type: Schema.Types.ObjectId, ref: 'User' },
   body: { type: String, required: true },
@@ -31,6 +31,6 @@ const MessageSchema = new Schema<TMessage>({
   },
 });
 
-const Message = model<TMessage>('Message', MessageSchema);
+const Message = model<TMessageSchema>('Message', MessageSchema);
 
 export default Message;
