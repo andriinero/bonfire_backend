@@ -53,7 +53,7 @@ const sign_in_post = [
       res.status(HttpStatusCodes.OK).json({ message: 'Success', token });
     }
   }),
-];
+] as any[];
 
 const sign_up_post = [
   validate(AuthValidation.body.signUpDataSchema),
@@ -74,6 +74,6 @@ const sign_up_post = [
         .json({ message: 'User created', status: HttpStatusCodes.CREATED });
     }
   }),
-];
+] as any[];
 
 export default { get, sign_in_post, sign_up_post } as const;
