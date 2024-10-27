@@ -56,6 +56,12 @@ const createContact = async (
   if (contactExists)
     throw new RouteError(HttpStatusCodes.BAD_REQUEST, CONTACT_EXISTS_ERROR);
 
+  if (currentUser._id.equals(newContact._id))
+    throw new RouteError(
+      HttpStatusCodes.BAD_REQUEST,
+      "You can't add yourself as a contact",
+    );
+
   await ContactsRepo.add(currentUser._id, newContact._id);
 };
 

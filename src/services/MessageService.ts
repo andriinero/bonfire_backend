@@ -55,14 +55,6 @@ const createUserMessage = async (data: {
   return createdMessage;
 };
 
-const updateOneById = async (id: TIdQuery, data: Partial<TMessageSchema>) => {
-  await MessageRepo.updateOne({ _id: id }, data);
-};
-
-const deleteOneById = async (id: TIdQuery) => {
-  await MessageRepo.deleteOne({ _id: id });
-};
-
 const createActionMessage = async (data: {
   body: string;
   chat_room: TIdQuery;
@@ -76,6 +68,14 @@ const createActionMessage = async (data: {
   const createdMessage = await MessageRepo.createOne(messageDetails);
 
   return createdMessage;
+};
+
+const updateOneById = async (id: TIdQuery, data: Partial<TMessageSchema>) => {
+  await MessageRepo.updateOne({ _id: id }, data);
+};
+
+const deleteOneById = async (id: TIdQuery) => {
+  await MessageRepo.deleteOne({ _id: id });
 };
 
 const getPageCountByChatRoomId = async (chatRoomId: TIdQuery) => {
