@@ -8,13 +8,13 @@ import type { IReq, IReqParams } from './types/types';
 
 import ProfileService from '@src/services/ProfileService';
 
-import Validation, { validate } from './validators/Validation';
+import validationUtils, { validate } from '@src/util/validationUtils';
 
 // CONTACTS //
 
 const contacts_get_all = [
   authenticateJwt,
-  ...Validation.queries.defaultQueriesValidators,
+  ...validationUtils.queries.defaultQueriesValidators,
   asyncHandler(async (req: IReq, res: IRes) => {
     const currentUserId = req.user!._id;
     const query = req.query;
@@ -27,7 +27,7 @@ const contacts_get_all = [
 
 const contact_post = [
   authenticateJwt,
-  validate(Validation.usernameOwnership('contactUsername')),
+  validate(validationUtils.usernameOwnership('contactUsername')),
   asyncHandler(async (req: IReq<{ contactUsername: string }>, res: IRes) => {
     const currentUserId = req.user!._id;
     const { contactUsername } = req.body;
@@ -40,7 +40,7 @@ const contact_post = [
 
 const contacts_delete = [
   authenticateJwt,
-  validate(Validation.params.userIdParamSchema),
+  validate(validationUtils.params.userIdParamSchema),
   asyncHandler(async (req: IReqParams<{ userid: string }>, res: IRes) => {
     const currentUserId = req.user!._id;
     const { userid } = req.params;

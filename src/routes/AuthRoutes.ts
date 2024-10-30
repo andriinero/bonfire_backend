@@ -3,7 +3,6 @@ import asyncHandler from 'express-async-handler';
 import { authenticateJwt } from '@src/middlewares/authentication';
 import { formatValidationErrors } from '@src/util/misc';
 import { validationResult } from 'express-validator';
-import { validate } from './validators/Validation';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 
@@ -13,7 +12,8 @@ import type { IReq } from './types/types';
 
 import AuthService from '@src/services/AuthService';
 
-import AuthValidation from './validators/AuthValidation';
+import { validate } from '@src/util/validationUtils';
+import AuthValidation from './schemas/AuthSchemas';
 
 type TSignInBody = {
   email: string;

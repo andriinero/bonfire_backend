@@ -8,8 +8,8 @@ import type { IReqParams } from './types/types';
 
 import MessageService from '@src/services/MessageService';
 
-import ChatRoomValidation from './validators/ChatRoomValidation';
-import Validation, { validate } from './validators/Validation';
+import validationUtils, { validate } from '@src/util/validationUtils';
+import ChatRoomValidation from './schemas/ChatRoomSchemas';
 
 type TMessagePostBody = {
   user: string;
@@ -19,7 +19,7 @@ type TMessagePostBody = {
 
 const message_get_all = [
   authenticateJwt,
-  ...Validation.queries.defaultQueriesValidators,
+  ...validationUtils.queries.defaultQueriesValidators,
   validate(ChatRoomValidation.params.idParamSchema),
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
     const { chatroomid } = req.params;

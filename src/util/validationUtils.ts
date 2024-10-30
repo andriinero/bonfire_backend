@@ -3,10 +3,10 @@ import { isValidObjectId } from 'mongoose';
 import { z } from 'zod';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
+import { IRes } from '@src/routes/types/express/misc';
+import { IReq } from '@src/routes/types/types';
 import type { NextFunction } from 'express';
 import type { AnyZodObject, ZodEffects } from 'zod';
-import type { IRes } from '../types/express/misc';
-import type { IReq } from '../types/types';
 
 export const validate =
   (schema: AnyZodObject | ZodEffects<AnyZodObject>) =>

@@ -9,8 +9,8 @@ import type { IReq, IReqParams } from './types/types';
 import ChatRoomService from '@src/services/ChatRoomService';
 import ParticipantService from '@src/services/ParticipantService';
 
-import ChatRoomValidation from './validators/ChatRoomValidation';
-import Validation, { validate } from './validators/Validation';
+import validationUtils, { validate } from '@src/util/validationUtils';
+import ChatRoomSchemas from './schemas/ChatRoomSchemas';
 
 type TCharRoomParam = {
   chatroomid: string;
@@ -18,7 +18,7 @@ type TCharRoomParam = {
 
 const chat_room_get_all = [
   authenticateJwt,
-  ...Validation.queries.defaultQueriesValidators,
+  ...validationUtils.queries.defaultQueriesValidators,
   asyncHandler(async (req: IReq, res: IRes): Promise<void> => {
     const currentUserId = req.user!._id;
     const query = req.query;
@@ -34,7 +34,7 @@ const chat_room_get_all = [
 
 const chat_room_get_one = [
   authenticateJwt,
-  validate(ChatRoomValidation.params.idParamSchema),
+  validate(ChatRoomSchemas.params.idParamSchema),
   asyncHandler(
     async (req: IReqParams<TCharRoomParam>, res: IRes): Promise<void> => {
       const currentUserId = req.user!._id;
@@ -54,7 +54,7 @@ const chat_room_get_one = [
 
 const chat_room_post = [
   authenticateJwt,
-  validate(Validation.usernameOwnership('participantUsername')),
+  validate(validationUtils.usernameOwnership('participantUsername')),
   asyncHandler(
     async (req: IReq<{ participantUsername: string }>, res: IRes) => {
       const currentUserId = req.user!._id;
@@ -93,8 +93,8 @@ const participant_get_all = [
 
 const participant_post = [
   authenticateJwt,
-  validate(ChatRoomValidation.params.idParamSchema),
-  validate(Validation.usernameOwnership('participantUsername')),
+  validate(ChatRoomSchemas.params.idParamSchema),
+  validate(validationUtils.usernameOwnership('participantUsername')),
   asyncHandler(
     async (
       req: IReqParams<{ chatroomid: string }, { participantUsername: string }>,
@@ -117,7 +117,7 @@ const participant_post = [
 
 const participant_delete = [
   authenticateJwt,
-  validate(ChatRoomValidation.params.idParamSchema),
+  validate(ChatRoomSchemas.params.idParamSchema),
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
     const { _id, username } = req.user!;
     const { chatroomid } = req.params;
@@ -134,7 +134,7 @@ const participant_delete = [
 
 const participant_page_count = [
   authenticateJwt,
-  validate(ChatRoomValidation.params.idParamSchema),
+  validate(ChatRoomSchemas.params.idParamSchema),
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
     const { chatroomid } = req.params;
 
