@@ -13,7 +13,7 @@ import type { IReq } from './types/types';
 import AuthService from '@src/services/AuthService';
 
 import { validate } from '@src/util/validationUtils';
-import AuthValidation from './schemas/AuthSchemas';
+import AuthSchemas from './schemas/AuthSchemas';
 
 type TSignInBody = {
   email: string;
@@ -38,7 +38,7 @@ const get = [
 ];
 
 const sign_in_post = [
-  validate(AuthValidation.body.signInDataSchema),
+  validate(AuthSchemas.body.signInDataSchema),
   asyncHandler(async (req: IReq<TSignInBody>, res: IRes): Promise<void> => {
     const errors = validationResult(req);
 
@@ -56,7 +56,7 @@ const sign_in_post = [
 ] as any[];
 
 const sign_up_post = [
-  validate(AuthValidation.body.signUpDataSchema),
+  validate(AuthSchemas.body.signUpDataSchema),
   asyncHandler(async (req: IReq<TSignUpBody>, res: IRes) => {
     const errors = validationResult(req);
 

@@ -70,13 +70,13 @@ const signIn = async (email: string, password: string) => {
   return token;
 };
 
-const signUp = async (userData: TSignUpBody) => {
+const signUp = async (signUpData: TSignUpBody) => {
   const hashedPassword = await bcrypt.hash(
-    userData.password,
+    signUpData.password,
     +EnvVars.Bcrypt.SALT,
   );
   const userDetails = {
-    ...userData,
+    ...signUpData,
     password: hashedPassword,
     created: new Date(),
     role: 'user' as const,

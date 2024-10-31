@@ -27,7 +27,6 @@ const contacts_get_all = [
 
 const contact_post = [
   authenticateJwt,
-  validate(validationUtils.usernameOwnership('contactUsername')),
   asyncHandler(async (req: IReq<{ contactUsername: string }>, res: IRes) => {
     const currentUserId = req.user!._id;
     const { contactUsername } = req.body;
