@@ -54,17 +54,15 @@ const chat_room_get_one = [
 
 const chat_room_post = [
   authenticateJwt,
-  validate(validationUtils.usernameOwnership('participantUsername')),
-  asyncHandler(
-    async (req: IReq<{ participantUsername: string }>, res: IRes) => {
-      const currentUserId = req.user!._id;
-      const { participantUsername } = req.body;
+  validate(ChatRoomSchemas.body.contactIdsExistence),
+  asyncHandler(async (req: IReq<{ userIds: string[] }>, res: IRes) => {
+    const currentUserId = req.user!._id;
+    const { userIds } = req.body;
 
-      await ChatRoomService.createOne(currentUserId, participantUsername);
+    await ChatRoomService.createOne(currentUserId, userIds);
 
-      res.status(HttpStatusCodes.OK).json({ message: 'Chat room created' });
-    },
-  ),
+    res.status(HttpStatusCodes.OK).json({ message: 'Chat room created' });
+  }),
 ];
 
 const chat_room_page_count = [

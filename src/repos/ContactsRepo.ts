@@ -49,4 +49,13 @@ const getCount = async (query: TQuery) => {
   return user ? user.contacts.length : 0;
 };
 
-export default { getAll, add, remove, getCount } as const;
+const hasContacts = async (userId: TIdQuery, contactIds: TIdQuery[]) => {
+  const userWithContacts = User.findOne({
+    _id: userId,
+    contacts: contactIds,
+  }).exec();
+
+  return !!userWithContacts;
+};
+
+export default { getAll, add, remove, getCount, hasContacts } as const;

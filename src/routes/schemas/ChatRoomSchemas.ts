@@ -1,5 +1,7 @@
-import { isValidObjectId } from 'mongoose';
+import { isValidObjectId, Types } from 'mongoose';
 import { z } from 'zod';
+
+import ContactsRepo from '@src/repos/ContactsRepo';
 
 const idParamSchema = z.object({
   params: z.object({
@@ -24,7 +26,23 @@ const userIdBodySchema = z.object({
   }),
 });
 
-const body = { nameBodySchema, userIdBodySchema };
+const contactIdsExistence = z
+  .object({
+    user: z.object({ _id: z.any() }),
+    body: z.object({
+      userIds: z.string().array(),
+    }),
+  })
+  .refine(async (req) => {
+    const currentUserId = req.user._id as Types.ObjectId;
+    const userWithContacts = await ContactsRepo.hasContacts(
+      currentUserId,
+      req.body.userIds,
+    );
+    return !!userWithContacts;
+  }, 'Contacts not found');
+
+const body = { nameBodySchema, userIdBodySchema, contactIdsExistence };
 
 const params = { idParamSchema };
 

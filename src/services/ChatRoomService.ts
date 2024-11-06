@@ -8,9 +8,8 @@ import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
-import UserRepo from '@src/repos/UserRepo';
 
-import { USER_NOT_FOUND_ERR } from './AuthService';
+import ContactsRepo from '@src/repos/ContactsRepo';
 import MessageService from './MessageService';
 
 type TChatRoomQuery = {
@@ -43,16 +42,13 @@ const getById = async ({ roomId, userId }: TChatRoomQuery) => {
   return foundChatRoom;
 };
 
-const createOne = async (
-  currentUserUserId: TIdQuery,
-  participantUsername: string,
-) => {
-  const participant = await UserRepo.getOne({ username: participantUsername });
-  if (!participant)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
+const createOne = async (currentUserUserId: TIdQuery, userIds: string[]) => {
+  const persists = await ContactsRepo.hasContacts(currentUserUserId, userIds);
+  if (!persists)
+    throw new RouteError(HttpStatusCodes.NOT_FOUND, 'Contacts not found');
 
   const chatRoomDetails = {
-    participants: [currentUserUserId, participant._id],
+    participants: [currentUserUserId, ...userIds],
     created: new Date(),
     color_class: getRandomColorClass(),
   };
