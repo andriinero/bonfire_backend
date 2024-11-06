@@ -12,7 +12,9 @@ export const validate =
   (schema: AnyZodObject | ZodEffects<AnyZodObject>) =>
   async (req: IReq, res: IRes, next: NextFunction) => {
     try {
-      await schema.parseAsync(req);
+      const validationResult = await schema.parseAsync(req);
+      //@ts-expect-error incorrect type inferring
+      req = { validationResult, ...req };
       next();
     } catch (error) {
       let err = error as unknown;
