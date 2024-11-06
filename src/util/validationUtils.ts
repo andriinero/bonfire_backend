@@ -1,4 +1,3 @@
-import { query as reqQuery } from 'express-validator';
 import { isValidObjectId } from 'mongoose';
 import { z } from 'zod';
 
@@ -13,8 +12,10 @@ export const validate =
   async (req: IReq, res: IRes, next: NextFunction) => {
     try {
       const validationResult = await schema.parseAsync(req);
-      //@ts-expect-error incorrect type inferring
-      req = { validationResult, ...req };
+      for (const [key, value] of Object.entries(validationResult)) {
+        //@ts-expect-error incorrect type inferring
+        req[key] = value;
+      }
       next();
     } catch (error) {
       let err = error as unknown;
@@ -50,15 +51,16 @@ const userIdParamSchema = z.object({
   }),
 });
 
-//TODO: refactor
-const defaultQueriesValidators = [
-  reqQuery('limit').default(25).trim().escape(),
-  reqQuery('page').default(0).trim().escape(),
-];
+const defaultQueriesSchema = z.object({
+  query: z.object({
+    limit: z.string().default('25'),
+    page: z.string().default('0'),
+  }),
+});
 
 const params = { userIdParamSchema };
 
-const queries = { defaultQueriesValidators };
+const queries = { defaultQueriesSchema };
 
 export default {
   params,
