@@ -19,8 +19,8 @@ type TMessagePostBody = {
 
 const message_get_all = [
   authenticateJwt,
-  ...validationUtils.queries.defaultQueriesValidators,
   validate(ChatRoomValidation.params.idParamSchema),
+  validate(validationUtils.queries.defaultQueriesSchema),
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
     const { chatroomid } = req.params;
     const opts = req.query;

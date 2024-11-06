@@ -18,10 +18,12 @@ type TCharRoomParam = {
 
 const chat_room_get_all = [
   authenticateJwt,
-  ...validationUtils.queries.defaultQueriesValidators,
+  validate(validationUtils.queries.defaultQueriesSchema),
   asyncHandler(async (req: IReq, res: IRes): Promise<void> => {
     const currentUserId = req.user!._id;
     const query = req.query;
+    // FIXME: remove comment
+    console.log(query);
 
     const allChatRooms = await ChatRoomService.getByUserId(
       currentUserId,

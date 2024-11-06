@@ -14,7 +14,7 @@ import validationUtils, { validate } from '@src/util/validationUtils';
 
 const contacts_get_all = [
   authenticateJwt,
-  ...validationUtils.queries.defaultQueriesValidators,
+  validate(validationUtils.queries.defaultQueriesSchema),
   asyncHandler(async (req: IReq, res: IRes) => {
     const currentUserId = req.user!._id;
     const query = req.query;
