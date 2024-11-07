@@ -4,7 +4,7 @@ import { authenticateJwt } from '@src/middlewares/authentication';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import type { IRes } from './types/express/misc';
-import type { IReq, IReqParams } from './types/types';
+import type { IReq, IReqParams, IReqQuery } from './types/types';
 
 import ProfileService from '@src/services/ProfileService';
 
@@ -15,14 +15,19 @@ import validationUtils, { validate } from '@src/util/validationUtils';
 const contacts_get_all = [
   authenticateJwt,
   validate(validationUtils.queries.defaultQueriesSchema),
-  asyncHandler(async (req: IReq, res: IRes) => {
-    const currentUserId = req.user!._id;
-    const query = req.query;
+  asyncHandler(
+    async (
+      req: IReqQuery<{ username: string; limit: string; page: string }>,
+      res: IRes,
+    ) => {
+      const queryOpts = { limit: +req.query.limit, page: +req.query.page };
+      const query = { _id: req.user!._id, username: req.query.username };
 
-    const participants = await ProfileService.getContacts(currentUserId, query);
+      const participants = await ProfileService.getContacts(query, queryOpts);
 
-    res.status(HttpStatusCodes.OK).json(participants);
-  }),
+      res.status(HttpStatusCodes.OK).json(participants);
+    },
+  ),
 ];
 
 const contact_post = [

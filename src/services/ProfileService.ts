@@ -30,10 +30,10 @@ const updateOnlineStatus = async (userId: TIdQuery, isOnline: boolean) => {
 // CONTACTS //
 
 const getContacts = async (
-  userId: TIdQuery,
-  query: TQueryOptions<TUserDTO>,
+  query: { _id?: TIdQuery; username?: string },
+  opts: TQueryOptions<TUserDTO>,
 ) => {
-  const contacts = await ContactsRepo.getAll({ _id: userId }, query);
+  const contacts = await ContactsRepo.getAll(query, opts);
 
   return contacts;
 };

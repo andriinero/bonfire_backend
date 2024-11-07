@@ -1,19 +1,21 @@
 import EnvVars from '@src/constants/EnvVars';
 
-import type { TUserSchema } from '@src/models/User';
 import type { TUserDTO, TUserDTODocument } from '@src/repos/UserRepo';
 import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 import type { FilterQuery, Types } from 'mongoose';
 
-import User from '@src/models/User';
+import User, { TUserSchema } from '@src/models/User';
 
 import { USER_DATA_SELECTION } from './UserRepo';
 
 type TQuery = FilterQuery<TUserSchema>;
 
-const getAll = async (query: TQuery, opts?: TQueryOptions<TUserDTO>) => {
-  const user = (await User.findOne(query)
+const getAll = async (
+  query: { _id?: TIdQuery; username?: string },
+  opts?: TQueryOptions<TUserDTO>,
+) => {
+  const user = (await User.findOne({ _id: query._id })
     .select('contacts')
     .populate({ path: 'contacts', select: USER_DATA_SELECTION })
     .limit(opts?.limit as number)

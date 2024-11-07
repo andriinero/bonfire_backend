@@ -22,8 +22,6 @@ const chat_room_get_all = [
   asyncHandler(async (req: IReq, res: IRes): Promise<void> => {
     const currentUserId = req.user!._id;
     const query = req.query;
-    // FIXME: remove comment
-    console.log(query);
 
     const allChatRooms = await ChatRoomService.getByUserId(
       currentUserId,
