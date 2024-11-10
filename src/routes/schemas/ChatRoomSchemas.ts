@@ -1,7 +1,7 @@
 import { isValidObjectId } from 'mongoose';
 import { z } from 'zod';
 
-import ContactsRepo from '@src/repos/ContactsRepo';
+import ContactsRepo from '@src/repos/ContactRepo;
 
 const idParamSchema = z.object({
   params: z.object({

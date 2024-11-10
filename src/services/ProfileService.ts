@@ -5,7 +5,7 @@ import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import type { TUserDTO } from '@src/repos/UserRepo';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 
-import ContactsRepo from '@src/repos/ContactsRepo';
+import ContactsRepo from '@src/repos/ContactRepo;
 import UserRepo from '@src/repos/UserRepo';
 
 import { USER_NOT_FOUND_ERR } from './AuthService';

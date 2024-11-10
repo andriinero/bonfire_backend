@@ -9,7 +9,7 @@ import type { TQueryOptions } from '@src/types/TQueryOptions';
 
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 
-import ContactsRepo from '@src/repos/ContactsRepo';
+import ContactsRepo from '@src/repos/ContactRepo;
 import MessageService from './MessageService';
 
 export const CHAT_ROOM_NOT_FOUND_ERR = 'Chat room not found';
