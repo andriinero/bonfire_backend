@@ -9,7 +9,7 @@ datasource db {
 
 model Chatroom {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
-  v               Int      @map("__v")
+  v               Int      @map("__v") @ignore
   color_class     String
   created         DateTime @db.Date
   name            String?
@@ -25,28 +25,24 @@ model Chatroom {
 
 model Message {
   id         String      @id @default(auto()) @map("_id") @db.ObjectId
-  v          Int         @map("__v")
+  v          Int         @map("__v") @ignore
   body       String
   chatRoomId String      @map("chat_room") @db.ObjectId
   created    DateTime    @db.Date
-  type       MessageType @default(ACTION)
+  type       MessageType @default(action)
   userId     String?     @map("user") @db.ObjectId
-  replyId    String?     @unique @map("reply") @db.ObjectId
 
   // relations
   chat_room Chatroom? @relation(fields: [chatRoomId], references: [id])
 
   user User? @relation(fields: [userId], references: [id])
 
-  parentMessage Message? @relation("Reply", fields: [replyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  reply         Message? @relation("Reply")
-
   @@map("messages")
 }
 
 model User {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  v             Int      @map("__v")
+  v             Int      @map("__v") @ignore
   color_class   String
   contactIds    String[] @map("contacts") @db.ObjectId
   created       DateTime @db.Date
@@ -70,11 +66,11 @@ model User {
 }
 
 enum MessageType {
-  ACTION
-  MESSAGE
+  action
+  message
 }
 
 enum UserRole {
-  USER
-  ADMIN
+  user
+  admin
 }
