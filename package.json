@@ -28,6 +28,7 @@
     "node": ">=8.10.0"
   },
   "dependencies": {
+    "@prisma/client": "^5.22.0",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.17",
     "@types/jsonwebtoken": "^9.0.7",
@@ -55,6 +56,7 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "prettier-plugin-organize-imports": "^4.1.0",
+    "prisma": "^5.22.0",
     "socket.io": "^4.8.1",
     "ts-command-line-args": "^2.5.1",
     "ts-to-zod": "^3.13.0",
