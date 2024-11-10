@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+model Chatroom {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  v               Int      @map("__v")
+  color_class     String
+  created         DateTime @db.Date
+  name            String?
+  participtantIds String[] @map("participants") @db.ObjectId
+
+  // relations
+  participtants User[] @relation(fields: [participtantIds], references: [id])
+
+  messages Message[]
+	@@map("chatrooms")
+}
+
+model Message {
+  id         String      @id @default(auto()) @map("_id") @db.ObjectId
+  v          Int         @map("__v")
+  body       String
+  chatRoomId String      @map("chat_room") @db.ObjectId
+  created    DateTime    @db.Date
+  type       MessageType @default(ACTION)
+  userId     String?     @map("user") @db.ObjectId
+  replyId    String?     @unique @map("reply") @db.ObjectId
+
+  // relations
+  chat_room Chatroom? @relation(fields: [chatRoomId], references: [id])
+
+  user User? @relation(fields: [userId], references: [id])
+
+  parentMessage Message? @relation("Reply", fields: [replyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  reply         Message? @relation("Reply")
+
+	@@map("messages")
+}
+
+model User {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  v             Int      @map("__v")
+  color_class   String
+  contactIds    String[] @map("contacts") @db.ObjectId
+  created       DateTime @db.Date
+  email         String   @unique
+  is_online     Boolean
+  password      String
+  profile_image String?
+  role          UserRole
+  username      String   @unique
+  chatRoomIds   String[] @map("chatrooms") @db.ObjectId
+
+  // relations
+  chatrooms Chatroom[] @relation(fields: [chatRoomIds], references: [id])
+
+  messages Message[]
+
+  userContacts User?  @relation("Contacts", fields: [contactIds], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  contacts     User[] @relation("Contacts")
+
+	@@map("users")
+}
+
+enum MessageType {
+  ACTION
+  MESSAGE
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
