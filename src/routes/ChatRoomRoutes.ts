@@ -40,12 +40,10 @@ const chat_room_get_one = [
       const currentUserId = req.user!._id;
       const { chatroomid } = req.params;
 
-      const query = {
-        userId: currentUserId,
-        roomId: chatroomid,
-      };
-
-      const allChatRooms = await ChatRoomService.getById(query);
+      const allChatRooms = await ChatRoomService.getById(
+        currentUserId.toString(),
+        chatroomid,
+      );
 
       res.status(HttpStatusCodes.OK).json(allChatRooms);
     },
@@ -70,7 +68,7 @@ const chat_room_page_count = [
   asyncHandler(async (req: IReq, res: IRes) => {
     const currentUserId = req.user!._id;
 
-    const count = await ChatRoomService.getPageCount(currentUserId);
+    const count = await ChatRoomService.getPageCount(currentUserId.toString());
 
     res.status(HttpStatusCodes.OK).json(count);
   }),
@@ -122,7 +120,7 @@ const participant_delete = [
 
     await ParticipantService.removeParticipant({
       currentUsername: username,
-      userId: _id,
+      userId: _id.toString(),
       chatRoomId: chatroomid,
     });
 

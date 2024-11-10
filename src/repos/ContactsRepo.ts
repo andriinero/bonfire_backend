@@ -1,3 +1,5 @@
+import prisma from '@src/prisma';
+
 import EnvVars from '@src/constants/EnvVars';
 
 import type { TUserDTO, TUserDTODocument } from '@src/repos/UserRepo';
@@ -28,10 +30,11 @@ const getAll = async (
   return user.contacts ?? [];
 };
 
-const add = async (userId: TIdQuery, contactId: Types.ObjectId) => {
-  const currentUser = await User.findOne({ _id: userId });
-  currentUser?.contacts.push(contactId);
-  await currentUser?.save();
+const add = async (userId: string, contactId: string) => {
+  await prisma.user.update({
+    where: { id: userId },
+    data: { contactIds: { push: contactId } },
+  });
 };
 
 const remove = async (userId: TIdQuery, contactId: Types.ObjectId) => {

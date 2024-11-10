@@ -12,11 +12,6 @@ import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import ContactsRepo from '@src/repos/ContactsRepo';
 import MessageService from './MessageService';
 
-type TChatRoomQuery = {
-  userId: TIdQuery;
-  roomId: TIdQuery;
-};
-
 export const CHAT_ROOM_NOT_FOUND_ERR = 'Chat room not found';
 
 const getByUserId = async (
@@ -31,11 +26,8 @@ const getByUserId = async (
   return allChatRooms;
 };
 
-const getById = async ({ roomId, userId }: TChatRoomQuery) => {
-  const foundChatRoom = await ChatRoomRepo.getOne({
-    _id: roomId,
-    participants: userId,
-  });
+const getById = async (chatRoomId: string, userId: string) => {
+  const foundChatRoom = await ChatRoomRepo.getOneByUserId(chatRoomId, userId);
   if (!foundChatRoom)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
 
@@ -60,8 +52,8 @@ const createOne = async (currentUserUserId: TIdQuery, userIds: string[]) => {
   });
 };
 
-const getPageCount = async (userId: TIdQuery) => {
-  const docCount = await ChatRoomRepo.getCount({ participants: userId });
+const getPageCount = async (userId: string) => {
+  const docCount = await ChatRoomRepo.getCountByUserId(userId);
 
   return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);
 };

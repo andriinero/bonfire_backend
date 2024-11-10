@@ -14,12 +14,12 @@ const onConnection = (socket: ISocket) => {
 
 const logConnectedUser = async (socket: ISocket) => {
   const user = socket.request.user!;
-  await ProfileService.updateOnlineStatus(user._id, true);
+  await ProfileService.updateOnlineStatus(user.id, true);
 };
 
 const logDisconnectedUser = (socket: ISocket) => async () => {
   const user = socket.request.user!;
-  await ProfileService.updateOnlineStatus(user._id, false);
+  await ProfileService.updateOnlineStatus(user.id, false);
 };
 
 export default { onConnection } as const;

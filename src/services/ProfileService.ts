@@ -17,14 +17,14 @@ const CONTACT_EXISTS_ERROR = 'Contact with this id already exists';
 
 // ONLINE STATUS //
 
-const updateOnlineStatus = async (userId: TIdQuery, isOnline: boolean) => {
-  const persists = await UserRepo.persistOne({ _id: userId });
+const updateOnlineStatus = async (userId: string, isOnline: boolean) => {
+  const persists = await UserRepo.persistOne({ id: userId });
 
   if (!persists) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
   }
 
-  await UserRepo.updateOne({ _id: userId }, { is_online: isOnline });
+  await UserRepo.updateOne({ id: userId }, { is_online: isOnline });
 };
 
 // CONTACTS //
@@ -39,10 +39,10 @@ const getContacts = async (
 };
 
 const createContact = async (
-  currentUserId: TIdQuery,
+  currentUserId: string,
   contactUsername: string,
 ) => {
-  const currentUser = await UserRepo.getOne({ _id: currentUserId });
+  const currentUser = await UserRepo.getOne({ id: currentUserId });
   if (!currentUser)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
 
@@ -50,34 +50,31 @@ const createContact = async (
   if (!newContact)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
 
-  const contactExists = currentUser.contacts.some((c) =>
-    c.equals(newContact._id),
-  );
+  const contactExists = currentUser.contactIds.some((c) => c === newContact.id);
+
   if (contactExists)
     throw new RouteError(HttpStatusCodes.BAD_REQUEST, CONTACT_EXISTS_ERROR);
 
-  if (currentUser._id.equals(newContact._id))
+  if (currentUser.id === newContact.id)
     throw new RouteError(
       HttpStatusCodes.BAD_REQUEST,
       "You can't add yourself as a contact",
     );
 
-  await ContactsRepo.add(currentUser._id, newContact._id);
+  await ContactsRepo.add(currentUser.id, newContact.id);
 };
 
-const deleteContact = async (currentUserId: TIdQuery, contactId: TIdQuery) => {
-  const user = await UserRepo.getOne({ _id: currentUserId });
+const deleteContact = async (currentUserId: string, contactId: string) => {
+  const user = await UserRepo.getOne({ id: currentUserId });
   if (!user) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
   }
 
-  const foundContactIndex = user.contacts.findIndex((c) =>
-    c._id.equals(contactId),
-  );
+  const foundContactIndex = user.contactIds.findIndex((c) => c === contactId);
   if (foundContactIndex < 0)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
 
-  await ContactsRepo.remove(user._id, new Types.ObjectId(contactId));
+  await ContactsRepo.remove(user.id, new Types.ObjectId(contactId));
 };
 
 const getContactPageCount = async (userId: TIdQuery) => {

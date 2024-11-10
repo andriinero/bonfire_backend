@@ -19,7 +19,8 @@ model Chatroom {
   participtants User[] @relation(fields: [participtantIds], references: [id])
 
   messages Message[]
-	@@map("chatrooms")
+
+  @@map("chatrooms")
 }
 
 model Message {
@@ -40,7 +41,7 @@ model Message {
   parentMessage Message? @relation("Reply", fields: [replyId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   reply         Message? @relation("Reply")
 
-	@@map("messages")
+  @@map("messages")
 }
 
 model User {
@@ -65,7 +66,7 @@ model User {
   userContacts User?  @relation("Contacts", fields: [contactIds], references: [id], onDelete: NoAction, onUpdate: NoAction)
   contacts     User[] @relation("Contacts")
 
-	@@map("users")
+  @@map("users")
 }
 
 enum MessageType {

@@ -6,6 +6,7 @@ import type { TQueryOptions } from '@src/types/TQueryOptions';
 import type { FilterQuery } from 'mongoose';
 
 import ChatRoom from '@src/models/ChatRoom';
+import prisma from '@src/prisma';
 
 type TQuery = FilterQuery<TChatRoomSchema>;
 
@@ -23,8 +24,18 @@ const getAll = async (query: TQuery, opts?: TQueryOptions<TChatRoomSchema>) => {
   return allChatRooms;
 };
 
-const getOne = async (query: TQuery) => {
-  const chatRoom = await ChatRoom.findOne(query).exec();
+const getOneById = async (chatRoomId: string) => {
+  const chatRoom = await prisma.chatroom.findFirst({
+    where: { id: chatRoomId },
+  });
+
+  return chatRoom;
+};
+
+const getOneByUserId = async (chatRoomId: string, userId: string) => {
+  const chatRoom = await prisma.chatroom.findFirst({
+    where: { id: chatRoomId, participtantIds: { has: userId } },
+  });
 
   return chatRoom;
 };
@@ -42,16 +53,19 @@ const persists = async (query: TQuery) => {
   return persistingChatRoom > 0;
 };
 
-const getCount = async (query: TQuery) => {
-  const docCount = await ChatRoom.countDocuments(query).exec();
+const getCountByUserId = async (userId: string) => {
+  const docCount = await prisma.chatroom.count({
+    where: { participtantIds: { has: userId } },
+  });
 
   return docCount;
 };
 
 export default {
   getAll,
-  getOne,
+  getOneById,
+  getOneByUserId,
   createOne,
   persists,
-  getCount,
+  getCountByUserId,
 } as const;

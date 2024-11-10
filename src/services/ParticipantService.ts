@@ -34,13 +34,13 @@ const addParticipant = async ({
   if (!participant)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
 
-  const chatRoom = await ChatRoomRepo.getOne({ _id: chatRoomId });
+  const chatRoom = await ChatRoomRepo.getOneById(chatRoomId);
   if (!chatRoom)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
 
   const participantPersists = await ParticipantRepo.persistsInChatRoom({
-    userId: participant._id,
-    chatRoomId: chatRoom._id,
+    userId: participant.id,
+    chatRoomId: chatRoom.id,
   });
   if (participantPersists)
     throw new RouteError(
@@ -49,12 +49,12 @@ const addParticipant = async ({
     );
 
   await ParticipantRepo.add({
-    userId: participant._id,
-    chatRoomId: chatRoom._id,
+    userId: participant.id,
+    chatRoomId: chatRoom.id,
   });
   await MessageService.createActionMessage({
     body: `${currentUsername} has added ${participant.username}`,
-    chat_room: chatRoom._id,
+    chat_room: chatRoom.id,
   });
 };
 
@@ -64,10 +64,10 @@ const removeParticipant = async ({
   chatRoomId,
 }: {
   currentUsername: string;
-  userId: TIdQuery;
-  chatRoomId: TIdQuery;
+  userId: string;
+  chatRoomId: string;
 }) => {
-  const userPersists = await UserRepo.persistOne({ _id: userId });
+  const userPersists = await UserRepo.persistOne({ id: userId });
   if (!userPersists)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
 

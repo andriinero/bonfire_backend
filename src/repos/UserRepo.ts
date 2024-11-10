@@ -2,11 +2,13 @@ import EnvVars from '@src/constants/EnvVars';
 
 import type { TUserSchema } from '@src/models/User';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
-import type { Document, FilterQuery } from 'mongoose';
+import type { Document } from 'mongoose';
 
+import { Prisma } from '@prisma/client';
 import User from '@src/models/User';
+import prisma from '@src/prisma';
 
-type TQuery = FilterQuery<TUserSchema>;
+type TQuery = Prisma.UserWhereInput;
 
 type TCreateOne = Omit<TUserSchema, '_id' | 'profile_image' | 'contacts'>;
 
@@ -29,7 +31,7 @@ const getAll = async (query: TQuery, opts?: TQueryOptions<TUserDTO>) => {
 };
 
 const getOne = async (query: TQuery) => {
-  const user = await User.findOne(query).exec();
+  const user = await prisma.user.findFirst({ where: query });
 
   return user;
 };
@@ -51,7 +53,7 @@ const deleteOne = async (id: string) => {
 };
 
 const persistOne = async (query: TQuery) => {
-  const persistingUser = await User.findOne(query).exec();
+  const persistingUser = await prisma.user.findFirst({ where: query });
 
   return !!persistingUser;
 };

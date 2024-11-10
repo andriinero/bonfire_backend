@@ -19,7 +19,7 @@ type AuthPayload = {
   username: string;
   email: string;
   role: string;
-  profile_image: string;
+  profile_image: string | null;
   color_class: ColorClass;
 };
 
@@ -55,12 +55,12 @@ const signIn = async (email: string, password: string) => {
   }
 
   const jwtPayload: AuthPayload = {
-    sub: user._id.toString(),
+    sub: user.id,
     username: user.username,
     email: user.email,
     role: user.role,
     profile_image: user.profile_image,
-    color_class: user.color_class,
+    color_class: user.color_class as ColorClass,
   };
 
   const token = jwt.sign(jwtPayload, EnvVars.Jwt.SECRET, {
