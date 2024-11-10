@@ -6,9 +6,9 @@ import EnvVars from '@src/constants/EnvVars';
 import type { TUserDTO } from '@src/repos/UserRepo';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 
-type TQuery = Prisma.UserWhereInput;
+type WhereQuery = Prisma.UserWhereInput;
 
-const getAll = async (query: TQuery, opts?: TQueryOptions<TUserDTO>) => {
+const getAll = async (query: WhereQuery, opts?: TQueryOptions<TUserDTO>) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
   const limit = opts?.limit ?? 0;
 
@@ -45,7 +45,7 @@ const removeByUserId = async (userId: string, contactId: string) => {
     });
 };
 
-const getCount = async (query: TQuery) => {
+const getCount = async (query: WhereQuery) => {
   const user = await prisma.user.findFirst({ where: query });
 
   return user ? user.contactIds.length : 0;

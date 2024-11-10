@@ -1,3 +1,5 @@
+import prisma from '@src/prisma';
+
 import EnvVars from '@src/constants/EnvVars';
 
 import type { TChatRoomSchema } from '@src/models/ChatRoom';
@@ -6,7 +8,6 @@ import type { TQueryOptions } from '@src/types/TQueryOptions';
 import type { FilterQuery } from 'mongoose';
 
 import ChatRoom from '@src/models/ChatRoom';
-import prisma from '@src/prisma';
 
 type TQuery = FilterQuery<TChatRoomSchema>;
 
