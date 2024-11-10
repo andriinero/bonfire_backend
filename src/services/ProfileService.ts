@@ -1,11 +1,8 @@
-import { Types } from 'mongoose';
-
 import EnvVars from '@src/constants/EnvVars';
 import { RouteError } from '@src/other/classes';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import type { TUserDTO } from '@src/repos/UserRepo';
-import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 
 import ContactsRepo from '@src/repos/ContactsRepo';
@@ -29,11 +26,11 @@ const updateOnlineStatus = async (userId: string, isOnline: boolean) => {
 
 // CONTACTS //
 
-const getContacts = async (
-  query: { _id?: TIdQuery; username?: string },
+const getContactsById = async (
+  userId: string,
   opts: TQueryOptions<TUserDTO>,
 ) => {
-  const contacts = await ContactsRepo.getAll(query, opts);
+  const contacts = await ContactsRepo.getAll({ id: userId }, opts);
 
   return contacts;
 };
@@ -74,18 +71,18 @@ const deleteContact = async (currentUserId: string, contactId: string) => {
   if (foundContactIndex < 0)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
 
-  await ContactsRepo.remove(user.id, new Types.ObjectId(contactId));
+  await ContactsRepo.removeByUserId(user.id, contactId);
 };
 
-const getContactPageCount = async (userId: TIdQuery) => {
-  const docCount = await ContactsRepo.getCount({ _id: userId });
+const getContactPageCount = async (userId: string) => {
+  const docCount = await ContactsRepo.getCount({ id: userId });
 
   return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);
 };
 
 export default {
   updateOnlineStatus,
-  getContacts,
+  getContactsById,
   createContact,
   deleteContact,
   getContactPageCount,

@@ -20,10 +20,13 @@ const contacts_get_all = [
       req: IReqQuery<{ username: string; limit: string; page: string }>,
       res: IRes,
     ) => {
+      const currentUserId = req.user!._id.toString();
       const queryOpts = { limit: +req.query.limit, page: +req.query.page };
-      const query = { _id: req.user!._id, username: req.query.username };
 
-      const participants = await ProfileService.getContacts(query, queryOpts);
+      const participants = await ProfileService.getContactsById(
+        currentUserId,
+        queryOpts,
+      );
 
       res.status(HttpStatusCodes.OK).json(participants);
     },
@@ -61,7 +64,7 @@ const contacts_delete = [
 const contacts_page_count = [
   authenticateJwt,
   asyncHandler(async (req: IReq, res: IRes) => {
-    const currentUserId = req.user!._id;
+    const currentUserId = req.user!._id.toString();
 
     const count = await ProfileService.getContactPageCount(currentUserId);
 

@@ -43,7 +43,7 @@ const getAuthData = (user: TUserSchema): AuthPayload => {
 };
 
 const signIn = async (email: string, password: string) => {
-  const user = await UserRepo.getOne({ email });
+  const user = await UserRepo.getOne({ email }, false);
 
   if (!user) {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);

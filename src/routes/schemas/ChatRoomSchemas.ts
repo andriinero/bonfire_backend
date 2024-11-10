@@ -1,4 +1,4 @@
-import { isValidObjectId, Types } from 'mongoose';
+import { isValidObjectId } from 'mongoose';
 import { z } from 'zod';
 
 import ContactsRepo from '@src/repos/ContactsRepo';
@@ -34,8 +34,8 @@ const contactIdsExistence = z
     }),
   })
   .refine(async (req) => {
-    const currentUserId = req.user._id as Types.ObjectId;
-    const userWithContacts = await ContactsRepo.hasContacts(
+    const currentUserId = req.user._id.toString();
+    const userWithContacts = await ContactsRepo.hasContactsWithIds(
       currentUserId,
       req.body.userIds,
     );

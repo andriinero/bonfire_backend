@@ -34,8 +34,11 @@ const getById = async (chatRoomId: string, userId: string) => {
   return foundChatRoom;
 };
 
-const createOne = async (currentUserUserId: TIdQuery, userIds: string[]) => {
-  const persists = await ContactsRepo.hasContacts(currentUserUserId, userIds);
+const createOne = async (currentUserUserId: string, userIds: string[]) => {
+  const persists = await ContactsRepo.hasContactsWithIds(
+    currentUserUserId,
+    userIds,
+  );
   if (!persists)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, 'Contacts not found');
 

@@ -54,7 +54,7 @@ const chat_room_post = [
   authenticateJwt,
   validate(ChatRoomSchemas.body.contactIdsExistence),
   asyncHandler(async (req: IReq<{ userIds: string[] }>, res: IRes) => {
-    const currentUserId = req.user!._id;
+    const currentUserId = req.user!._id.toString();
     const { userIds } = req.body;
 
     await ChatRoomService.createOne(currentUserId, userIds);

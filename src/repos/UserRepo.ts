@@ -30,8 +30,11 @@ const getAll = async (query: TQuery, opts?: TQueryOptions<TUserDTO>) => {
   return allUsers;
 };
 
-const getOne = async (query: TQuery) => {
-  const user = await prisma.user.findFirst({ where: query });
+const getOne = async (query: TQuery, excludePassword?: boolean) => {
+  const user = await prisma.user.findFirst({
+    where: query,
+    omit: { password: excludePassword },
+  });
 
   return user;
 };

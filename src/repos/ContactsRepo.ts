@@ -1,33 +1,28 @@
+import { Prisma } from '@prisma/client';
 import prisma from '@src/prisma';
 
 import EnvVars from '@src/constants/EnvVars';
 
-import type { TUserDTO, TUserDTODocument } from '@src/repos/UserRepo';
-import type { TIdQuery } from '@src/types/IdQuery';
+import type { TUserDTO } from '@src/repos/UserRepo';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
-import type { FilterQuery, Types } from 'mongoose';
 
-import User, { TUserSchema } from '@src/models/User';
+type TQuery = Prisma.UserWhereInput;
 
-import { USER_DATA_SELECTION } from './UserRepo';
+const getAll = async (query: TQuery, opts?: TQueryOptions<TUserDTO>) => {
+  const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
+  const limit = opts?.limit ?? 0;
 
-type TQuery = FilterQuery<TUserSchema>;
+  const user = await prisma.user.findFirst({
+    where: query,
+    skip: skip,
+    take: limit,
+    include: { contacts: true },
+  });
 
-const getAll = async (
-  query: { _id?: TIdQuery; username?: string },
-  opts?: TQueryOptions<TUserDTO>,
-) => {
-  const user = (await User.findOne({ _id: query._id })
-    .select('contacts')
-    .populate({ path: 'contacts', select: USER_DATA_SELECTION })
-    .limit(opts?.limit as number)
-    .sort(opts?.sort)
-    .skip((opts?.page as number) * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH)
-    .exec()) as unknown as {
-    contacts: TUserDTODocument[];
-  };
+  // FIXME: remove comment
+  console.log(user);
 
-  return user.contacts ?? [];
+  return user?.contacts;
 };
 
 const add = async (userId: string, contactId: string) => {
@@ -37,30 +32,37 @@ const add = async (userId: string, contactId: string) => {
   });
 };
 
-const remove = async (userId: TIdQuery, contactId: Types.ObjectId) => {
-  const currentUser = await User.findOne({ _id: userId });
-  const contactIndex = currentUser?.contacts.findIndex((c) =>
-    c.equals(contactId),
-  );
-  if (typeof contactIndex !== 'undefined' && contactIndex > -1)
-    currentUser?.contacts.splice(contactIndex, 1);
-
-  await currentUser?.save();
+const removeByUserId = async (userId: string, contactId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { contactIds: true },
+  });
+  const updatedContactIds = user?.contactIds.filter((c) => c !== contactId);
+  if (updatedContactIds)
+    await prisma.user.update({
+      where: { id: userId },
+      data: { contactIds: { set: updatedContactIds } },
+    });
 };
 
 const getCount = async (query: TQuery) => {
-  const user = await User.findOne(query).exec();
+  const user = await prisma.user.findFirst({ where: query });
 
-  return user ? user.contacts.length : 0;
+  return user ? user.contactIds.length : 0;
 };
 
-const hasContacts = async (userId: TIdQuery, contactIds: TIdQuery[]) => {
-  const userWithContacts = User.findOne({
-    _id: userId,
-    contacts: contactIds,
-  }).exec();
+const hasContactsWithIds = async (userId: string, contactIds: string[]) => {
+  const userWithContacts = await prisma.user.findFirst({
+    where: { id: userId, contactIds: { hasEvery: contactIds } },
+  });
 
   return !!userWithContacts;
 };
 
-export default { getAll, add, remove, getCount, hasContacts } as const;
+export default {
+  getAll,
+  add,
+  removeByUserId,
+  getCount,
+  hasContactsWithIds,
+} as const;
