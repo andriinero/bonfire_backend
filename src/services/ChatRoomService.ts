@@ -8,8 +8,8 @@ import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
+import ContactRepo from '@src/repos/ContactRepo';
 
-import ContactsRepo from '@src/repos/ContactRepo;
 import MessageService from './MessageService';
 
 export const CHAT_ROOM_NOT_FOUND_ERR = 'Chat room not found';
@@ -35,7 +35,7 @@ const getById = async (chatRoomId: string, userId: string) => {
 };
 
 const createOne = async (currentUserUserId: string, userIds: string[]) => {
-  const persists = await ContactsRepo.hasContactsWithIds(
+  const persists = await ContactRepo.hasContactsWithIds(
     currentUserUserId,
     userIds,
   );

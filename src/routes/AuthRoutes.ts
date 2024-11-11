@@ -6,7 +6,6 @@ import { validationResult } from 'express-validator';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 
-import type { TUserSchema } from '@src/models/User';
 import type { IRes } from './types/express/misc';
 import type { IReq } from './types/types';
 
@@ -30,8 +29,8 @@ type TSignUpBody = {
 const get = [
   authenticateJwt,
   (req: IReq, res: IRes): void => {
-    const user = req.user as TUserSchema;
-    const data = AuthService.getAuthData(user);
+    const userId = req.user!._id.toString();
+    const data = AuthService.getAuthData(userId);
 
     res.status(HttpStatusCodes.OK).json(data);
   },

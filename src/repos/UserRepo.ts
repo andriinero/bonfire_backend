@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import prisma from '@src/prisma';
 
 import EnvVars from '@src/constants/EnvVars';
@@ -6,14 +7,13 @@ import type { TUserSchema } from '@src/models/User';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 import type { Document } from 'mongoose';
 
-import { Prisma } from '@prisma/client';
-import User from '@src/models/User';
-
 type WhereQuery = Prisma.UserWhereInput;
 
-type TCreateOne = Omit<TUserSchema, '_id' | 'profile_image' | 'contacts'>;
+type WhereUniqueQuery = Prisma.UserWhereUniqueInput;
 
-type TUpdateOne = Partial<TUserSchema>;
+type CreateData = Prisma.UserCreateInput;
+
+type UpdateData = Prisma.UserUpdateInput;
 
 export type TUserDTO = Omit<TUserSchema, 'password'>;
 
@@ -22,13 +22,12 @@ export type TUserDTODocument = Document<unknown, unknown, TUserDTO> & TUserDTO;
 export const USER_DATA_SELECTION = '-password';
 
 const getAll = async (query: WhereQuery, opts?: TQueryOptions<TUserDTO>) => {
-  const allUsers = await User.find(query)
-    .limit(opts?.limit as number)
-    .sort(opts?.sort)
-    .skip((opts?.page as number) * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH)
-    .exec();
+  const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
+  const limit = opts?.limit ?? 0;
 
-  return allUsers;
+  const users = await prisma.user.findMany({ where: query, take: limit, skip });
+
+  return users;
 };
 
 const getOne = async (query: WhereQuery, excludePassword?: boolean) => {
@@ -40,20 +39,16 @@ const getOne = async (query: WhereQuery, excludePassword?: boolean) => {
   return user;
 };
 
-const createOne = async (data: TCreateOne) => {
-  const newUser = new User(data);
-  await newUser.save();
+const createOne = async (data: CreateData) => {
+  await prisma.user.create({ data });
 };
 
-const updateOne = async (query: WhereQuery, data: TUpdateOne) => {
-  await User.findOneAndUpdate(query, data, {
-    runValidators: true,
-    new: true,
-  });
+const updateOne = async (query: WhereUniqueQuery, data: UpdateData) => {
+  await prisma.user.update({ where: query, data });
 };
 
-const deleteOne = async (id: string) => {
-  await User.findByIdAndDelete(id);
+const deleteOne = async (query: WhereUniqueQuery) => {
+  await prisma.user.delete({ where: query });
 };
 
 const persistOne = async (query: WhereQuery) => {
@@ -62,16 +57,18 @@ const persistOne = async (query: WhereQuery) => {
   return !!persistingUser;
 };
 
-const persistMany = async (ids: string[]) => {
-  const persistingUsers = await User.find({ _id: { $in: ids } }).exec();
+const persistManyByIds = async (userIds: string[]) => {
+  const persistingUsers = await prisma.user.findMany({
+    where: { id: { in: userIds } },
+  });
 
-  return persistingUsers.length === ids.length;
+  return persistingUsers.length === userIds.length;
 };
 
 const count = async (query: WhereQuery) => {
-  const docCount = await User.countDocuments(query).exec();
+  const userCount = await prisma.user.count({ where: query });
 
-  return docCount;
+  return userCount;
 };
 
 export default {
@@ -81,6 +78,6 @@ export default {
   updateOne,
   deleteOne,
   persistOne,
-  persistMany,
+  persistManyByIds,
   count,
 } as const;

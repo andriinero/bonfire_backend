@@ -1,7 +1,7 @@
 import { isValidObjectId } from 'mongoose';
 import { z } from 'zod';
 
-import ContactsRepo from '@src/repos/ContactRepo;
+import ContactRepo from '@src/repos/ContactRepo';
 
 const idParamSchema = z.object({
   params: z.object({
@@ -35,7 +35,7 @@ const contactIdsExistence = z
   })
   .refine(async (req) => {
     const currentUserId = req.user._id.toString();
-    const userWithContacts = await ContactsRepo.hasContactsWithIds(
+    const userWithContacts = await ContactRepo.hasContactsWithIds(
       currentUserId,
       req.body.userIds,
     );

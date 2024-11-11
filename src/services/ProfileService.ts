@@ -5,7 +5,7 @@ import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import type { TUserDTO } from '@src/repos/UserRepo';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 
-import ContactsRepo from '@src/repos/ContactRepo;
+import ContactRepo from '@src/repos/ContactRepo';
 import UserRepo from '@src/repos/UserRepo';
 
 import { USER_NOT_FOUND_ERR } from './AuthService';
@@ -30,7 +30,7 @@ const getContactsById = async (
   userId: string,
   opts: TQueryOptions<TUserDTO>,
 ) => {
-  const contacts = await ContactsRepo.getAll({ id: userId }, opts);
+  const contacts = await ContactRepo.getAll({ id: userId }, opts);
 
   return contacts;
 };
@@ -58,7 +58,7 @@ const createContact = async (
       "You can't add yourself as a contact",
     );
 
-  await ContactsRepo.add(currentUser.id, newContact.id);
+  await ContactRepo.add(currentUser.id, newContact.id);
 };
 
 const deleteContact = async (currentUserId: string, contactId: string) => {
@@ -71,11 +71,11 @@ const deleteContact = async (currentUserId: string, contactId: string) => {
   if (foundContactIndex < 0)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
 
-  await ContactsRepo.removeByUserId(user.id, contactId);
+  await ContactRepo.removeByUserId(user.id, contactId);
 };
 
 const getContactPageCount = async (userId: string) => {
-  const docCount = await ContactsRepo.getCount({ id: userId });
+  const docCount = await ContactRepo.getCount({ id: userId });
 
   return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);
 };

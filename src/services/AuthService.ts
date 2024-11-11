@@ -7,7 +7,6 @@ import { getRandomColorClass } from '@src/util/getRandomColorClass';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import type { ColorClass } from '@src/constants/misc';
-import type { TUserSchema } from '@src/models/User';
 
 import UserRepo from '@src/repos/UserRepo';
 
@@ -20,20 +19,24 @@ type AuthPayload = {
   email: string;
   role: string;
   profile_image: string | null;
-  color_class: ColorClass;
+  color_class: string;
 };
 
-type TSignUpBody = {
+type SignUpData = {
   username: string;
   email: string;
   password: string;
 };
 
-const getAuthData = (user: TUserSchema): AuthPayload => {
-  const { _id, username, email, role, profile_image, color_class } = user;
+const getAuthData = async (userId: string): Promise<AuthPayload> => {
+  const user = await UserRepo.getOne({ id: userId });
+  if (!user)
+    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
+
+  const { id, username, email, role, profile_image, color_class } = user;
 
   return {
-    sub: _id.toString(),
+    sub: id,
     username,
     email,
     role,
@@ -44,15 +47,12 @@ const getAuthData = (user: TUserSchema): AuthPayload => {
 
 const signIn = async (email: string, password: string) => {
   const user = await UserRepo.getOne({ email }, false);
-
-  if (!user) {
+  if (!user)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
-  }
 
   const match = bcrypt.compareSync(password, user.password);
-  if (!match) {
+  if (!match)
     throw new RouteError(HttpStatusCodes.UNAUTHORIZED, AUTHENTICATION_ERR);
-  }
 
   const jwtPayload: AuthPayload = {
     sub: user.id,
@@ -70,7 +70,7 @@ const signIn = async (email: string, password: string) => {
   return token;
 };
 
-const signUp = async (signUpData: TSignUpBody) => {
+const signUp = async (signUpData: SignUpData) => {
   const hashedPassword = await bcrypt.hash(
     signUpData.password,
     +EnvVars.Bcrypt.SALT,
