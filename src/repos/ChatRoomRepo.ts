@@ -1,32 +1,35 @@
+import { Prisma } from '@prisma/client';
 import prisma from '@src/prisma';
 
 import EnvVars from '@src/constants/EnvVars';
 
 import type { TChatRoomSchema } from '@src/models/ChatRoom';
-import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
-import type { FilterQuery } from 'mongoose';
 
-import ChatRoom from '@src/models/ChatRoom';
+type WhereQuery = Prisma.ChatroomWhereInput;
 
-type TQuery = FilterQuery<TChatRoomSchema>;
+type WhereUniqueQuery = Prisma.ChatroomWhereUniqueInput;
 
-type TCreateOne = Omit<TChatRoomSchema, '_id' | 'name' | 'participants'> & {
-  participants: TIdQuery[];
-};
+type CreateData = Prisma.ChatroomCreateInput;
 
-const getAll = async (query: TQuery, opts?: TQueryOptions<TChatRoomSchema>) => {
-  const allChatRooms = await ChatRoom.find(query)
-    .limit(opts?.limit as number)
-    .sort(opts?.sort)
-    .skip((opts?.page as number) * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH)
-    .exec();
+const getAll = async (
+  query: WhereQuery,
+  opts?: TQueryOptions<TChatRoomSchema>,
+) => {
+  const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
+  const limit = opts?.limit ?? 0;
 
-  return allChatRooms;
+  const chatRooms = await prisma.chatroom.findMany({
+    where: query,
+    take: limit,
+    skip,
+  });
+
+  return chatRooms;
 };
 
 const getOneById = async (chatRoomId: string) => {
-  const chatRoom = await prisma.chatroom.findFirst({
+  const chatRoom = await prisma.chatroom.findUnique({
     where: { id: chatRoomId },
   });
 
@@ -35,31 +38,30 @@ const getOneById = async (chatRoomId: string) => {
 
 const getOneByUserId = async (chatRoomId: string, userId: string) => {
   const chatRoom = await prisma.chatroom.findFirst({
-    where: { id: chatRoomId, participtantIds: { has: userId } },
+    where: { id: chatRoomId, participtants: { some: { id: userId } } },
   });
 
   return chatRoom;
 };
 
-const createOne = async (data: TCreateOne) => {
-  const newChatRoom = new ChatRoom(data);
-  await newChatRoom.save();
+const createOne = async (data: CreateData) => {
+  const newChatRoom = await prisma.chatroom.create({ data });
 
-  return newChatRoom._id;
+  return newChatRoom.id;
 };
 
-const persists = async (query: TQuery) => {
-  const persistingChatRoom = await ChatRoom.countDocuments(query).exec();
+const persists = async (query: WhereUniqueQuery) => {
+  const chatRoom = await prisma.chatroom.findUnique({ where: query });
 
-  return persistingChatRoom > 0;
+  return !!chatRoom;
 };
 
 const getCountByUserId = async (userId: string) => {
-  const docCount = await prisma.chatroom.count({
-    where: { participtantIds: { has: userId } },
+  const count = await prisma.chatroom.count({
+    where: { participtants: { some: { id: userId } } },
   });
 
-  return docCount;
+  return count;
 };
 
 export default {
