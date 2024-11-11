@@ -5,9 +5,6 @@ export default {
   NodeEnv: process.env.NODE_ENV ?? 'DEVELOPMENT',
   CORS: { ORIGIN: process.env.CORS_ORIGIN ?? 'http://localhost:5174' },
   PORT: parseInt(process.env.PORT ?? '3000'),
-  MongoDB: {
-    URI: process.env.MONGODB_URI ?? '',
-  },
   Jwt: {
     SECRET: process.env.JWT_SECRET ?? '',
     EXP: process.env.JWT_EXP ?? '',

@@ -7,7 +7,6 @@ import express, { NextFunction } from 'express';
 import helmet from 'helmet';
 import { createServer } from 'http';
 import logger from 'jet-logger';
-import mongoose from 'mongoose';
 import morgan from 'morgan';
 import passport from 'passport';
 import { ExtractJwt, Strategy as JWTStrategy } from 'passport-jwt';
@@ -42,13 +41,6 @@ const io = new Server(server, {
 });
 
 // **** Setup **** //
-
-const mongoDB = EnvVars.MongoDB.URI;
-mongoose.set('strictQuery', false);
-const main = async () => {
-  await mongoose.connect(mongoDB);
-};
-main().catch((err: unknown) => logger.err(err, true));
 
 // Basic middleware
 app.use(cors());
