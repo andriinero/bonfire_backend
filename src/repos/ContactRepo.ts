@@ -12,7 +12,6 @@ const getAll = async (query: WhereQuery, opts?: TQueryOptions<TUserDTO>) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
   const limit = opts?.limit ?? 0;
 
-  //TODO: fix include query
   const user = await prisma.user.findFirst({
     where: query,
     skip: skip,

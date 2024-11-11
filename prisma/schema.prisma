@@ -42,27 +42,27 @@ model Message {
 }
 
 model User {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  v              Int      @map("__v") @ignore
-  chatRoomIds    String[] @map("chatrooms") @db.ObjectId
-  color_class    String
-  contactIds     String[] @map("contacts") @db.ObjectId
-  contactedByIds String[] @map("contacted_bys") @db.ObjectId
-  created        DateTime @db.Date
-  email          String   @unique
-  is_online      Boolean
-  password       String
-  profile_image  String?
-  role           UserRole
-  username       String   @unique
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  v             Int      @map("__v") @ignore
+  chatRoomIds   String[] @map("chatrooms") @db.ObjectId
+  color_class   String
+  created       DateTime @db.Date
+  email         String   @unique
+  is_online     Boolean
+  password      String
+  profile_image String?
+  role          UserRole
+  username      String   @unique
 
   // relations
   chatrooms Chatroom[] @relation(fields: [chatRoomIds], references: [id])
 
   messages Message[]
 
-  contacts      User[] @relation("Contacts", fields: [contactIds], references: [id])
-  contacted_bys User[] @relation("Contacts", fields: [contactedByIds], references: [id])
+  contacts       User[]   @relation("UserContacts", fields: [contactIds], references: [id])
+  contactIds     String[] @map("contacts") @db.ObjectId
+  contactedBy    User[]   @relation("UserContacts", fields: [contactedByIds], references: [id])
+  contactedByIds String[] @map("contact_bys") @db.ObjectId
 
   @@map("users")
 }

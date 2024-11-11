@@ -30,6 +30,9 @@ type SignUpData = {
 
 const getAuthData = async (userId: string): Promise<AuthPayload> => {
   const user = await UserRepo.getOne({ id: userId });
+  // FIXME: remove comment
+  console.log(user);
+
   if (!user)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
 
