@@ -58,11 +58,11 @@ const persistOne = async (query: WhereQuery) => {
 };
 
 const persistManyByIds = async (userIds: string[]) => {
-  const persistingUsers = await prisma.user.findMany({
+  const count = await prisma.user.count({
     where: { id: { in: userIds } },
   });
 
-  return persistingUsers.length === userIds.length;
+  return count;
 };
 
 const count = async (query: WhereQuery) => {

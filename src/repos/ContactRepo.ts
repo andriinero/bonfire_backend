@@ -9,14 +9,14 @@ import type { TQueryOptions } from '@src/types/TQueryOptions';
 type WhereQuery = Prisma.UserWhereInput;
 
 const getAll = async (query: WhereQuery, opts?: TQueryOptions<TUserDTO>) => {
-  const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
   const limit = opts?.limit ?? 0;
+  const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
 
   const user = await prisma.user.findFirst({
     where: query,
-    skip: skip,
     take: limit,
-    include: { contacts: true },
+    skip: skip,
+    select: { contacts: true },
   });
 
   return user?.contacts;
@@ -25,32 +25,32 @@ const getAll = async (query: WhereQuery, opts?: TQueryOptions<TUserDTO>) => {
 const add = async (userId: string, contactId: string) => {
   await prisma.user.update({
     where: { id: userId },
-    data: { contactIds: { push: contactId } },
+    data: { contacts: { connect: { id: contactId } } },
   });
 };
 
 const removeByUserId = async (userId: string, contactId: string) => {
-  const user = await prisma.user.findUnique({
+  await prisma.user.update({
     where: { id: userId },
-    select: { contactIds: true },
+    data: { contacts: { disconnect: { id: contactId } } },
   });
-  const updatedContactIds = user?.contactIds.filter((c) => c !== contactId);
-  if (updatedContactIds)
-    await prisma.user.update({
-      where: { id: userId },
-      data: { contactIds: { set: updatedContactIds } },
-    });
 };
 
-const getCount = async (query: WhereQuery) => {
-  const user = await prisma.user.findFirst({ where: query });
+const getCountByUserId = async (userId: string) => {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { _count: { select: { contacts: true } } },
+  });
 
-  return user ? user.contactIds.length : 0;
+  return user ? user._count.contacts : 0;
 };
 
 const hasContactsWithIds = async (userId: string, contactIds: string[]) => {
   const userWithContacts = await prisma.user.findFirst({
-    where: { id: userId, contactIds: { hasEvery: contactIds } },
+    where: {
+      id: userId,
+      AND: contactIds.map((id) => ({ contacts: { some: { id } } })),
+    },
   });
 
   return !!userWithContacts;
@@ -60,6 +60,6 @@ export default {
   getAll,
   add,
   removeByUserId,
-  getCount,
+  getCountByUserId,
   hasContactsWithIds,
 } as const;
