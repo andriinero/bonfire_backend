@@ -3,63 +3,64 @@ import EnvVars from '@src/constants/EnvVars';
 import type { TMessageSchema } from '@src/models/Message';
 import Message from '@src/models/Message';
 import prisma from '@src/prisma';
-import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 
 type WhereQuery = Prisma.MessageWhereInput;
 
-type TCreateOne = Pick<TMessageSchema, 'body' | 'type' | 'created'> &
-  Partial<Pick<TMessageSchema, 'user' | 'reply'>> & {
-    chat_room: TIdQuery;
-  };
+type WhereUniqueQuery = Prisma.MessageWhereUniqueInput;
+
+type CreateData = Prisma.MessageCreateInput;
+
+type UpdateData = Prisma.MessageUpdateInput;
 
 const getAll = async (
   query: WhereQuery,
   opts?: TQueryOptions<TMessageSchema>,
 ) => {
-  const messages = await Message.find(query)
-    .limit(opts?.limit as number)
-    .sort(opts?.sort)
-    .skip((opts?.page as number) * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH)
-    .exec();
+  const limit = opts?.limit;
+  const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
+
+  const messages = await prisma.message.findMany({
+    where: query,
+    take: limit,
+    skip,
+  });
 
   return messages;
 };
 
 const getOne = async (query: WhereQuery) => {
-  const message = await Message.findOne(query).exec();
+  const message = await prisma.message.findFirst({ where: query });
 
   return message;
 };
 
-const createOne = async (data: TCreateOne) => {
-  const message = new Message(data);
-  const savedMessage = await message.save();
+const createOne = async (data: CreateData) => {
+  const createdMessage = await prisma.message.create({ data });
 
-  return savedMessage;
+  return createdMessage;
 };
 
-const updateOne = async (
-  query: WhereQuery,
-  messageData: Partial<TMessageSchema>,
-) => {
-  await Message.findOneAndUpdate(query, messageData, { runValidators: true });
+const updateOne = async (query: WhereUniqueQuery, data: UpdateData) => {
+  await Message.findOneAndUpdate(query, data, { runValidators: true });
 };
 
-const deleteOne = async (query: WhereQuery) => {
-  await Message.deleteOne(query);
+const deleteOne = async (query: WhereUniqueQuery) => {
+  await prisma.message.delete({ where: query });
 };
 
-const persists = async (ids: TIdQuery[]) => {
-  const messages = await Message.find({ _id: { $in: ids } }).exec();
+const persistManyByIds = async (messageIds: string[]) => {
+  const messageCount = await prisma.chatroom.count({
+    where: { id: { in: messageIds } },
+  });
 
-  return ids.length === messages.length;
+  return messageIds.length === messageCount;
 };
 
 const getCount = async (query: WhereQuery) => {
-  const docCount = await prisma.message.countDocuments(query).exec();
+  const count = await prisma.message.count({ where: query });
 
-  return docCount;
+  return count;
 };
 
 export default {
@@ -68,6 +69,6 @@ export default {
   createOne,
   updateOne,
   deleteOne,
-  persists,
+  persistManyByIds,
   getCount,
 } as const;
