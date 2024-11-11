@@ -1,20 +1,22 @@
+import { Prisma } from '@prisma/client';
 import EnvVars from '@src/constants/EnvVars';
-
 import type { TMessageSchema } from '@src/models/Message';
+import Message from '@src/models/Message';
+import prisma from '@src/prisma';
 import type { TIdQuery } from '@src/types/IdQuery';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
-import type { FilterQuery } from 'mongoose';
 
-import Message from '@src/models/Message';
-
-type TQuery = FilterQuery<TMessageSchema>;
+type WhereQuery = Prisma.MessageWhereInput;
 
 type TCreateOne = Pick<TMessageSchema, 'body' | 'type' | 'created'> &
   Partial<Pick<TMessageSchema, 'user' | 'reply'>> & {
     chat_room: TIdQuery;
   };
 
-const getAll = async (query: TQuery, opts?: TQueryOptions<TMessageSchema>) => {
+const getAll = async (
+  query: WhereQuery,
+  opts?: TQueryOptions<TMessageSchema>,
+) => {
   const messages = await Message.find(query)
     .limit(opts?.limit as number)
     .sort(opts?.sort)
@@ -24,7 +26,7 @@ const getAll = async (query: TQuery, opts?: TQueryOptions<TMessageSchema>) => {
   return messages;
 };
 
-const getOne = async (query: TQuery) => {
+const getOne = async (query: WhereQuery) => {
   const message = await Message.findOne(query).exec();
 
   return message;
@@ -38,13 +40,13 @@ const createOne = async (data: TCreateOne) => {
 };
 
 const updateOne = async (
-  query: TQuery,
+  query: WhereQuery,
   messageData: Partial<TMessageSchema>,
 ) => {
   await Message.findOneAndUpdate(query, messageData, { runValidators: true });
 };
 
-const deleteOne = async (query: TQuery) => {
+const deleteOne = async (query: WhereQuery) => {
   await Message.deleteOne(query);
 };
 
@@ -54,8 +56,8 @@ const persists = async (ids: TIdQuery[]) => {
   return ids.length === messages.length;
 };
 
-const getCount = async (query: TQuery) => {
-  const docCount = await Message.countDocuments(query).exec();
+const getCount = async (query: WhereQuery) => {
+  const docCount = await prisma.message.countDocuments(query).exec();
 
   return docCount;
 };

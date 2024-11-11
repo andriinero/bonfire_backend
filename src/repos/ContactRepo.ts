@@ -19,9 +19,6 @@ const getAll = async (query: WhereQuery, opts?: TQueryOptions<TUserDTO>) => {
     include: { contacts: true },
   });
 
-  // FIXME: remove comment
-  console.log(user);
-
   return user?.contacts;
 };
 

@@ -1,86 +1,60 @@
-import { Types } from 'mongoose';
+import prisma from '@src/prisma';
 
 import EnvVars from '@src/constants/EnvVars';
 
-import type { TUserDTO, TUserDTODocument } from '@src/repos/UserRepo';
-import type { TIdQuery } from '@src/types/IdQuery';
+import type { TUserDTO } from '@src/repos/UserRepo';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 
-import ChatRoom from '@src/models/ChatRoom';
-
-import { USER_DATA_SELECTION } from './UserRepo';
-
 const getAllByChatRoomId = async (
-  id: TIdQuery,
+  chatRoomId: string,
   opts?: TQueryOptions<TUserDTO>,
 ) => {
-  const chatRoom = (await ChatRoom.findById(id)
-    .select('participants')
-    .populate({ path: 'participants', select: USER_DATA_SELECTION })
-    .limit(opts?.limit as number)
-    .sort(opts?.sort)
-    .skip((opts?.page as number) * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH)
-    .exec()) as unknown as {
-    participants: TUserDTODocument[];
-  };
+  const limit = opts?.limit;
+  const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
 
-  return chatRoom.participants ?? [];
+  const chatRoom = await prisma.chatroom.findUnique({
+    where: { id: chatRoomId },
+    select: { participtants: { take: limit, skip } },
+  });
+
+  return chatRoom?.participtants ?? [];
 };
 
-const add = async ({
-  userId,
-  chatRoomId,
-}: {
-  userId: TIdQuery;
-  chatRoomId: TIdQuery;
-}) => {
-  const chatRoom = await ChatRoom.findOne({ _id: chatRoomId }).exec();
-  chatRoom?.participants.push(new Types.ObjectId(userId));
-  await chatRoom?.save();
+const addById = async (userId: string, chatRoomId: string) => {
+  await prisma.chatroom.update({
+    where: { id: chatRoomId },
+    data: { participtants: { connect: { id: userId } } },
+  });
 };
 
-const remove = async ({
-  userId,
-  chatRoomId,
-}: {
-  userId: TIdQuery;
-  chatRoomId: TIdQuery;
-}) => {
-  const chatRoom = await ChatRoom.findOne({ _id: chatRoomId }).exec();
-  const participantIndex = chatRoom?.participants.findIndex((p) =>
-    p.equals(userId),
-  );
-  if (participantIndex && participantIndex > -1)
-    chatRoom?.participants.splice(participantIndex, 1);
-
-  await chatRoom?.save();
+const removeById = async (userId: string, chatRoomId: string) => {
+  await prisma.chatroom.update({
+    where: { id: chatRoomId },
+    data: { participtants: { disconnect: { id: userId } } },
+  });
 };
 
-const persistsInChatRoom = async ({
-  userId,
-  chatRoomId,
-}: {
-  userId: TIdQuery;
-  chatRoomId: TIdQuery;
-}) => {
-  const foundParticipantCount = await ChatRoom.countDocuments({
-    _id: chatRoomId,
-    participants: userId,
-  }).exec();
+const persistsInChatRoomById = async (userId: string, chatRoomId: string) => {
+  const participant = await prisma.chatroom.findUnique({
+    where: { id: chatRoomId, participtants: { some: { id: userId } } },
+  });
 
-  return foundParticipantCount > 0;
+  return !!participant;
 };
 
-const getCountInChatRoom = async (id: TIdQuery) => {
-  const chatRoom = await ChatRoom.findById(id).exec();
+const getCountById = async (chatRoomId: string) => {
+  const chatRoom = await prisma.chatroom.findUnique({
+    where: { id: chatRoomId },
+    select: { participtants: true },
+  });
 
-  return chatRoom ? chatRoom.participants.length : 0;
+  return chatRoom ? chatRoom.participtants.length : 0;
 };
 
 export default {
   getAllByChatRoomId,
-  add,
-  remove,
-  persistsInChatRoom,
-  getCountInChatRoom,
+  addById,
+  removeById,
+  persistsInChatRoomById,
+  getCountById,
 } as const;
