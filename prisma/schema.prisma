@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Chatroom {
-  id         Int      @id @default(autoincrement())
+  id         String   @id @default(uuid())
   name       String?
   created    DateTime @default(now()) @db.Date
   colorClass String   @map("color_class")
@@ -21,26 +21,26 @@ model Chatroom {
 }
 
 model Message {
-  id      Int         @id @default(autoincrement())
+  id      String      @id @default(uuid())
   body    String
   created DateTime    @default(now()) @db.Date
   type    MessageType @default(ACTION)
 
-  chatRoomId Int      @unique
+  chatRoomId String   @unique
   chatroom   Chatroom @relation(fields: [chatRoomId], references: [id])
 
-  userId Int?
-  user   User? @relation(fields: [userId], references: [id])
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
 
   @@map("messages")
 }
 
 model User {
-  id           Int      @id @default(autoincrement())
+  id           String   @id @default(uuid())
   username     String   @unique
   email        String   @unique
   password     String
-  role         UserRole
+  role         UserRole @default(USER)
   created      DateTime @default(now()) @db.Date
   isOnline     Boolean  @map("is_online")
   profileImage String?  @map("profile_image")
