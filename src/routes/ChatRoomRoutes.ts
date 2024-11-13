@@ -12,7 +12,7 @@ import ParticipantService from '@src/services/ParticipantService';
 import validationUtils, { validate } from '@src/util/validationUtils';
 import ChatRoomSchemas from './schemas/ChatRoomSchemas';
 
-type TCharRoomParam = {
+type CharRoomParam = {
   chatroomid: string;
 };
 
@@ -36,7 +36,7 @@ const chat_room_get_one = [
   authenticateJwt,
   validate(ChatRoomSchemas.params.idParamSchema),
   asyncHandler(
-    async (req: IReqParams<TCharRoomParam>, res: IRes): Promise<void> => {
+    async (req: IReqParams<CharRoomParam>, res: IRes): Promise<void> => {
       const currentUserId = req.user!.id;
       const { chatroomid } = req.params;
 

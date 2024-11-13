@@ -1,19 +1,18 @@
-import { CallbackHandler } from 'supertest';
-import moment from 'moment';
 import logger from 'jet-logger';
+import moment from 'moment';
+import { CallbackHandler } from 'supertest';
 
-import { TApiCb, TRes } from 'spec/types/misc';
-
+import { ApiCb, Res } from 'spec/types/misc';
 
 /**
  * API callback function.
  */
 function apiCb(
-  cb: TApiCb,
+  cb: ApiCb,
   dateParam = 'created',
   printErr?: boolean,
 ): CallbackHandler {
-  return (err: Error, res: TRes) => {
+  return (err: Error, res: Res) => {
     if (printErr) {
       logger.err(err);
     }
@@ -23,14 +22,11 @@ function apiCb(
 }
 
 /**
- * When date objects get sent through supertest they are converted to 
- * iso-strings. This will cause "toEqual()"" tests to fail, so we need to 
+ * When date objects get sent through supertest they are converted to
+ * iso-strings. This will cause "toEqual()"" tests to fail, so we need to
  * convert them back to Date objects.
  */
-function _strToDate(
-  param: unknown,
-  prop: string,
-): void {
+function _strToDate(param: unknown, prop: string): void {
   return _iterate(param, prop);
 }
 
@@ -52,8 +48,8 @@ function _iterate(param: unknown, prop: string): void {
   // Check valid string or Date object. If undefined just skip
   const val = paramF[prop];
   if (
-    (typeof val !== 'undefined') && 
-    !((typeof val === 'string') || (val instanceof Date)) && 
+    typeof val !== 'undefined' &&
+    !(typeof val === 'string' || val instanceof Date) &&
     !moment(val as string | Date).isValid()
   ) {
     throw new Error('Property must be a valid date-string or Date() object');
@@ -69,7 +65,6 @@ function _iterate(param: unknown, prop: string): void {
     }
   }
 }
-
 
 // **** Export default **** //
 

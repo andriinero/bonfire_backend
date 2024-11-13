@@ -1,6 +1,6 @@
 import { ValidationError } from 'express-validator';
 
-export type TErrorData =
+export type ErrorData =
   | { message: string }
   | {
       message: string;

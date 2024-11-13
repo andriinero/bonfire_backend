@@ -9,12 +9,12 @@ import AuthSchemas from './schemas/AuthSchemas';
 import type { IRes } from './types/express/misc';
 import type { IReq } from './types/types';
 
-type TSignInBody = {
+type SignInBody = {
   email: string;
   password: string;
 };
 
-type TSignUpBody = {
+type SignUpBody = {
   username: string;
   email: string;
   password: string;
@@ -33,7 +33,7 @@ const get = [
 
 const sign_in_post = [
   validate(AuthSchemas.body.signInDataSchema),
-  asyncHandler(async (req: IReq<TSignInBody>, res: IRes) => {
+  asyncHandler(async (req: IReq<SignInBody>, res: IRes) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -52,7 +52,7 @@ const sign_in_post = [
 
 const sign_up_post = [
   validate(AuthSchemas.body.signUpDataSchema),
-  asyncHandler(async (req: IReq<TSignUpBody>, res: IRes) => {
+  asyncHandler(async (req: IReq<SignUpBody>, res: IRes) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
