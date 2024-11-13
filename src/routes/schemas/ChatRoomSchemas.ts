@@ -1,13 +1,10 @@
-import { isValidObjectId } from 'mongoose';
 import { z } from 'zod';
 
 import ContactRepo from '@src/repos/ContactRepo';
 
 const idParamSchema = z.object({
   params: z.object({
-    chatroomid: z.string().trim().refine(isValidObjectId, {
-      message: 'Invalid chat room id',
-    }),
+    chatroomid: z.string().trim(),
   }),
 });
 
@@ -19,10 +16,7 @@ const nameBodySchema = z.object({
 
 const userIdBodySchema = z.object({
   body: z.object({
-    userid: z
-      .string()
-      .trim()
-      .refine(isValidObjectId, { message: 'Invalid user id' }),
+    userid: z.string().trim(),
   }),
 });
 

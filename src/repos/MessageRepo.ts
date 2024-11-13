@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import EnvVars from '@src/constants/EnvVars';
 import prisma from '@src/prisma';
-import type { QueryOptions } from '@src/types/TQueryOptions';
+import type { QueryOptions } from '@src/types/QueryOptions';
 
 type WhereQuery = Prisma.MessageWhereInput;
 

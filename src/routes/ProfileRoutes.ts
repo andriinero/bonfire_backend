@@ -20,7 +20,7 @@ const contacts_get_all = [
       req: IReqQuery<{ username: string; limit: string; page: string }>,
       res: IRes,
     ) => {
-      const currentUserId = req.user!._id.toString();
+      const currentUserId = req.user!.id;
       const queryOpts = { limit: +req.query.limit, page: +req.query.page };
 
       const participants = await ProfileService.getContactsById(

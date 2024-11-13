@@ -3,7 +3,7 @@ import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { RouteError } from '@src/other/classes';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import ContactRepo from '@src/repos/ContactRepo';
-import type { QueryOptions } from '@src/types/TQueryOptions';
+import type { QueryOptions } from '@src/types/QueryOptions';
 import { getRandomColorClass } from '@src/util/getRandomColorClass';
 
 import MessageService from './MessageService';

@@ -1,6 +1,6 @@
 import EnvVars from '@src/constants/EnvVars';
 import prisma from '@src/prisma';
-import type { QueryOptions } from '@src/types/TQueryOptions';
+import type { QueryOptions } from '@src/types/QueryOptions';
 
 const getAllByChatRoomId = async (chatRoomId: string, opts?: QueryOptions) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;

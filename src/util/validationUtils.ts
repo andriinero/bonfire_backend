@@ -1,4 +1,3 @@
-import { isValidObjectId } from 'mongoose';
 import { z } from 'zod';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
@@ -44,10 +43,7 @@ const usernameOwnership = (fieldName: string) =>
 
 const userIdParamSchema = z.object({
   params: z.object({
-    userid: z
-      .string()
-      .trim()
-      .refine(isValidObjectId, { message: 'User id must be valid' }),
+    userid: z.string().trim(),
   }),
 });
 

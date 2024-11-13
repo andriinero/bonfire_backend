@@ -4,7 +4,7 @@ import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { RouteError } from '@src/other/classes';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import MessageRepo, { UpdateMessageData } from '@src/repos/MessageRepo';
-import type { QueryOptions } from '@src/types/TQueryOptions';
+import type { QueryOptions } from '@src/types/QueryOptions';
 import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
 
 export const MESSAGE_NOT_FOUND_ERR = 'Message not found';

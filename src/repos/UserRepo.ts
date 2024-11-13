@@ -1,15 +1,15 @@
 import { Prisma } from '@prisma/client';
 import EnvVars from '@src/constants/EnvVars';
 import prisma from '@src/prisma';
-import type { QueryOptions } from '@src/types/TQueryOptions';
+import { QueryOptions } from '@src/types/QueryOptions';
 
 type WhereQuery = Prisma.UserWhereInput;
 
 type WhereUniqueQuery = Prisma.UserWhereUniqueInput;
 
-type CreateData = Prisma.UserCreateInput;
+type CreateData = Prisma.Args<typeof prisma.user, 'create'>['data'];
 
-type UpdateData = Prisma.UserUpdateInput;
+type UpdateData = Prisma.Args<typeof prisma.user, 'update'>['data'];
 
 const getAll = async (query: WhereQuery, opts?: QueryOptions) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;

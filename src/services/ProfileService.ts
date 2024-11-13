@@ -3,7 +3,7 @@ import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { RouteError } from '@src/other/classes';
 import ContactRepo from '@src/repos/ContactRepo';
 import UserRepo from '@src/repos/UserRepo';
-import type { QueryOptions } from '@src/types/TQueryOptions';
+import type { QueryOptions } from '@src/types/QueryOptions';
 import { USER_NOT_FOUND_ERR } from './AuthService';
 
 const CONTACT_EXISTS_ERROR = 'Contact with this id already exists';

@@ -47,7 +47,10 @@ const sign_in_post = [
         .json(formatValidationErrors(errors));
     } else {
       const { email, password } = req.body;
+
       const token = await AuthService.signIn(email, password);
+      // FIXME: remove comment
+      console.log(token);
 
       res.status(HttpStatusCodes.OK).json({ message: 'Success', token });
     }
@@ -64,9 +67,11 @@ const sign_up_post = [
         .status(HttpStatusCodes.BAD_REQUEST)
         .json(formatValidationErrors(errors));
     } else {
-      const { ...signUpBody } = req.body;
+      const { username, email, password } = req.body;
 
-      await AuthService.signUp(signUpBody);
+      const signUpData = { username, email, password };
+
+      await AuthService.signUp(signUpData);
 
       res
         .status(HttpStatusCodes.CREATED)
