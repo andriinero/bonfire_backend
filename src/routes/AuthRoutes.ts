@@ -23,17 +23,17 @@ type TSignUpBody = {
 
 const get = [
   authenticateJwt,
-  (req: IReq, res: IRes): void => {
+  asyncHandler(async (req: IReq, res: IRes) => {
     const userId = req.user!.id;
-    const data = AuthService.getAuthData(userId);
+    const data = await AuthService.getAuthData(userId);
 
     res.status(HttpStatusCodes.OK).json(data);
-  },
+  }),
 ];
 
 const sign_in_post = [
   validate(AuthSchemas.body.signInDataSchema),
-  asyncHandler(async (req: IReq<TSignInBody>, res: IRes): Promise<void> => {
+  asyncHandler(async (req: IReq<TSignInBody>, res: IRes) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {

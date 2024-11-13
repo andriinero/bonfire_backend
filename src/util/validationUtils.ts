@@ -49,8 +49,8 @@ const userIdParamSchema = z.object({
 
 const defaultQueriesSchema = z.object({
   query: z.object({
-    limit: z.string().default('25'),
-    page: z.string().default('0'),
+    limit: z.number().default(25),
+    page: z.number().default(0),
   }),
 });
 
