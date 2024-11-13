@@ -34,15 +34,15 @@ const getAuthData = async (userId: string): Promise<AuthPayload> => {
   if (!user)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
 
-  const { id, username, email, role, profile_image, color_class } = user;
+  const { id, username, email, role, profileImage, colorClass } = user;
 
   return {
     sub: id,
     username,
     email,
     role,
-    profile_image,
-    color_class,
+    profile_image: profileImage,
+    color_class: colorClass,
   };
 };
 
@@ -60,8 +60,8 @@ const signIn = async (email: string, password: string) => {
     username: user.username,
     email: user.email,
     role: user.role,
-    profile_image: user.profile_image,
-    color_class: user.color_class as ColorClass,
+    profile_image: user.profileImage,
+    color_class: user.colorClass as ColorClass,
   };
 
   const token = jwt.sign(jwtPayload, EnvVars.Jwt.SECRET, {
@@ -80,9 +80,9 @@ const signUp = async (signUpData: SignUpData) => {
     ...signUpData,
     password: hashedPassword,
     created: new Date(),
-    role: 'user' as const,
-    is_online: false,
-    color_class: getRandomColorClass(),
+    role: 'USER' as const,
+    isOnline: false,
+    colorClass: getRandomColorClass(),
   };
 
   await UserRepo.createOne(userDetails);

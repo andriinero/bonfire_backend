@@ -43,7 +43,7 @@ const message_post = [
       const currentUserId = req.user!._id;
 
       const messageDetails = {
-        chat_room: chatroomid,
+        chatroom: chatroomid,
         user: currentUserId,
         body,
         reply,

@@ -1,7 +1,6 @@
 import { Prisma } from '@prisma/client';
 import EnvVars from '@src/constants/EnvVars';
 import type { TMessageSchema } from '@src/models/Message';
-import Message from '@src/models/Message';
 import prisma from '@src/prisma';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 
@@ -9,9 +8,15 @@ type WhereQuery = Prisma.MessageWhereInput;
 
 type WhereUniqueQuery = Prisma.MessageWhereUniqueInput;
 
-type CreateData = Prisma.MessageCreateInput;
+export type CreateMessageData = Prisma.Args<
+  typeof prisma.message,
+  'create'
+>['data'];
 
-type UpdateData = Prisma.MessageUpdateInput;
+export type UpdateMessageData = Prisma.Args<
+  typeof prisma.message,
+  'update'
+>['data'];
 
 const getAll = async (
   query: WhereQuery,
@@ -35,14 +40,14 @@ const getOne = async (query: WhereQuery) => {
   return message;
 };
 
-const createOne = async (data: CreateData) => {
+const createOne = async (data: CreateMessageData) => {
   const createdMessage = await prisma.message.create({ data });
 
   return createdMessage;
 };
 
-const updateOne = async (query: WhereUniqueQuery, data: UpdateData) => {
-  await Message.findOneAndUpdate(query, data, { runValidators: true });
+const updateOne = async (query: WhereUniqueQuery, data: UpdateMessageData) => {
+  await prisma.message.update({ where: query, data });
 };
 
 const deleteOne = async (query: WhereUniqueQuery) => {

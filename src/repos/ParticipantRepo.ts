@@ -1,7 +1,5 @@
-import prisma from '@src/prisma';
-
 import EnvVars from '@src/constants/EnvVars';
-
+import prisma from '@src/prisma';
 import type { TUserDTO } from '@src/repos/UserRepo';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 

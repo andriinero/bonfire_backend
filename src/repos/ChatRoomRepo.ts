@@ -1,9 +1,7 @@
 import { Prisma } from '@prisma/client';
-import prisma from '@src/prisma';
-
 import EnvVars from '@src/constants/EnvVars';
-
 import type { TChatRoomSchema } from '@src/models/ChatRoom';
+import prisma from '@src/prisma';
 import type { TQueryOptions } from '@src/types/TQueryOptions';
 
 type WhereQuery = Prisma.ChatroomWhereInput;
