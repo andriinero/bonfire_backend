@@ -22,13 +22,13 @@ const userIdBodySchema = z.object({
 
 const contactIdsExistence = z
   .object({
-    user: z.object({ _id: z.any() }),
+    user: z.object({ id: z.any() }),
     body: z.object({
       userIds: z.string().array(),
     }),
   })
   .refine(async (req) => {
-    const currentUserId = req.user._id.toString();
+    const currentUserId = req.user.id;
     const userWithContacts = await ContactRepo.hasContactsWithIds(
       currentUserId,
       req.body.userIds,

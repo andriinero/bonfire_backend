@@ -7,17 +7,17 @@ type WhereQuery = Prisma.MessageWhereInput;
 
 type WhereUniqueQuery = Prisma.MessageWhereUniqueInput;
 
-export type CreateMessageData = Prisma.Args<
-  typeof prisma.message,
-  'create'
->['data'];
+export type CreateMessageData = Prisma.MessageCreateInput;
 
-export type UpdateMessageData = Prisma.Args<
-  typeof prisma.message,
-  'update'
->['data'];
+export type OrderMessageData = Prisma.MessageOrderByWithRelationInput;
 
-const getAll = async (query: WhereQuery, opts?: QueryOptions) => {
+export type UpdateMessageData = Prisma.MessageUpdateInput;
+
+const getAll = async (
+  query: WhereQuery,
+  opts?: QueryOptions,
+  orderBy?: OrderMessageData,
+) => {
   const limit = opts?.limit;
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
 
@@ -25,6 +25,7 @@ const getAll = async (query: WhereQuery, opts?: QueryOptions) => {
     where: query,
     take: limit,
     skip,
+    orderBy,
   });
 
   return messages;

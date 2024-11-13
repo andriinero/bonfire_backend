@@ -7,7 +7,7 @@ type WhereQuery = Prisma.ChatroomWhereInput;
 
 type WhereUniqueQuery = Prisma.ChatroomWhereUniqueInput;
 
-type CreateData = Prisma.ChatroomCreateInput;
+type CreateData = Prisma.Args<typeof prisma.chatroom, 'create'>['data'];
 
 const getAll = async (query: WhereQuery, opts?: QueryOptions) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
@@ -32,7 +32,7 @@ const getOneById = async (chatRoomId: string) => {
 
 const getOneByUserId = async (chatRoomId: string, userId: string) => {
   const chatRoom = await prisma.chatroom.findFirst({
-    where: { id: chatRoomId, participtants: { some: { id: userId } } },
+    where: { id: chatRoomId, participants: { some: { id: userId } } },
   });
 
   return chatRoom;
@@ -52,7 +52,7 @@ const persists = async (query: WhereUniqueQuery) => {
 
 const getCountByUserId = async (userId: string) => {
   const count = await prisma.chatroom.count({
-    where: { participtants: { some: { id: userId } } },
+    where: { participants: { some: { id: userId } } },
   });
 
   return count;

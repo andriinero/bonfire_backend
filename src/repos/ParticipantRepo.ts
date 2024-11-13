@@ -8,29 +8,29 @@ const getAllByChatRoomId = async (chatRoomId: string, opts?: QueryOptions) => {
 
   const chatRoom = await prisma.chatroom.findUnique({
     where: { id: chatRoomId },
-    select: { participtants: { take: limit, skip } },
+    select: { participants: { take: limit, skip } },
   });
 
-  return chatRoom?.participtants ?? [];
+  return chatRoom?.participants ?? [];
 };
 
 const addById = async (userId: string, chatRoomId: string) => {
   await prisma.chatroom.update({
     where: { id: chatRoomId },
-    data: { participtants: { connect: { id: userId } } },
+    data: { participants: { connect: { id: userId } } },
   });
 };
 
 const removeById = async (userId: string, chatRoomId: string) => {
   await prisma.chatroom.update({
     where: { id: chatRoomId },
-    data: { participtants: { disconnect: { id: userId } } },
+    data: { participants: { disconnect: { id: userId } } },
   });
 };
 
 const persistsInChatRoomById = async (userId: string, chatRoomId: string) => {
   const participant = await prisma.chatroom.findUnique({
-    where: { id: chatRoomId, participtants: { some: { id: userId } } },
+    where: { id: chatRoomId, participants: { some: { id: userId } } },
   });
 
   return !!participant;
@@ -39,10 +39,10 @@ const persistsInChatRoomById = async (userId: string, chatRoomId: string) => {
 const getCountById = async (chatRoomId: string) => {
   const chatRoom = await prisma.chatroom.findUnique({
     where: { id: chatRoomId },
-    select: { participtants: true },
+    select: { participants: true },
   });
 
-  return chatRoom ? chatRoom.participtants.length : 0;
+  return chatRoom ? chatRoom.participants.length : 0;
 };
 
 export default {

@@ -12,7 +12,7 @@ export const CHAT_ROOM_NOT_FOUND_ERR = 'Chat room not found';
 
 const getByUserId = async (userId: string, queryOpts?: QueryOptions) => {
   const allChatRooms = await ChatRoomRepo.getAll(
-    { participtants: { some: { id: userId } } },
+    { participants: { some: { id: userId } } },
     queryOpts,
   );
 
@@ -36,7 +36,11 @@ const createOne = async (currentUserUserId: string, userIds: string[]) => {
     throw new RouteError(HttpStatusCodes.NOT_FOUND, 'Contacts not found');
 
   const chatRoomDetails = {
-    participants: [currentUserUserId, ...userIds],
+    participants: {
+      connect: [currentUserUserId, ...userIds].map((participantId) => ({
+        id: participantId,
+      })),
+    },
     created: new Date(),
     colorClass: getRandomColorClass(),
   };

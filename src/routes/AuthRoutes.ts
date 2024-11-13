@@ -7,7 +7,7 @@ import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
 import AuthSchemas from './schemas/AuthSchemas';
 import type { IRes } from './types/express/misc';
-import type { IReq } from './types/types';
+import type { Req } from './types/types';
 
 type SignInBody = {
   email: string;
@@ -23,7 +23,7 @@ type SignUpBody = {
 
 const get = [
   authenticateJwt,
-  asyncHandler(async (req: IReq, res: IRes) => {
+  asyncHandler(async (req: Req, res: IRes) => {
     const userId = req.user!.id;
     const data = await AuthService.getAuthData(userId);
 
@@ -33,7 +33,7 @@ const get = [
 
 const sign_in_post = [
   validate(AuthSchemas.body.signInDataSchema),
-  asyncHandler(async (req: IReq<SignInBody>, res: IRes) => {
+  asyncHandler(async (req: Req<SignInBody>, res: IRes) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -52,7 +52,7 @@ const sign_in_post = [
 
 const sign_up_post = [
   validate(AuthSchemas.body.signUpDataSchema),
-  asyncHandler(async (req: IReq<SignUpBody>, res: IRes) => {
+  asyncHandler(async (req: Req<SignUpBody>, res: IRes) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {

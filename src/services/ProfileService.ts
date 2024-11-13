@@ -8,6 +8,8 @@ import { USER_NOT_FOUND_ERR } from './AuthService';
 
 const CONTACT_EXISTS_ERROR = 'Contact with this id already exists';
 
+type GetOptions = { username?: string } & QueryOptions;
+
 // ONLINE STATUS //
 
 const updateOnlineStatus = async (userId: string, isOnline: boolean) => {
@@ -21,8 +23,14 @@ const updateOnlineStatus = async (userId: string, isOnline: boolean) => {
 
 // CONTACTS //
 
-const getContactsById = async (userId: string, opts: QueryOptions) => {
-  const contacts = await ContactRepo.getAll({ id: userId }, opts);
+const getContactsById = async (userId: string, queryOpts?: GetOptions) => {
+  const queriedUsername = queryOpts?.username;
+
+  const contacts = await ContactRepo.getAll(
+    userId,
+    { username: { contains: queriedUsername, mode: 'insensitive' } },
+    queryOpts,
+  );
 
   return contacts;
 };

@@ -17,7 +17,9 @@ const getAllByChatRoomId = async (
   if (!persists)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
 
-  const messages = await MessageRepo.getAll({ chatRoomId }, queryOpts);
+  const messages = await MessageRepo.getAll({ chatRoomId }, queryOpts, {
+    created: 'desc',
+  });
 
   return messages;
 };
@@ -31,12 +33,16 @@ const getOneById = async (id: string) => {
 };
 
 const createUserMessage = async (data: {
-  body: string;
+  userId: string;
   chatRoomId: string;
+  body: string;
 }) => {
+  const { userId, chatRoomId, body } = data;
+
   const messageData = {
-    ...data,
-    created: new Date(),
+    user: { connect: { id: userId } },
+    chatroom: { connect: { id: chatRoomId } },
+    body,
     type: MessageType.MESSAGE,
   };
 
@@ -46,12 +52,14 @@ const createUserMessage = async (data: {
 };
 
 const createActionMessage = async (data: {
-  body: string;
   chatRoomId: string;
+  body: string;
 }) => {
+  const { chatRoomId, body } = data;
+
   const messageDetails = {
-    ...data,
-    created: new Date(),
+    chatroom: { connect: { id: chatRoomId } },
+    body,
     type: MessageType.ACTION,
   };
 

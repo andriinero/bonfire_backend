@@ -5,15 +5,17 @@ import type { QueryOptions } from '@src/types/QueryOptions';
 
 type WhereQuery = Prisma.UserWhereInput;
 
-const getAll = async (query: WhereQuery, opts?: QueryOptions) => {
+const getAll = async (
+  userId: string,
+  query: WhereQuery,
+  opts?: QueryOptions,
+) => {
   const limit = opts?.limit ?? 0;
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
 
   const user = await prisma.user.findFirst({
-    where: query,
-    take: limit,
-    skip: skip,
-    select: { contacts: true },
+    where: { id: userId },
+    select: { contacts: { where: query, take: limit, skip: skip } },
   });
 
   return user?.contacts;

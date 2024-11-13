@@ -3,9 +3,8 @@ import { authenticateJwt } from '@src/middlewares/authentication';
 import MessageService from '@src/services/MessageService';
 import validationUtils, { validate } from '@src/util/validationUtils';
 import asyncHandler from 'express-async-handler';
-import ChatRoomValidation from './schemas/ChatRoomSchemas';
 import type { IRes } from './types/express/misc';
-import type { IReqParams } from './types/types';
+import type { ReqParams } from './types/types';
 
 type MessagePostData = {
   user: string;
@@ -15,9 +14,8 @@ type MessagePostData = {
 
 const message_get_all = [
   authenticateJwt,
-  validate(ChatRoomValidation.params.idParamSchema),
-  validate(validationUtils.queries.defaultQueriesSchema),
-  asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
+  validate(validationUtils.queries.pageQueriesSchema),
+  asyncHandler(async (req: ReqParams<{ chatroomid: string }>, res: IRes) => {
     const { chatroomid } = req.params;
     const opts = req.query;
 
@@ -31,18 +29,17 @@ const message_post = [
   authenticateJwt,
   asyncHandler(
     async (
-      req: IReqParams<{ chatroomid: string }, MessagePostData>,
+      req: ReqParams<{ chatroomid: string }, MessagePostData>,
       res: IRes,
     ) => {
-      const { chatroomid } = req.params;
-      const { body, reply } = req.body;
       const currentUserId = req.user!.id;
+      const { chatroomid } = req.params;
+      const { body } = req.body;
 
       const messageDetails = {
         chatRoomId: chatroomid,
-        user: currentUserId,
+        userId: currentUserId,
         body,
-        reply,
       };
 
       const result = await MessageService.createUserMessage(messageDetails);
@@ -54,7 +51,7 @@ const message_post = [
 
 const message_page_count = [
   authenticateJwt,
-  asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
+  asyncHandler(async (req: ReqParams<{ chatroomid: string }>, res: IRes) => {
     const { chatroomid } = req.params;
 
     const count = await MessageService.getPageCountByChatRoomId(chatroomid);

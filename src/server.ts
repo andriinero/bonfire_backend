@@ -21,7 +21,7 @@ import type { StrategyOptionsWithoutRequest } from 'passport-jwt';
 import HttpStatusCodes from './constants/HttpStatusCodes';
 import { RouteError } from './other/classes';
 import { IRes } from './routes/types/express/misc';
-import { IReq } from './routes/types/types';
+import { Req } from './routes/types/types';
 
 import socketManager from './listeners/socketManager';
 
@@ -87,7 +87,7 @@ app.use(Paths.Base, messageRouter);
 app.use(Paths.Base, profileRouter);
 
 // Add error handler
-app.use((err: Error, req: IReq, res: IRes, next: NextFunction) => {
+app.use((err: Error, req: Req, res: IRes, next: NextFunction) => {
   if (EnvVars.NodeEnv !== NodeEnvs.Test.valueOf()) {
     logger.err(err, true);
   }

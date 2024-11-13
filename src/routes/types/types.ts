@@ -19,16 +19,16 @@ export interface ISocket
   };
 }
 
-export interface IReq<T = void> extends e.Request {
+export interface Req<T = void> extends e.Request {
   body: T;
 }
 
-export interface IReqQuery<T extends Query, U = void> extends e.Request {
+export interface ReqQuery<T extends Query, U = void> extends e.Request {
   query: T;
   body: U;
 }
 
-export interface IReqParams<T extends ParamsDictionary, U = void>
+export interface ReqParams<T extends ParamsDictionary, U = void>
   extends e.Request {
   params: T;
   body: U;

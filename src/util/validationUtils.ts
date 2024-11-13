@@ -2,18 +2,18 @@ import { z } from 'zod';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { IRes } from '@src/routes/types/express/misc';
-import { IReq } from '@src/routes/types/types';
+import { Req } from '@src/routes/types/types';
 import type { NextFunction } from 'express';
 import type { AnyZodObject, ZodEffects } from 'zod';
 
 export const validate =
   (schema: AnyZodObject | ZodEffects<AnyZodObject>) =>
-  async (req: IReq, res: IRes, next: NextFunction) => {
+  async (req: Req, res: IRes, next: NextFunction) => {
     try {
       const validationResult = await schema.parseAsync(req);
       for (const [key, value] of Object.entries(validationResult)) {
         //@ts-expect-error incorrect type inferring
-        req[key] = value;
+        req[key] = { ...req[key], ...value };
       }
       next();
     } catch (error) {
@@ -47,7 +47,7 @@ const userIdParamSchema = z.object({
   }),
 });
 
-const defaultQueriesSchema = z.object({
+const pageQueriesSchema = z.object({
   query: z.object({
     limit: z
       .string()
@@ -62,7 +62,7 @@ const defaultQueriesSchema = z.object({
 
 const params = { userIdParamSchema };
 
-const queries = { defaultQueriesSchema };
+const queries = { pageQueriesSchema };
 
 export default {
   params,

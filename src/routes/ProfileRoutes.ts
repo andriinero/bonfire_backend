@@ -1,27 +1,27 @@
-import asyncHandler from 'express-async-handler';
-
-import { authenticateJwt } from '@src/middlewares/authentication';
-
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import type { IRes } from './types/express/misc';
-import type { IReq, IReqParams, IReqQuery } from './types/types';
-
+import { authenticateJwt } from '@src/middlewares/authentication';
 import ProfileService from '@src/services/ProfileService';
-
 import validationUtils, { validate } from '@src/util/validationUtils';
+import asyncHandler from 'express-async-handler';
+import type { IRes } from './types/express/misc';
+import type { Req, ReqParams, ReqQuery } from './types/types';
 
 // CONTACTS //
 
 const contacts_get_all = [
   authenticateJwt,
-  validate(validationUtils.queries.defaultQueriesSchema),
+  validate(validationUtils.queries.pageQueriesSchema),
   asyncHandler(
     async (
-      req: IReqQuery<{ username: string; limit: string; page: string }>,
+      req: ReqQuery<{ username: string; limit: string; page: string }>,
       res: IRes,
     ) => {
       const currentUserId = req.user!.id;
-      const queryOpts = { limit: +req.query.limit, page: +req.query.page };
+      const queryOpts = {
+        username: req.query.username,
+        limit: +req.query.limit,
+        page: +req.query.page,
+      };
 
       const participants = await ProfileService.getContactsById(
         currentUserId,
@@ -35,7 +35,7 @@ const contacts_get_all = [
 
 const contact_post = [
   authenticateJwt,
-  asyncHandler(async (req: IReq<{ contactUsername: string }>, res: IRes) => {
+  asyncHandler(async (req: Req<{ contactUsername: string }>, res: IRes) => {
     const currentUserId = req.user!.id;
     const { contactUsername } = req.body;
 
@@ -48,7 +48,7 @@ const contact_post = [
 const contacts_delete = [
   authenticateJwt,
   validate(validationUtils.params.userIdParamSchema),
-  asyncHandler(async (req: IReqParams<{ userid: string }>, res: IRes) => {
+  asyncHandler(async (req: ReqParams<{ userid: string }>, res: IRes) => {
     const currentUserId = req.user!.id;
     const { userid } = req.params;
 
@@ -63,7 +63,7 @@ const contacts_delete = [
 
 const contacts_page_count = [
   authenticateJwt,
-  asyncHandler(async (req: IReq, res: IRes) => {
+  asyncHandler(async (req: Req, res: IRes) => {
     const currentUserId = req.user!.id;
 
     const count = await ProfileService.getContactPageCount(currentUserId);
