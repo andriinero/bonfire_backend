@@ -1,8 +1,7 @@
+import { MessageType } from '@prisma/client';
+import type { ISocket } from '@src/routes/types/types';
 import logger from 'jet-logger';
 import { v4 as uuidv4 } from 'uuid';
-
-import { MessageType } from '@src/models/Message';
-import type { ISocket } from '@src/routes/types/types';
 
 type ReceivedMessage = {
   chatRoomId: string;

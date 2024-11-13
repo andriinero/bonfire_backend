@@ -23,11 +23,10 @@ import { RouteError } from './other/classes';
 import { IRes } from './routes/types/express/misc';
 import { IReq } from './routes/types/types';
 
-import User from './models/User';
-
 import socketManager from './listeners/socketManager';
 
 import AuthRouter from '@src/routes/api/AuthAPI';
+import UserRepo from './repos/UserRepo';
 import ChatRoomRouter from './routes/api/ChatRoomAPI';
 import messageRouter from './routes/api/MessageAPI';
 import profileRouter from './routes/api/ProfileAPI';
@@ -68,7 +67,7 @@ const strategyOpts: StrategyOptionsWithoutRequest = {
 passport.use(
   new JWTStrategy(strategyOpts, async (jwt_payload: { sub: string }, done) => {
     try {
-      const user = await User.findOne({ _id: jwt_payload.sub }).exec();
+      const user = await UserRepo.getOne({ id: jwt_payload.sub });
 
       if (user) {
         return done(null, user);

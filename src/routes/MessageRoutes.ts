@@ -1,17 +1,13 @@
-import asyncHandler from 'express-async-handler';
-
-import { authenticateJwt } from '@src/middlewares/authentication';
-
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
+import { authenticateJwt } from '@src/middlewares/authentication';
+import MessageService from '@src/services/MessageService';
+import validationUtils, { validate } from '@src/util/validationUtils';
+import asyncHandler from 'express-async-handler';
+import ChatRoomValidation from './schemas/ChatRoomSchemas';
 import type { IRes } from './types/express/misc';
 import type { IReqParams } from './types/types';
 
-import MessageService from '@src/services/MessageService';
-
-import validationUtils, { validate } from '@src/util/validationUtils';
-import ChatRoomValidation from './schemas/ChatRoomSchemas';
-
-type TMessagePostBody = {
+type MessagePostData = {
   user: string;
   body: string;
   reply: string;
@@ -35,12 +31,12 @@ const message_post = [
   authenticateJwt,
   asyncHandler(
     async (
-      req: IReqParams<{ chatroomid: string }, TMessagePostBody>,
+      req: IReqParams<{ chatroomid: string }, MessagePostData>,
       res: IRes,
     ) => {
       const { chatroomid } = req.params;
       const { body, reply } = req.body;
-      const currentUserId = req.user!._id;
+      const currentUserId = req.user!.id;
 
       const messageDetails = {
         chatRoomId: chatroomid,

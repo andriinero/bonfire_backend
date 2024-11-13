@@ -1,18 +1,13 @@
-import asyncHandler from 'express-async-handler';
-
-import { authenticateJwt } from '@src/middlewares/authentication';
-import { formatValidationErrors } from '@src/util/misc';
-import { validationResult } from 'express-validator';
-
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-
+import { authenticateJwt } from '@src/middlewares/authentication';
+import AuthService from '@src/services/AuthService';
+import { formatValidationErrors } from '@src/util/misc';
+import { validate } from '@src/util/validationUtils';
+import asyncHandler from 'express-async-handler';
+import { validationResult } from 'express-validator';
+import AuthSchemas from './schemas/AuthSchemas';
 import type { IRes } from './types/express/misc';
 import type { IReq } from './types/types';
-
-import AuthService from '@src/services/AuthService';
-
-import { validate } from '@src/util/validationUtils';
-import AuthSchemas from './schemas/AuthSchemas';
 
 type TSignInBody = {
   email: string;
@@ -29,7 +24,7 @@ type TSignUpBody = {
 const get = [
   authenticateJwt,
   (req: IReq, res: IRes): void => {
-    const userId = req.user!._id.toString();
+    const userId = req.user!.id;
     const data = AuthService.getAuthData(userId);
 
     res.status(HttpStatusCodes.OK).json(data);
@@ -49,8 +44,6 @@ const sign_in_post = [
       const { email, password } = req.body;
 
       const token = await AuthService.signIn(email, password);
-      // FIXME: remove comment
-      console.log(token);
 
       res.status(HttpStatusCodes.OK).json({ message: 'Success', token });
     }

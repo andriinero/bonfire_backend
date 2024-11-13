@@ -1,4 +1,4 @@
-import type { TUserSchema } from '@src/models/User';
+import { User } from '@prisma/client';
 import type { Response } from 'supertest';
 
 // Misc
@@ -10,6 +10,6 @@ export type TApiCb = (res: TRes) => void;
 // typescript errors.
 type TBody = {
   [key: string]: unknown;
-  user?: TUserSchema;
-  users?: TUserSchema[];
+  user?: User;
+  users?: User[];
 };

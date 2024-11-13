@@ -20,7 +20,7 @@ const chat_room_get_all = [
   authenticateJwt,
   validate(validationUtils.queries.defaultQueriesSchema),
   asyncHandler(async (req: IReq, res: IRes): Promise<void> => {
-    const currentUserId = req.user!._id.toString();
+    const currentUserId = req.user!.id;
     const query = req.query;
 
     const allChatRooms = await ChatRoomService.getByUserId(
@@ -37,7 +37,7 @@ const chat_room_get_one = [
   validate(ChatRoomSchemas.params.idParamSchema),
   asyncHandler(
     async (req: IReqParams<TCharRoomParam>, res: IRes): Promise<void> => {
-      const currentUserId = req.user!._id;
+      const currentUserId = req.user!.id;
       const { chatroomid } = req.params;
 
       const allChatRooms = await ChatRoomService.getById(
@@ -54,7 +54,7 @@ const chat_room_post = [
   authenticateJwt,
   validate(ChatRoomSchemas.body.contactIdsExistence),
   asyncHandler(async (req: IReq<{ userIds: string[] }>, res: IRes) => {
-    const currentUserId = req.user!._id.toString();
+    const currentUserId = req.user!.id;
     const { userIds } = req.body;
 
     await ChatRoomService.createOne(currentUserId, userIds);
@@ -66,7 +66,7 @@ const chat_room_post = [
 const chat_room_page_count = [
   authenticateJwt,
   asyncHandler(async (req: IReq, res: IRes) => {
-    const currentUserId = req.user!._id;
+    const currentUserId = req.user!.id;
 
     const count = await ChatRoomService.getPageCount(currentUserId.toString());
 
@@ -115,12 +115,12 @@ const participant_delete = [
   authenticateJwt,
   validate(ChatRoomSchemas.params.idParamSchema),
   asyncHandler(async (req: IReqParams<{ chatroomid: string }>, res: IRes) => {
-    const { _id, username } = req.user!;
+    const { id, username } = req.user!;
     const { chatroomid } = req.params;
 
     await ParticipantService.removeParticipant({
       currentUsername: username,
-      userId: _id.toString(),
+      userId: id,
       chatRoomId: chatroomid,
     });
 

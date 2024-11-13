@@ -1,6 +1,8 @@
 import 'express';
 
-import type { TUserSchemaDocument } from '@src/models/User';
+import { User } from '@prisma/client';
+
+type PrismaUser = User;
 
 // **** Declaration Merging **** //
 
@@ -12,6 +14,6 @@ declare module 'express' {
 
 declare global {
   namespace Express {
-    export interface User extends TUserSchemaDocument {}
+    export interface User extends PrismaUser {}
   }
 }

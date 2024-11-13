@@ -36,7 +36,7 @@ const contacts_get_all = [
 const contact_post = [
   authenticateJwt,
   asyncHandler(async (req: IReq<{ contactUsername: string }>, res: IRes) => {
-    const currentUserId = req.user!._id.toString();
+    const currentUserId = req.user!.id;
     const { contactUsername } = req.body;
 
     await ProfileService.createContact(currentUserId, contactUsername);
@@ -49,7 +49,7 @@ const contacts_delete = [
   authenticateJwt,
   validate(validationUtils.params.userIdParamSchema),
   asyncHandler(async (req: IReqParams<{ userid: string }>, res: IRes) => {
-    const currentUserId = req.user!._id.toString();
+    const currentUserId = req.user!.id;
     const { userid } = req.params;
 
     const participants = await ProfileService.deleteContact(
@@ -64,7 +64,7 @@ const contacts_delete = [
 const contacts_page_count = [
   authenticateJwt,
   asyncHandler(async (req: IReq, res: IRes) => {
-    const currentUserId = req.user!._id.toString();
+    const currentUserId = req.user!.id;
 
     const count = await ProfileService.getContactPageCount(currentUserId);
 
