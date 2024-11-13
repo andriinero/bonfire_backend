@@ -29,7 +29,7 @@ export const validate =
     }
   };
 
-const usernameOwnership = (fieldName: string) =>
+const notSelectingYourself = (fieldName: string) =>
   z
     .object({
       user: z.object({ username: z.string() }),
@@ -47,7 +47,7 @@ const userIdParamSchema = z.object({
   }),
 });
 
-const pageQueriesSchema = z.object({
+const paginationQueriesSchema = z.object({
   query: z.object({
     limit: z
       .string()
@@ -62,11 +62,11 @@ const pageQueriesSchema = z.object({
 
 const params = { userIdParamSchema };
 
-const queries = { pageQueriesSchema };
+const queries = { paginationQueriesSchema };
 
 export default {
   params,
   queries,
   validate,
-  usernameOwnership,
+  usernameOwnership: notSelectingYourself,
 } as const;

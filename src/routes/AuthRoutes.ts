@@ -1,12 +1,11 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { authenticateJwt } from '@src/middlewares/authentication';
+import { authenticate } from '@src/middlewares/authentication';
 import AuthService from '@src/services/AuthService';
 import { formatValidationErrors } from '@src/util/misc';
 import { validate } from '@src/util/validationUtils';
 import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
 import AuthSchemas from './schemas/AuthSchemas';
-import type { IRes } from './types/express/misc';
 import type { Req } from './types/types';
 
 type SignInBody = {
@@ -22,8 +21,8 @@ type SignUpBody = {
 };
 
 const get = [
-  authenticateJwt,
-  asyncHandler(async (req: Req, res: IRes) => {
+  authenticate,
+  asyncHandler(async (req: Req, res) => {
     const userId = req.user!.id;
     const data = await AuthService.getAuthData(userId);
 
@@ -33,7 +32,7 @@ const get = [
 
 const sign_in_post = [
   validate(AuthSchemas.body.signInDataSchema),
-  asyncHandler(async (req: Req<SignInBody>, res: IRes) => {
+  asyncHandler(async (req: Req<SignInBody>, res) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -52,7 +51,7 @@ const sign_in_post = [
 
 const sign_up_post = [
   validate(AuthSchemas.body.signUpDataSchema),
-  asyncHandler(async (req: Req<SignUpBody>, res: IRes) => {
+  asyncHandler(async (req: Req<SignUpBody>, res) => {
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {

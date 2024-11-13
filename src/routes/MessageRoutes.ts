@@ -1,9 +1,8 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { authenticateJwt } from '@src/middlewares/authentication';
+import { authenticate } from '@src/middlewares/authentication';
 import MessageService from '@src/services/MessageService';
 import validationUtils, { validate } from '@src/util/validationUtils';
 import asyncHandler from 'express-async-handler';
-import type { IRes } from './types/express/misc';
 import type { ReqParams } from './types/types';
 
 type MessagePostData = {
@@ -13,9 +12,9 @@ type MessagePostData = {
 };
 
 const message_get_all = [
-  authenticateJwt,
-  validate(validationUtils.queries.pageQueriesSchema),
-  asyncHandler(async (req: ReqParams<{ chatroomid: string }>, res: IRes) => {
+  authenticate,
+  validate(validationUtils.queries.paginationQueriesSchema),
+  asyncHandler(async (req: ReqParams<{ chatroomid: string }>, res) => {
     const { chatroomid } = req.params;
     const opts = req.query;
 
@@ -26,12 +25,9 @@ const message_get_all = [
 ];
 
 const message_post = [
-  authenticateJwt,
+  authenticate,
   asyncHandler(
-    async (
-      req: ReqParams<{ chatroomid: string }, MessagePostData>,
-      res: IRes,
-    ) => {
+    async (req: ReqParams<{ chatroomid: string }, MessagePostData>, res) => {
       const currentUserId = req.user!.id;
       const { chatroomid } = req.params;
       const { body } = req.body;
@@ -50,8 +46,8 @@ const message_post = [
 ];
 
 const message_page_count = [
-  authenticateJwt,
-  asyncHandler(async (req: ReqParams<{ chatroomid: string }>, res: IRes) => {
+  authenticate,
+  asyncHandler(async (req: ReqParams<{ chatroomid: string }>, res) => {
     const { chatroomid } = req.params;
 
     const count = await MessageService.getPageCountByChatRoomId(chatroomid);

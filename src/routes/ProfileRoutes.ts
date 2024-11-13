@@ -1,20 +1,19 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { authenticateJwt } from '@src/middlewares/authentication';
+import { authenticate } from '@src/middlewares/authentication';
 import ProfileService from '@src/services/ProfileService';
 import validationUtils, { validate } from '@src/util/validationUtils';
 import asyncHandler from 'express-async-handler';
-import type { IRes } from './types/express/misc';
 import type { Req, ReqParams, ReqQuery } from './types/types';
 
 // CONTACTS //
 
 const contacts_get_all = [
-  authenticateJwt,
-  validate(validationUtils.queries.pageQueriesSchema),
+  authenticate,
+  validate(validationUtils.queries.paginationQueriesSchema),
   asyncHandler(
     async (
       req: ReqQuery<{ username: string; limit: string; page: string }>,
-      res: IRes,
+      res,
     ) => {
       const currentUserId = req.user!.id;
       const queryOpts = {
@@ -34,8 +33,8 @@ const contacts_get_all = [
 ];
 
 const contact_post = [
-  authenticateJwt,
-  asyncHandler(async (req: Req<{ contactUsername: string }>, res: IRes) => {
+  authenticate,
+  asyncHandler(async (req: Req<{ contactUsername: string }>, res) => {
     const currentUserId = req.user!.id;
     const { contactUsername } = req.body;
 
@@ -46,9 +45,8 @@ const contact_post = [
 ];
 
 const contacts_delete = [
-  authenticateJwt,
-  validate(validationUtils.params.userIdParamSchema),
-  asyncHandler(async (req: ReqParams<{ userid: string }>, res: IRes) => {
+  authenticate,
+  asyncHandler(async (req: ReqParams<{ userid: string }>, res) => {
     const currentUserId = req.user!.id;
     const { userid } = req.params;
 
@@ -62,8 +60,8 @@ const contacts_delete = [
 ];
 
 const contacts_page_count = [
-  authenticateJwt,
-  asyncHandler(async (req: Req, res: IRes) => {
+  authenticate,
+  asyncHandler(async (req: Req, res) => {
     const currentUserId = req.user!.id;
 
     const count = await ProfileService.getContactPageCount(currentUserId);

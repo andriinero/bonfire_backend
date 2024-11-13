@@ -15,7 +15,7 @@ import { Server } from 'socket.io';
 import EnvVars from '@src/constants/EnvVars';
 import Paths from '@src/constants/Paths';
 import { NodeEnvs } from '@src/constants/misc';
-import { authenticateJwt } from './middlewares/authentication';
+import { authenticate } from './middlewares/authentication';
 
 import type { StrategyOptionsWithoutRequest } from 'passport-jwt';
 import HttpStatusCodes from './constants/HttpStatusCodes';
@@ -46,7 +46,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-io.engine.use(authenticateJwt);
+io.engine.use(authenticate);
 io.on('connection', socketManager.onConnection);
 
 // Show routes called in console during development
