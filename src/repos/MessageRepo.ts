@@ -1,8 +1,7 @@
 import { Prisma } from '@prisma/client';
 import EnvVars from '@src/constants/EnvVars';
-import type { TMessageSchema } from '@src/models/Message';
 import prisma from '@src/prisma';
-import type { TQueryOptions } from '@src/types/TQueryOptions';
+import type { QueryOptions } from '@src/types/TQueryOptions';
 
 type WhereQuery = Prisma.MessageWhereInput;
 
@@ -18,10 +17,7 @@ export type UpdateMessageData = Prisma.Args<
   'update'
 >['data'];
 
-const getAll = async (
-  query: WhereQuery,
-  opts?: TQueryOptions<TMessageSchema>,
-) => {
+const getAll = async (query: WhereQuery, opts?: QueryOptions) => {
   const limit = opts?.limit;
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
 

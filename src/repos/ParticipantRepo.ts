@@ -1,14 +1,10 @@
 import EnvVars from '@src/constants/EnvVars';
 import prisma from '@src/prisma';
-import type { TUserDTO } from '@src/repos/UserRepo';
-import type { TQueryOptions } from '@src/types/TQueryOptions';
+import type { QueryOptions } from '@src/types/TQueryOptions';
 
-const getAllByChatRoomId = async (
-  chatRoomId: string,
-  opts?: TQueryOptions<TUserDTO>,
-) => {
-  const limit = opts?.limit;
+const getAllByChatRoomId = async (chatRoomId: string, opts?: QueryOptions) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
+  const limit = opts?.limit;
 
   const chatRoom = await prisma.chatroom.findUnique({
     where: { id: chatRoomId },

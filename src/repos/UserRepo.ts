@@ -1,11 +1,7 @@
 import { Prisma } from '@prisma/client';
-import prisma from '@src/prisma';
-
 import EnvVars from '@src/constants/EnvVars';
-
-import type { TUserSchema } from '@src/models/User';
-import type { TQueryOptions } from '@src/types/TQueryOptions';
-import type { Document } from 'mongoose';
+import prisma from '@src/prisma';
+import type { QueryOptions } from '@src/types/TQueryOptions';
 
 type WhereQuery = Prisma.UserWhereInput;
 
@@ -15,13 +11,7 @@ type CreateData = Prisma.UserCreateInput;
 
 type UpdateData = Prisma.UserUpdateInput;
 
-export type TUserDTO = Omit<TUserSchema, 'password'>;
-
-export type TUserDTODocument = Document<unknown, unknown, TUserDTO> & TUserDTO;
-
-export const USER_DATA_SELECTION = '-password';
-
-const getAll = async (query: WhereQuery, opts?: TQueryOptions<TUserDTO>) => {
+const getAll = async (query: WhereQuery, opts?: QueryOptions<TUserDTO>) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
   const limit = opts?.limit ?? 0;
 

@@ -5,14 +5,14 @@ import type { TMessageSchema } from '@src/models/Message';
 import { RouteError } from '@src/other/classes';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import MessageRepo, { UpdateMessageData } from '@src/repos/MessageRepo';
-import type { TQueryOptions } from '@src/types/TQueryOptions';
+import type { QueryOptions } from '@src/types/TQueryOptions';
 import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
 
 export const MESSAGE_NOT_FOUND_ERR = 'Message not found';
 
 const getAllByChatRoomId = async (
   chatRoomId: string,
-  queryOpts: TQueryOptions<TMessageSchema>,
+  queryOpts: QueryOptions<TMessageSchema>,
 ) => {
   const persists = await ChatRoomRepo.persists({ id: chatRoomId });
   if (!persists) {

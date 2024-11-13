@@ -1,5 +1,4 @@
-export type TQueryOptions<T> = {
+export type QueryOptions = {
   limit?: number;
-  sort?: { [key in keyof T]?: 1 | -1 };
   page?: number;
 };

@@ -1,8 +1,7 @@
 import { Prisma } from '@prisma/client';
 import EnvVars from '@src/constants/EnvVars';
-import type { TChatRoomSchema } from '@src/models/ChatRoom';
 import prisma from '@src/prisma';
-import type { TQueryOptions } from '@src/types/TQueryOptions';
+import type { QueryOptions } from '@src/types/TQueryOptions';
 
 type WhereQuery = Prisma.ChatroomWhereInput;
 
@@ -10,10 +9,7 @@ type WhereUniqueQuery = Prisma.ChatroomWhereUniqueInput;
 
 type CreateData = Prisma.ChatroomCreateInput;
 
-const getAll = async (
-  query: WhereQuery,
-  opts?: TQueryOptions<TChatRoomSchema>,
-) => {
+const getAll = async (query: WhereQuery, opts?: QueryOptions) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
   const limit = opts?.limit ?? 0;
 

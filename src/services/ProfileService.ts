@@ -3,7 +3,7 @@ import { RouteError } from '@src/other/classes';
 
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import type { TUserDTO } from '@src/repos/UserRepo';
-import type { TQueryOptions } from '@src/types/TQueryOptions';
+import type { QueryOptions } from '@src/types/TQueryOptions';
 
 import ContactRepo from '@src/repos/ContactRepo';
 import UserRepo from '@src/repos/UserRepo';
@@ -27,7 +27,7 @@ const updateOnlineStatus = async (userId: string, isOnline: boolean) => {
 
 const getContactsById = async (
   userId: string,
-  opts: TQueryOptions<TUserDTO>,
+  opts: QueryOptions<TUserDTO>,
 ) => {
   const contacts = await ContactRepo.getAll({ id: userId }, opts);
 

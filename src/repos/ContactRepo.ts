@@ -1,12 +1,11 @@
 import { Prisma } from '@prisma/client';
 import EnvVars from '@src/constants/EnvVars';
 import prisma from '@src/prisma';
-import type { TUserDTO } from '@src/repos/UserRepo';
-import type { TQueryOptions } from '@src/types/TQueryOptions';
+import type { QueryOptions } from '@src/types/TQueryOptions';
 
 type WhereQuery = Prisma.UserWhereInput;
 
-const getAll = async (query: WhereQuery, opts?: TQueryOptions<TUserDTO>) => {
+const getAll = async (query: WhereQuery, opts?: QueryOptions) => {
   const limit = opts?.limit ?? 0;
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
 
