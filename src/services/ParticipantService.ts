@@ -1,16 +1,12 @@
 import EnvVars from '@src/constants/EnvVars';
-import { RouteError } from '@src/other/classes';
-
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-
+import { RouteError } from '@src/other/classes';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import ParticipantRepo from '@src/repos/ParticipantRepo';
 import UserRepo from '@src/repos/UserRepo';
-
-import MessageService from './MessageService';
-
 import { USER_NOT_FOUND_ERR } from './AuthService';
 import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
+import MessageService from './MessageService';
 
 const PARTICIPANT_ALREADY_IN_CHAT_ROOM_ERR = 'This user has already been added';
 const PARTICIPANT_NOT_FOUND_ERR = 'Participant not found';
@@ -51,7 +47,7 @@ const addParticipant = async ({
   await ParticipantRepo.addById(participant.id, chatRoom.id);
   await MessageService.createActionMessage({
     body: `${currentUsername} has added ${participant.username}`,
-    chat_room: chatRoom.id,
+    chatRoomId: chatRoom.id,
   });
 };
 
@@ -85,7 +81,7 @@ const removeParticipant = async ({
   await ParticipantRepo.removeById(userId, chatRoomId);
   await MessageService.createActionMessage({
     body: `${currentUsername} has left the chat`,
-    chat_room: chatRoomId,
+    chatRoomId,
   });
 };
 

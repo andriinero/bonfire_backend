@@ -1,12 +1,10 @@
 import EnvVars from '@src/constants/EnvVars';
-import { RouteError } from '@src/other/classes';
-import { getRandomColorClass } from '@src/util/getRandomColorClass';
-
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import type { QueryOptions } from '@src/types/TQueryOptions';
-
+import { RouteError } from '@src/other/classes';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import ContactRepo from '@src/repos/ContactRepo';
+import type { QueryOptions } from '@src/types/TQueryOptions';
+import { getRandomColorClass } from '@src/util/getRandomColorClass';
 
 import MessageService from './MessageService';
 
@@ -40,12 +38,12 @@ const createOne = async (currentUserUserId: string, userIds: string[]) => {
   const chatRoomDetails = {
     participants: [currentUserUserId, ...userIds],
     created: new Date(),
-    color_class: getRandomColorClass(),
+    colorClass: getRandomColorClass(),
   };
   const createdChatRoomId = await ChatRoomRepo.createOne(chatRoomDetails);
 
   await MessageService.createActionMessage({
-    chat_room: createdChatRoomId,
+    chatRoomId: createdChatRoomId,
     body: 'chat room created',
   });
 };

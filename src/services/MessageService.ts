@@ -1,7 +1,6 @@
 import { MessageType } from '@prisma/client';
 import EnvVars from '@src/constants/EnvVars';
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import type { TMessageSchema } from '@src/models/Message';
 import { RouteError } from '@src/other/classes';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import MessageRepo, { UpdateMessageData } from '@src/repos/MessageRepo';
@@ -12,12 +11,11 @@ export const MESSAGE_NOT_FOUND_ERR = 'Message not found';
 
 const getAllByChatRoomId = async (
   chatRoomId: string,
-  queryOpts: QueryOptions<TMessageSchema>,
+  queryOpts: QueryOptions,
 ) => {
   const persists = await ChatRoomRepo.persists({ id: chatRoomId });
-  if (!persists) {
+  if (!persists)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
-  }
 
   const messages = await MessageRepo.getAll({ chatRoomId }, queryOpts);
 
@@ -26,9 +24,8 @@ const getAllByChatRoomId = async (
 
 const getOneById = async (id: string) => {
   const message = await MessageRepo.getOne({ id });
-  if (!message) {
+  if (!message)
     throw new RouteError(HttpStatusCodes.NOT_FOUND, MESSAGE_NOT_FOUND_ERR);
-  }
 
   return message;
 };

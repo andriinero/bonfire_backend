@@ -11,7 +11,7 @@ type CreateData = Prisma.UserCreateInput;
 
 type UpdateData = Prisma.UserUpdateInput;
 
-const getAll = async (query: WhereQuery, opts?: QueryOptions<TUserDTO>) => {
+const getAll = async (query: WhereQuery, opts?: QueryOptions) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
   const limit = opts?.limit ?? 0;
 

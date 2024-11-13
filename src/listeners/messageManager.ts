@@ -11,7 +11,7 @@ type ReceivedMessage = {
 };
 
 const sendMessage = (socket: ISocket) => (message: ReceivedMessage) => {
-  const userId = socket.request.user!._id;
+  const userId = socket.request.user!.id;
   // FIXME: REMOVE
   logger.info(`${userId.toString()} has sent message: '${message.body}'`);
   socket.emit('message:receive', {

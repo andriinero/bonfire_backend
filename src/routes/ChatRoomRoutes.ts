@@ -20,7 +20,7 @@ const chat_room_get_all = [
   authenticateJwt,
   validate(validationUtils.queries.defaultQueriesSchema),
   asyncHandler(async (req: IReq, res: IRes): Promise<void> => {
-    const currentUserId = req.user!._id;
+    const currentUserId = req.user!._id.toString();
     const query = req.query;
 
     const allChatRooms = await ChatRoomService.getByUserId(

@@ -1,4 +1,4 @@
-import type { TUserSchemaDocument } from '@src/models/User';
+import { User } from '@prisma/client';
 import type * as e from 'express';
 import type { ParamsDictionary, Query } from 'express-serve-static-core';
 import type { IncomingMessage } from 'http';
@@ -15,7 +15,7 @@ export interface ISocket
     unknown
   > {
   request: IncomingMessage & {
-    user?: TUserSchemaDocument;
+    user?: User;
   };
 }
 
