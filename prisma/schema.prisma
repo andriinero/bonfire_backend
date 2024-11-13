@@ -14,8 +14,8 @@ model Chatroom {
   created    DateTime @default(now()) @db.Date
   colorClass String   @map("color_class")
 
-  participtants User[]
-  messages      Message[]
+  participants User[]
+  messages     Message[]
 
   @@map("chatrooms")
 }
@@ -23,10 +23,10 @@ model Chatroom {
 model Message {
   id      String      @id @default(uuid())
   body    String
-  created DateTime    @default(now()) @db.Date
+  created DateTime    @default(now())
   type    MessageType @default(ACTION)
 
-  chatRoomId String   @unique
+  chatRoomId String
   chatroom   Chatroom @relation(fields: [chatRoomId], references: [id])
 
   userId String?
