@@ -25,7 +25,6 @@ const getAll = async (
     where: query,
     take: limit,
     skip,
-    orderBy,
   });
 
   return messages;

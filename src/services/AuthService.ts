@@ -1,17 +1,11 @@
+import EnvVars from '@src/constants/EnvVars';
+import type { ColorClass } from '@src/constants/misc';
+import NotFoundError from '@src/other/errors/NotFoundError';
+import UnauthorizedError from '@src/other/errors/UnauthorizedError';
+import UserRepo from '@src/repos/UserRepo';
+import { getRandomColorClass } from '@src/util/getRandomColorClass';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-
-import EnvVars from '@src/constants/EnvVars';
-import { RouteError } from '@src/other/classes';
-import { getRandomColorClass } from '@src/util/getRandomColorClass';
-
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import type { ColorClass } from '@src/constants/misc';
-
-import UserRepo from '@src/repos/UserRepo';
-
-export const AUTHENTICATION_ERR = 'Incorrect credentials';
-export const USER_NOT_FOUND_ERR = 'User not found';
 
 type AuthPayload = {
   sub: string;
@@ -30,9 +24,7 @@ type SignUpData = {
 
 const getAuthData = async (userId: string): Promise<AuthPayload> => {
   const user = await UserRepo.getOne({ id: userId });
-
-  if (!user)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
+  if (!user) throw new NotFoundError();
 
   const { id, username, email, role, profileImage, colorClass } = user;
 
@@ -48,12 +40,10 @@ const getAuthData = async (userId: string): Promise<AuthPayload> => {
 
 const signIn = async (email: string, password: string) => {
   const user = await UserRepo.getOne({ email }, false);
-  if (!user)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
+  if (!user) throw new NotFoundError();
 
   const match = bcrypt.compareSync(password, user.password);
-  if (!match)
-    throw new RouteError(HttpStatusCodes.UNAUTHORIZED, AUTHENTICATION_ERR);
+  if (!match) throw new UnauthorizedError();
 
   const jwtPayload: AuthPayload = {
     sub: user.id,
@@ -63,7 +53,6 @@ const signIn = async (email: string, password: string) => {
     profile_image: user.profileImage,
     color_class: user.colorClass as ColorClass,
   };
-
   const token = jwt.sign(jwtPayload, EnvVars.Jwt.SECRET, {
     expiresIn: EnvVars.Jwt.EXP,
   });
@@ -76,7 +65,7 @@ const signUp = async (signUpData: SignUpData) => {
     signUpData.password,
     +EnvVars.Bcrypt.SALT,
   );
-  const userDetails = {
+  const userData = {
     ...signUpData,
     password: hashedPassword,
     created: new Date(),
@@ -85,7 +74,7 @@ const signUp = async (signUpData: SignUpData) => {
     colorClass: getRandomColorClass(),
   };
 
-  await UserRepo.createOne(userDetails);
+  await UserRepo.createOne(userData);
 };
 
 export default { getAuthData, signIn, signUp } as const;

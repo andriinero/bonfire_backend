@@ -1,6 +1,5 @@
-import { z } from 'zod';
-
 import UserRepo from '@src/repos/UserRepo';
+import { z } from 'zod';
 
 const signInDataSchema = z.object({
   body: z.object({ email: z.string().trim(), password: z.string().trim() }),

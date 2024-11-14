@@ -1,14 +1,10 @@
 import EnvVars from '@src/constants/EnvVars';
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { RouteError } from '@src/other/classes';
+import NotFoundError from '@src/other/errors/NotFoundError';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import ContactRepo from '@src/repos/ContactRepo';
 import type { QueryOptions } from '@src/types/QueryOptions';
 import { getRandomColorClass } from '@src/util/getRandomColorClass';
-
 import MessageService from './MessageService';
-
-export const CHAT_ROOM_NOT_FOUND_ERR = 'Chat room not found';
 
 const getByUserId = async (userId: string, queryOpts?: QueryOptions) => {
   const allChatRooms = await ChatRoomRepo.getAll(
@@ -20,11 +16,10 @@ const getByUserId = async (userId: string, queryOpts?: QueryOptions) => {
 };
 
 const getById = async (chatRoomId: string, userId: string) => {
-  const foundChatRoom = await ChatRoomRepo.getOneByUserId(chatRoomId, userId);
-  if (!foundChatRoom)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
+  const chatRoom = await ChatRoomRepo.getOneByUserId(chatRoomId, userId);
+  if (!chatRoom) throw new NotFoundError();
 
-  return foundChatRoom;
+  return chatRoom;
 };
 
 const createOne = async (currentUserUserId: string, userIds: string[]) => {
@@ -32,10 +27,9 @@ const createOne = async (currentUserUserId: string, userIds: string[]) => {
     currentUserUserId,
     userIds,
   );
-  if (!persists)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, 'Contacts not found');
+  if (!persists) throw new NotFoundError();
 
-  const chatRoomDetails = {
+  const chatRoomData = {
     participants: {
       connect: [currentUserUserId, ...userIds].map((participantId) => ({
         id: participantId,
@@ -44,7 +38,7 @@ const createOne = async (currentUserUserId: string, userIds: string[]) => {
     created: new Date(),
     colorClass: getRandomColorClass(),
   };
-  const createdChatRoomId = await ChatRoomRepo.createOne(chatRoomDetails);
+  const createdChatRoomId = await ChatRoomRepo.createOne(chatRoomData);
 
   await MessageService.createActionMessage({
     chatRoomId: createdChatRoomId,

@@ -1,12 +1,10 @@
 import EnvVars from '@src/constants/EnvVars';
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { RouteError } from '@src/other/classes';
+import ContactExistsError from '@src/other/errors/ContactExistsError';
+import NotFoundError from '@src/other/errors/NotFoundError';
+import SelfActionError from '@src/other/errors/SelfActionError';
 import ContactRepo from '@src/repos/ContactRepo';
 import UserRepo from '@src/repos/UserRepo';
 import type { QueryOptions } from '@src/types/QueryOptions';
-import { USER_NOT_FOUND_ERR } from './AuthService';
-
-const CONTACT_EXISTS_ERROR = 'Contact with this id already exists';
 
 type GetOptions = { username?: string } & QueryOptions;
 
@@ -14,9 +12,7 @@ type GetOptions = { username?: string } & QueryOptions;
 
 const updateOnlineStatus = async (userId: string, isOnline: boolean) => {
   const persists = await UserRepo.persistOne({ id: userId });
-
-  if (!persists)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
+  if (!persists) throw new NotFoundError();
 
   await UserRepo.updateOne({ id: userId }, { isOnline: isOnline });
 };
@@ -25,7 +21,6 @@ const updateOnlineStatus = async (userId: string, isOnline: boolean) => {
 
 const getContactsById = async (userId: string, queryOpts?: GetOptions) => {
   const queriedUsername = queryOpts?.username;
-
   const contacts = await ContactRepo.getAll(
     userId,
     { username: { contains: queriedUsername, mode: 'insensitive' } },
@@ -40,41 +35,28 @@ const createContact = async (
   contactUsername: string,
 ) => {
   const currentUser = await UserRepo.getOne({ id: currentUserId });
-  if (!currentUser)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
-
+  if (!currentUser) throw new NotFoundError();
   const newContact = await UserRepo.getOne({ username: contactUsername });
-  if (!newContact)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
-
+  if (!newContact) throw new NotFoundError();
   const contactExists = await ContactRepo.hasContactsWithIds(currentUserId, [
     newContact.id,
   ]);
+  if (contactExists) throw new ContactExistsError();
 
-  if (contactExists)
-    throw new RouteError(HttpStatusCodes.BAD_REQUEST, CONTACT_EXISTS_ERROR);
-
-  if (currentUser.id === newContact.id)
-    throw new RouteError(
-      HttpStatusCodes.BAD_REQUEST,
-      "You can't add yourself as a contact",
-    );
+  if (currentUser.id === newContact.id) throw new SelfActionError();
 
   await ContactRepo.add(currentUser.id, newContact.id);
 };
 
-const deleteContact = async (currentUserId: string, contactId: string) => {
-  const user = await UserRepo.getOne({ id: currentUserId });
-  if (!user)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
-
-  const contactExists = await ContactRepo.hasContactsWithIds(currentUserId, [
+const deleteContact = async (userId: string, contactId: string) => {
+  const user = await UserRepo.getOne({ id: userId });
+  if (!user) throw new NotFoundError();
+  const contactExists = await ContactRepo.hasContactsWithIds(userId, [
     contactId,
   ]);
-  if (!contactExists)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
+  if (!contactExists) throw new NotFoundError();
 
-  await ContactRepo.removeByUserId(currentUserId, contactId);
+  await ContactRepo.removeByUserId(userId, contactId);
 };
 
 const getContactPageCount = async (userId: string) => {

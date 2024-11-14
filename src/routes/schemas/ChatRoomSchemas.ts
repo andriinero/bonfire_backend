@@ -1,12 +1,5 @@
-import { z } from 'zod';
-
 import ContactRepo from '@src/repos/ContactRepo';
-
-const idParamSchema = z.object({
-  params: z.object({
-    chatroomid: z.string().trim(),
-  }),
-});
+import { z } from 'zod';
 
 const nameBodySchema = z.object({
   body: z.object({
@@ -14,13 +7,7 @@ const nameBodySchema = z.object({
   }),
 });
 
-const userIdBodySchema = z.object({
-  body: z.object({
-    userid: z.string().trim(),
-  }),
-});
-
-const contactIdsExistence = z
+const hasContactsWithIds = z
   .object({
     user: z.object({ id: z.any() }),
     body: z.object({
@@ -36,11 +23,7 @@ const contactIdsExistence = z
     return !!userWithContacts;
   }, 'Contacts not found');
 
-const body = { nameBodySchema, userIdBodySchema, contactIdsExistence };
-
-const params = { idParamSchema };
-
 export default {
-  body,
-  params,
+  nameBodySchema,
+  hasContactsWithIds,
 } as const;

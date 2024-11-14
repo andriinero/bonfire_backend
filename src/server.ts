@@ -88,13 +88,10 @@ app.use(Paths.Base, profileRouter);
 
 // Add error handler
 app.use((err: Error, req: Req, res: IRes, next: NextFunction) => {
-  if (EnvVars.NodeEnv !== NodeEnvs.Test.valueOf()) {
-    logger.err(err, true);
-  }
+  if (EnvVars.NodeEnv !== NodeEnvs.Test.valueOf()) logger.err(err, true);
   let status = HttpStatusCodes.BAD_REQUEST;
-  if (err instanceof RouteError) {
-    status = err.status;
-  }
+  if (err instanceof RouteError) status = err.status;
+
   res.status(status).json({ error: err.message });
 });
 

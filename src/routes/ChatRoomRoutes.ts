@@ -29,7 +29,6 @@ const chat_room_get_all = [
 
 const chat_room_get_one = [
   authenticate,
-  validate(ChatRoomSchemas.params.idParamSchema),
   asyncHandler(async (req: ReqParams<CharRoomParam>, res): Promise<void> => {
     const currentUserId = req.user!.id;
     const { chatroomid } = req.params;
@@ -45,7 +44,7 @@ const chat_room_get_one = [
 
 const chat_room_post = [
   authenticate,
-  validate(ChatRoomSchemas.body.contactIdsExistence),
+  validate(ChatRoomSchemas.hasContactsWithIds),
   asyncHandler(async (req: Req<{ userIds: string[] }>, res) => {
     const currentUserId = req.user!.id;
     const { userIds } = req.body;
@@ -82,8 +81,7 @@ const participant_get_all = [
 
 const participant_post = [
   authenticate,
-  validate(ChatRoomSchemas.params.idParamSchema),
-  validate(validationUtils.usernameOwnership('participantUsername')),
+  validate(validationUtils.notSelectingYourself('participantUsername')),
   asyncHandler(
     async (
       req: ReqParams<{ chatroomid: string }, { participantUsername: string }>,
@@ -106,7 +104,6 @@ const participant_post = [
 
 const participant_delete = [
   authenticate,
-  validate(ChatRoomSchemas.params.idParamSchema),
   asyncHandler(async (req: ReqParams<{ chatroomid: string }>, res) => {
     const { id, username } = req.user!;
     const { chatroomid } = req.params;
@@ -123,7 +120,6 @@ const participant_delete = [
 
 const participant_page_count = [
   authenticate,
-  validate(ChatRoomSchemas.params.idParamSchema),
   asyncHandler(async (req: ReqParams<{ chatroomid: string }>, res) => {
     const { chatroomid } = req.params;
 

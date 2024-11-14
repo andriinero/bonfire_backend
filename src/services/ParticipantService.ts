@@ -1,14 +1,11 @@
 import EnvVars from '@src/constants/EnvVars';
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { RouteError } from '@src/other/classes';
+import NotFoundError from '@src/other/errors/NotFoundError';
+import ParticipantExistsError from '@src/other/errors/ParticipantExists';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import ParticipantRepo from '@src/repos/ParticipantRepo';
 import UserRepo from '@src/repos/UserRepo';
-import { USER_NOT_FOUND_ERR } from './AuthService';
-import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
 import MessageService from './MessageService';
 
-const PARTICIPANT_ALREADY_IN_CHAT_ROOM_ERR = 'This user has already been added';
 const PARTICIPANT_NOT_FOUND_ERR = 'Participant not found';
 
 const getByChatRoomId = async (chatRoomId: string) => {
@@ -27,22 +24,14 @@ const addParticipant = async ({
   chatRoomId: string;
 }) => {
   const participant = await UserRepo.getOne({ username: participantUsername });
-  if (!participant)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
-
+  if (!participant) throw new NotFoundError();
   const chatRoom = await ChatRoomRepo.getOneById(chatRoomId);
-  if (!chatRoom)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
-
+  if (!chatRoom) throw new NotFoundError();
   const participantPersists = await ParticipantRepo.persistsInChatRoomById(
     participant.id,
     chatRoom.id,
   );
-  if (participantPersists)
-    throw new RouteError(
-      HttpStatusCodes.BAD_REQUEST,
-      PARTICIPANT_ALREADY_IN_CHAT_ROOM_ERR,
-    );
+  if (participantPersists) throw new ParticipantExistsError();
 
   await ParticipantRepo.addById(participant.id, chatRoom.id);
   await MessageService.createActionMessage({
@@ -61,22 +50,15 @@ const removeParticipant = async ({
   chatRoomId: string;
 }) => {
   const userPersists = await UserRepo.persistOne({ id: userId });
-  if (!userPersists)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, USER_NOT_FOUND_ERR);
-
+  if (!userPersists) throw new NotFoundError();
   const chatRoomPersists = await ChatRoomRepo.persists({ id: chatRoomId });
-  if (!chatRoomPersists)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
+  if (!chatRoomPersists) throw new NotFoundError();
 
   const participantPersists = await ParticipantRepo.persistsInChatRoomById(
     userId,
     chatRoomId,
   );
-  if (!participantPersists)
-    throw new RouteError(
-      HttpStatusCodes.BAD_REQUEST,
-      PARTICIPANT_NOT_FOUND_ERR,
-    );
+  if (!participantPersists) throw new NotFoundError();
 
   await ParticipantRepo.removeById(userId, chatRoomId);
   await MessageService.createActionMessage({

@@ -7,14 +7,22 @@ type WhereQuery = Prisma.ChatroomWhereInput;
 
 type WhereUniqueQuery = Prisma.ChatroomWhereUniqueInput;
 
-type CreateData = Prisma.Args<typeof prisma.chatroom, 'create'>['data'];
+type CreateData = Prisma.ChatroomCreateInput;
 
-const getAll = async (query: WhereQuery, opts?: QueryOptions) => {
+type OrderBy = Prisma.ChatroomOrderByWithRelationInput;
+
+const getAll = async (
+  query: WhereQuery,
+  opts?: QueryOptions,
+  orderBy?: OrderBy,
+) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
   const limit = opts?.limit ?? 0;
 
   const chatRooms = await prisma.chatroom.findMany({
     where: query,
+    orderBy,
+    include: { messages: { take: 1, orderBy: { created: 'desc' } } },
     take: limit,
     skip,
   });

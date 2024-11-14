@@ -32,13 +32,12 @@ const message_post = [
       const { chatroomid } = req.params;
       const { body } = req.body;
 
-      const messageDetails = {
+      const messageData = {
         chatRoomId: chatroomid,
         userId: currentUserId,
         body,
       };
-
-      const result = await MessageService.createUserMessage(messageDetails);
+      const result = await MessageService.createUserMessage(messageData);
 
       res.status(HttpStatusCodes.CREATED).json(result);
     },

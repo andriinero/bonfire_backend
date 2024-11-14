@@ -7,9 +7,9 @@ type WhereQuery = Prisma.UserWhereInput;
 
 type WhereUniqueQuery = Prisma.UserWhereUniqueInput;
 
-type CreateData = Prisma.Args<typeof prisma.user, 'create'>['data'];
+type CreateData = Prisma.UserCreateInput;
 
-type UpdateData = Prisma.Args<typeof prisma.user, 'update'>['data'];
+type UpdateData = Prisma.UserUpdateInput;
 
 const getAll = async (query: WhereQuery, opts?: QueryOptions) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;

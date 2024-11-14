@@ -41,12 +41,6 @@ const notSelectingYourself = (fieldName: string) =>
       message: "You can't select yourself",
     });
 
-const userIdParamSchema = z.object({
-  params: z.object({
-    userid: z.string().trim(),
-  }),
-});
-
 const paginationQueriesSchema = z.object({
   query: z.object({
     limit: z
@@ -60,13 +54,10 @@ const paginationQueriesSchema = z.object({
   }),
 });
 
-const params = { userIdParamSchema };
-
 const queries = { paginationQueriesSchema };
 
 export default {
-  params,
   queries,
   validate,
-  usernameOwnership: notSelectingYourself,
+  notSelectingYourself,
 } as const;

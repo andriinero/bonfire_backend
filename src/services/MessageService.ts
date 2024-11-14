@@ -1,21 +1,16 @@
 import { MessageType } from '@prisma/client';
 import EnvVars from '@src/constants/EnvVars';
-import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import { RouteError } from '@src/other/classes';
+import NotFoundError from '@src/other/errors/NotFoundError';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import MessageRepo, { UpdateMessageData } from '@src/repos/MessageRepo';
 import type { QueryOptions } from '@src/types/QueryOptions';
-import { CHAT_ROOM_NOT_FOUND_ERR } from './ChatRoomService';
-
-export const MESSAGE_NOT_FOUND_ERR = 'Message not found';
 
 const getAllByChatRoomId = async (
   chatRoomId: string,
   queryOpts: QueryOptions,
 ) => {
   const persists = await ChatRoomRepo.persists({ id: chatRoomId });
-  if (!persists)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, CHAT_ROOM_NOT_FOUND_ERR);
+  if (!persists) throw new NotFoundError();
 
   const messages = await MessageRepo.getAll({ chatRoomId }, queryOpts, {
     created: 'desc',
@@ -26,15 +21,14 @@ const getAllByChatRoomId = async (
 
 const getOneById = async (id: string) => {
   const message = await MessageRepo.getOne({ id });
-  if (!message)
-    throw new RouteError(HttpStatusCodes.NOT_FOUND, MESSAGE_NOT_FOUND_ERR);
+  if (!message) throw new NotFoundError();
 
   return message;
 };
 
 const createUserMessage = async (data: {
-  userId: string;
   chatRoomId: string;
+  userId: string;
   body: string;
 }) => {
   const { userId, chatRoomId, body } = data;
@@ -56,14 +50,12 @@ const createActionMessage = async (data: {
   body: string;
 }) => {
   const { chatRoomId, body } = data;
-
-  const messageDetails = {
+  const messageData = {
     chatroom: { connect: { id: chatRoomId } },
     body,
     type: MessageType.ACTION,
   };
-
-  const createdMessage = await MessageRepo.createOne(messageDetails);
+  const createdMessage = await MessageRepo.createOne(messageData);
 
   return createdMessage;
 };
