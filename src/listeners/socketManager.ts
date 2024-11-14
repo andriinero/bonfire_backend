@@ -1,8 +1,6 @@
 import type { ISocket } from '@src/routes/types/types';
-
-import messageManager from './messageManager';
-
 import ProfileService from '@src/services/ProfileService';
+import messageManager from './messageManager';
 
 const onConnection = (socket: ISocket) => {
   logConnectedUser(socket);
