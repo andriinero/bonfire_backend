@@ -7,11 +7,11 @@ type WhereQuery = Prisma.UserWhereInput;
 
 const getAll = async (
   userId: string,
-  query: WhereQuery,
+  query?: WhereQuery,
   opts?: PaginationOptions,
 ) => {
-  const limit = opts?.limit ?? 0;
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
+  const limit = opts?.limit;
 
   const user = await prisma.user.findFirst({
     where: { id: userId },
@@ -21,7 +21,7 @@ const getAll = async (
   return user?.contacts;
 };
 
-const add = async (userId: string, contactId: string) => {
+const addById = async (userId: string, contactId: string) => {
   await prisma.user.update({
     where: { id: userId },
     data: { contacts: { connect: { id: contactId } } },
@@ -57,7 +57,7 @@ const hasContactsWithIds = async (userId: string, contactIds: string[]) => {
 
 export default {
   getAll,
-  add,
+  addById,
   removeByUserId,
   getCountByUserId,
   hasContactsWithIds,

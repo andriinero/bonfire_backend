@@ -15,6 +15,11 @@ profileRouter.get(
   ProfileRoutes.contacts_get_all,
 );
 
+profileRouter.get(
+  contactsBase + Paths.Profile.Contacts.RECOMMENDED,
+  ProfileRoutes.contacts_get_recommended,
+);
+
 profileRouter.post(
   contactsBase + Paths.Profile.Contacts.POST,
   ProfileRoutes.contact_post,

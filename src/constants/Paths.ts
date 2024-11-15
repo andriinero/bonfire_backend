@@ -43,6 +43,7 @@ export default {
     Contacts: {
       BASE: '/contacts',
       GET_ALL: '/',
+      RECOMMENDED: '/recommended',
       POST: '/',
       DELETE: '/:userid',
       GET_COUNT: '/page-count',

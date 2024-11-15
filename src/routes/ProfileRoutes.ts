@@ -32,6 +32,18 @@ const contacts_get_all = [
   ),
 ];
 
+const contacts_get_recommended = [
+  authenticate,
+  asyncHandler(async (req: Req, res) => {
+    const currentUserId = req.user!.id;
+
+    const recommendedConctacts =
+      await ProfileService.getRecommendedContactsById(currentUserId);
+
+    res.status(HttpStatusCodes.OK).json(recommendedConctacts);
+  }),
+];
+
 const contact_post = [
   authenticate,
   asyncHandler(async (req: Req<{ contactUsername: string }>, res) => {
@@ -72,6 +84,7 @@ const contacts_page_count = [
 
 export default {
   contacts_get_all,
+  contacts_get_recommended,
   contacts_delete,
   contact_post,
   contacts_page_count,

@@ -19,6 +19,17 @@ const updateOnlineStatus = async (userId: string, isOnline: boolean) => {
 
 // CONTACTS //
 
+const getRecommendedContactsById = async (userId: string) => {
+  const contacts = await ContactRepo.getAll(userId);
+  const contactIds = contacts?.map((c) => c.id);
+  const recommendedContacts = await UserRepo.getAll(
+    { id: { notIn: contactIds } },
+    { limit: 5 },
+  );
+
+  return recommendedContacts;
+};
+
 const getContactsById = async (userId: string, opts?: GetOptions) => {
   const queriedUsername = opts?.username;
   const contacts = await ContactRepo.getAll(
@@ -44,7 +55,7 @@ const createContact = async (userId: string, contactUsername: string) => {
 
   if (currentUser.id === newContact.id) throw new SelfActionError();
 
-  await ContactRepo.add(currentUser.id, newContact.id);
+  await ContactRepo.addById(currentUser.id, newContact.id);
 };
 
 const deleteContact = async (userId: string, contactId: string) => {
@@ -68,6 +79,7 @@ const getContactPageCount = async (userId: string) => {
 export default {
   updateOnlineStatus,
   getContactsById,
+  getRecommendedContactsById,
   createContact,
   deleteContact,
   getContactPageCount,
