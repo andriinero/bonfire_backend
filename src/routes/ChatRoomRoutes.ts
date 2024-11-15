@@ -7,7 +7,7 @@ import asyncHandler from 'express-async-handler';
 import ChatRoomSchemas from './schemas/ChatRoomSchemas';
 import type { Req, ReqParams } from './types/types';
 
-type CharRoomParam = {
+type ChatRoomParam = {
   chatroomid: string;
 };
 
@@ -18,7 +18,7 @@ const chat_room_get_all = [
     const currentUserId = req.user!.id;
     const query = req.query;
 
-    const allChatRooms = await ChatRoomService.getByUserId(
+    const allChatRooms = await ChatRoomService.getAllByUserId(
       currentUserId,
       query,
     );
@@ -29,11 +29,11 @@ const chat_room_get_all = [
 
 const chat_room_get_one = [
   authenticate,
-  asyncHandler(async (req: ReqParams<CharRoomParam>, res): Promise<void> => {
+  asyncHandler(async (req: ReqParams<ChatRoomParam>, res): Promise<void> => {
     const currentUserId = req.user!.id;
     const { chatroomid } = req.params;
 
-    const allChatRooms = await ChatRoomService.getById(
+    const allChatRooms = await ChatRoomService.getOneById(
       currentUserId.toString(),
       chatroomid,
     );
@@ -60,7 +60,9 @@ const chat_room_page_count = [
   asyncHandler(async (req: Req, res) => {
     const currentUserId = req.user!.id;
 
-    const count = await ChatRoomService.getPageCount(currentUserId.toString());
+    const count = await ChatRoomService.getPageCountByUserId(
+      currentUserId.toString(),
+    );
 
     res.status(HttpStatusCodes.OK).json(count);
   }),
@@ -70,7 +72,7 @@ const chat_room_page_count = [
 
 const participant_get_all = [
   authenticate,
-  asyncHandler(async (req: ReqParams<{ chatroomid: string }>, res) => {
+  asyncHandler(async (req: ReqParams<ChatRoomParam>, res) => {
     const { chatroomid } = req.params;
 
     const participants = await ParticipantService.getByChatRoomId(chatroomid);
@@ -84,7 +86,7 @@ const participant_post = [
   validate(validationUtils.notSelectingYourself('participantUsername')),
   asyncHandler(
     async (
-      req: ReqParams<{ chatroomid: string }, { participantUsername: string }>,
+      req: ReqParams<ChatRoomParam, { participantUsername: string }>,
       res,
     ) => {
       const { username } = req.user!;
@@ -104,7 +106,7 @@ const participant_post = [
 
 const participant_delete = [
   authenticate,
-  asyncHandler(async (req: ReqParams<{ chatroomid: string }>, res) => {
+  asyncHandler(async (req: ReqParams<ChatRoomParam>, res) => {
     const { id, username } = req.user!;
     const { chatroomid } = req.params;
 
@@ -120,7 +122,7 @@ const participant_delete = [
 
 const participant_page_count = [
   authenticate,
-  asyncHandler(async (req: ReqParams<{ chatroomid: string }>, res) => {
+  asyncHandler(async (req: ReqParams<ChatRoomParam>, res) => {
     const { chatroomid } = req.params;
 
     const participantCount = await ParticipantService.getPageCount(chatroomid);

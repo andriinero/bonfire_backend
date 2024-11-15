@@ -4,9 +4,9 @@ import NotFoundError from '@src/other/errors/NotFoundError';
 import SelfActionError from '@src/other/errors/SelfActionError';
 import ContactRepo from '@src/repos/ContactRepo';
 import UserRepo from '@src/repos/UserRepo';
-import type { QueryOptions } from '@src/types/QueryOptions';
+import type { PaginationOptions } from '@src/types/QueryOptions';
 
-type GetOptions = { username?: string } & QueryOptions;
+type GetOptions = { username?: string } & PaginationOptions;
 
 // ONLINE STATUS //
 
@@ -19,29 +19,28 @@ const updateOnlineStatus = async (userId: string, isOnline: boolean) => {
 
 // CONTACTS //
 
-const getContactsById = async (userId: string, queryOpts?: GetOptions) => {
-  const queriedUsername = queryOpts?.username;
+const getContactsById = async (userId: string, opts?: GetOptions) => {
+  const queriedUsername = opts?.username;
   const contacts = await ContactRepo.getAll(
     userId,
     { username: { contains: queriedUsername, mode: 'insensitive' } },
-    queryOpts,
+    opts,
   );
 
   return contacts;
 };
 
-const createContact = async (
-  currentUserId: string,
-  contactUsername: string,
-) => {
-  const currentUser = await UserRepo.getOne({ id: currentUserId });
+const createContact = async (userId: string, contactUsername: string) => {
+  const currentUser = await UserRepo.getOne({ id: userId });
   if (!currentUser) throw new NotFoundError();
+
   const newContact = await UserRepo.getOne({ username: contactUsername });
   if (!newContact) throw new NotFoundError();
-  const contactExists = await ContactRepo.hasContactsWithIds(currentUserId, [
+
+  const isContactAlreadyAdded = await ContactRepo.hasContactsWithIds(userId, [
     newContact.id,
   ]);
-  if (contactExists) throw new ContactExistsError();
+  if (isContactAlreadyAdded) throw new ContactExistsError();
 
   if (currentUser.id === newContact.id) throw new SelfActionError();
 
@@ -51,6 +50,7 @@ const createContact = async (
 const deleteContact = async (userId: string, contactId: string) => {
   const user = await UserRepo.getOne({ id: userId });
   if (!user) throw new NotFoundError();
+
   const contactExists = await ContactRepo.hasContactsWithIds(userId, [
     contactId,
   ]);

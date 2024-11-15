@@ -7,7 +7,7 @@ import { getRandomColorClass } from '@src/util/getRandomColorClass';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
-type AuthPayload = {
+type AuthData = {
   sub: string;
   username: string;
   email: string;
@@ -22,13 +22,12 @@ type SignUpData = {
   password: string;
 };
 
-const getAuthData = async (userId: string): Promise<AuthPayload> => {
+const getAuthData = async (userId: string) => {
   const user = await UserRepo.getOne({ id: userId });
   if (!user) throw new NotFoundError();
 
   const { id, username, email, role, profileImage, colorClass } = user;
-
-  return {
+  const authData: AuthData = {
     sub: id,
     username,
     email,
@@ -36,6 +35,8 @@ const getAuthData = async (userId: string): Promise<AuthPayload> => {
     profile_image: profileImage,
     color_class: colorClass,
   };
+
+  return authData;
 };
 
 const signIn = async (email: string, password: string) => {
@@ -45,7 +46,7 @@ const signIn = async (email: string, password: string) => {
   const match = bcrypt.compareSync(password, user.password);
   if (!match) throw new UnauthorizedError();
 
-  const jwtPayload: AuthPayload = {
+  const jwtPayload: AuthData = {
     sub: user.id,
     username: user.username,
     email: user.email,
@@ -60,13 +61,10 @@ const signIn = async (email: string, password: string) => {
   return token;
 };
 
-const signUp = async (signUpData: SignUpData) => {
-  const hashedPassword = await bcrypt.hash(
-    signUpData.password,
-    +EnvVars.Bcrypt.SALT,
-  );
+const signUp = async (data: SignUpData) => {
+  const hashedPassword = await bcrypt.hash(data.password, +EnvVars.Bcrypt.SALT);
   const userData = {
-    ...signUpData,
+    ...data,
     password: hashedPassword,
     created: new Date(),
     role: 'USER' as const,

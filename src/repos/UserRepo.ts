@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import EnvVars from '@src/constants/EnvVars';
 import prisma from '@src/prisma';
-import { QueryOptions } from '@src/types/QueryOptions';
+import { PaginationOptions } from '@src/types/QueryOptions';
 
 type WhereQuery = Prisma.UserWhereInput;
 
@@ -11,7 +11,7 @@ type CreateData = Prisma.UserCreateInput;
 
 type UpdateData = Prisma.UserUpdateInput;
 
-const getAll = async (query: WhereQuery, opts?: QueryOptions) => {
+const getAll = async (query: WhereQuery, opts?: PaginationOptions) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
   const limit = opts?.limit ?? 0;
 

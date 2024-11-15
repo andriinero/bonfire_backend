@@ -1,7 +1,7 @@
 import { Prisma } from '@prisma/client';
 import EnvVars from '@src/constants/EnvVars';
 import prisma from '@src/prisma';
-import type { QueryOptions } from '@src/types/QueryOptions';
+import { type PaginationOptions } from '@src/types/QueryOptions';
 
 type WhereQuery = Prisma.ChatroomWhereInput;
 
@@ -9,20 +9,18 @@ type WhereUniqueQuery = Prisma.ChatroomWhereUniqueInput;
 
 type CreateData = Prisma.ChatroomCreateInput;
 
-type OrderBy = Prisma.ChatroomOrderByWithRelationInput;
-
-const getAll = async (
-  query: WhereQuery,
-  opts?: QueryOptions,
-  orderBy?: OrderBy,
-) => {
+const getAll = async (query: WhereQuery, opts?: PaginationOptions) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
-  const limit = opts?.limit ?? 0;
+  const limit = opts?.limit;
 
+  const chatRoomIdsByLatestMessage = await prisma.message.groupBy({
+    by: ['chatRoomId'],
+    _max: { created: true },
+    orderBy: { _max: { created: 'desc' } },
+  });
+  const chatRoomIds = chatRoomIdsByLatestMessage.map((c) => c.chatRoomId);
   const chatRooms = await prisma.chatroom.findMany({
-    where: query,
-    orderBy,
-    include: { messages: { take: 1, orderBy: { created: 'desc' } } },
+    where: { id: { in: chatRoomIds } },
     take: limit,
     skip,
   });

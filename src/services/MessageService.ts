@@ -3,16 +3,22 @@ import EnvVars from '@src/constants/EnvVars';
 import NotFoundError from '@src/other/errors/NotFoundError';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import MessageRepo, { UpdateMessageData } from '@src/repos/MessageRepo';
-import type { QueryOptions } from '@src/types/QueryOptions';
+import type { PaginationOptions } from '@src/types/QueryOptions';
+
+type CreateData = {
+  chatRoomId: string;
+  userId: string;
+  body: string;
+};
 
 const getAllByChatRoomId = async (
   chatRoomId: string,
-  queryOpts: QueryOptions,
+  opts: PaginationOptions,
 ) => {
   const persists = await ChatRoomRepo.persists({ id: chatRoomId });
   if (!persists) throw new NotFoundError();
 
-  const messages = await MessageRepo.getAll({ chatRoomId }, queryOpts, {
+  const messages = await MessageRepo.getAll({ chatRoomId }, opts, {
     created: 'desc',
   });
 
@@ -26,20 +32,14 @@ const getOneById = async (id: string) => {
   return message;
 };
 
-const createUserMessage = async (data: {
-  chatRoomId: string;
-  userId: string;
-  body: string;
-}) => {
+const createUserMessage = async (data: CreateData) => {
   const { userId, chatRoomId, body } = data;
-
   const messageData = {
     user: { connect: { id: userId } },
     chatroom: { connect: { id: chatRoomId } },
     body,
     type: MessageType.MESSAGE,
   };
-
   const createdMessage = await MessageRepo.createOne(messageData);
 
   return createdMessage;

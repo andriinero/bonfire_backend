@@ -2,36 +2,33 @@ import EnvVars from '@src/constants/EnvVars';
 import NotFoundError from '@src/other/errors/NotFoundError';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
 import ContactRepo from '@src/repos/ContactRepo';
-import type { QueryOptions } from '@src/types/QueryOptions';
+import type { PaginationOptions } from '@src/types/QueryOptions';
 import { getRandomColorClass } from '@src/util/getRandomColorClass';
 import MessageService from './MessageService';
 
-const getByUserId = async (userId: string, queryOpts?: QueryOptions) => {
+const getAllByUserId = async (userId: string, opts?: PaginationOptions) => {
   const allChatRooms = await ChatRoomRepo.getAll(
     { participants: { some: { id: userId } } },
-    queryOpts,
+    opts,
   );
 
   return allChatRooms;
 };
 
-const getById = async (chatRoomId: string, userId: string) => {
+const getOneById = async (chatRoomId: string, userId: string) => {
   const chatRoom = await ChatRoomRepo.getOneByUserId(chatRoomId, userId);
   if (!chatRoom) throw new NotFoundError();
 
   return chatRoom;
 };
 
-const createOne = async (currentUserUserId: string, userIds: string[]) => {
-  const persists = await ContactRepo.hasContactsWithIds(
-    currentUserUserId,
-    userIds,
-  );
+const createOne = async (userId: string, contactIds: string[]) => {
+  const persists = await ContactRepo.hasContactsWithIds(userId, contactIds);
   if (!persists) throw new NotFoundError();
 
   const chatRoomData = {
     participants: {
-      connect: [currentUserUserId, ...userIds].map((participantId) => ({
+      connect: [userId, ...contactIds].map((participantId) => ({
         id: participantId,
       })),
     },
@@ -46,15 +43,15 @@ const createOne = async (currentUserUserId: string, userIds: string[]) => {
   });
 };
 
-const getPageCount = async (userId: string) => {
+const getPageCountByUserId = async (userId: string) => {
   const docCount = await ChatRoomRepo.getCountByUserId(userId);
 
   return Math.floor(docCount / EnvVars.Bandwidth.MAX_DOCS_PER_FETCH);
 };
 
 export default {
-  getByUserId,
-  getById,
+  getAllByUserId,
+  getOneById,
   createOne,
-  getPageCount,
+  getPageCountByUserId,
 } as const;
