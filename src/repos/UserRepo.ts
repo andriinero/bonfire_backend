@@ -13,7 +13,7 @@ type UpdateData = Prisma.UserUpdateInput;
 
 const getAll = async (query: WhereQuery, opts?: PaginationOptions) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
-  const limit = opts?.limit ?? 0;
+  const limit = opts?.limit;
 
   const users = await prisma.user.findMany({ where: query, take: limit, skip });
 

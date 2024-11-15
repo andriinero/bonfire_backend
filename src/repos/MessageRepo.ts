@@ -18,8 +18,8 @@ const getAll = async (
   opts?: PaginationOptions,
   orderBy?: OrderMessageData,
 ) => {
-  const limit = opts?.limit;
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
+  const limit = opts?.limit;
 
   const messages = await prisma.message.findMany({
     where: query,
