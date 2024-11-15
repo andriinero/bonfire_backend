@@ -21,9 +21,12 @@ const updateOnlineStatus = async (userId: string, isOnline: boolean) => {
 
 const getRecommendedContactsById = async (userId: string) => {
   const contacts = await ContactRepo.getAll(userId);
-  const contactIds = contacts?.map((c) => c.id);
+  if (!contacts) throw new NotFoundError('User not found');
+
+  const userContactIds = contacts.map((c) => c.id);
+  const excludedUserIds = [...userContactIds, userId];
   const recommendedContacts = await UserRepo.getAll(
-    { id: { notIn: contactIds } },
+    { id: { notIn: excludedUserIds } },
     { limit: 5 },
   );
 
