@@ -4,7 +4,7 @@ import { RouteError } from '../classes';
 const NOT_FOUND = 'Object not found ';
 
 export default class NotFoundError extends RouteError {
-  public constructor() {
-    super(HttpStatusCodes.NOT_FOUND, NOT_FOUND);
+  public constructor(message = NOT_FOUND) {
+    super(HttpStatusCodes.NOT_FOUND, message);
   }
 }

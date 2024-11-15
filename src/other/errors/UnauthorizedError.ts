@@ -4,7 +4,7 @@ import { RouteError } from '../classes';
 const AUTHENTICATION_ERR = 'Incorrect credentials';
 
 export default class UnauthorizedError extends RouteError {
-  public constructor() {
-    super(HttpStatusCodes.UNAUTHORIZED, AUTHENTICATION_ERR);
+  public constructor(message = AUTHENTICATION_ERR) {
+    super(HttpStatusCodes.UNAUTHORIZED, message);
   }
 }
