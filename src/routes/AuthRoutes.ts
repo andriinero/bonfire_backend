@@ -5,7 +5,7 @@ import { formatValidationErrors } from '@src/util/misc';
 import { validate } from '@src/util/validationUtils';
 import asyncHandler from 'express-async-handler';
 import { validationResult } from 'express-validator';
-import AuthSchemas from './schemas/AuthSchemas';
+import AuthSchemas from '../schemas/AuthSchemas';
 import type { Req } from './types/types';
 
 type SignInBody = {
