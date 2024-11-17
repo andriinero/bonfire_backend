@@ -27,7 +27,7 @@ const getRecommendedContactsById = async (userId: string) => {
   const excludedUserIds = [...userContactIds, userId];
   const recommendedContacts = await UserRepo.getAll(
     { id: { notIn: excludedUserIds } },
-    { limit: 5 },
+    { limit: 4 },
   );
 
   return recommendedContacts;
