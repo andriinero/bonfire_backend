@@ -27,17 +27,21 @@ const logDisconnectedUser = (socket: ISocket) => async () => {
 
 export const handleSocketError = (
   socket: ISocket,
-  status: HttpStatusCodes = HttpStatusCodes.BAD_GATEWAY,
+  status: HttpStatusCodes,
   error: unknown,
 ) => {
+  let errorMessage = 'Socket returned an error';
+  let statusCode = HttpStatusCodes.BAD_GATEWAY;
   if (error instanceof ZodError) {
     const validationError = fromError(error);
-
-    socket.emit('error:receive', {
-      status,
-      data: { error: validationError },
-    });
+    errorMessage = validationError.toString();
+    statusCode = status;
   }
+
+  socket.emit('error:receive', {
+    statusCode,
+    data: { error: errorMessage },
+  });
 };
 
 export default { onConnection } as const;
