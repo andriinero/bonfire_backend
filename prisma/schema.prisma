@@ -26,11 +26,11 @@ model Message {
   created DateTime    @default(now())
   type    MessageType @default(ACTION)
 
-  chatRoomId String
   chatroom   Chatroom @relation(fields: [chatRoomId], references: [id])
+  chatRoomId String
 
-  userId String?
   user   User?   @relation(fields: [userId], references: [id])
+  userId String?
 
   @@map("messages")
 }
@@ -41,10 +41,12 @@ model User {
   email        String   @unique
   password     String
   role         UserRole @default(USER)
-  created      DateTime @default(now()) @db.Date
+  created      DateTime @default(now())
   isOnline     Boolean  @map("is_online")
   profileImage String?  @map("profile_image")
   colorClass   String   @map("color_class")
+
+  languages Language[]
 
   contacts    User[] @relation("UserContacts")
   contactedBy User[] @relation("UserContacts")
@@ -52,7 +54,34 @@ model User {
   chatrooms Chatroom[]
   messages  Message[]
 
+  receivedNotifications Notification[] @relation("NotificationReceiver")
+  sentNotifications     Notification[] @relation("NotificationSender")
+
   @@map("users")
+}
+
+model Notification {
+  id      String           @id @default(uuid())
+  body    String
+  type    NotificationType
+  created DateTime         @default(now())
+
+  receiver   User   @relation("NotificationReceiver", fields: [receiverId], references: [id])
+  receiverId String
+
+  sender   User   @relation("NotificationSender", fields: [senderId], references: [id])
+  senderId String
+
+  @@map("notifications")
+}
+
+model Language {
+  id   String @id @default(uuid())
+  name String
+
+  users User[]
+
+  @@map("languages")
 }
 
 enum MessageType {
@@ -63,4 +92,8 @@ enum MessageType {
 enum UserRole {
   USER
   ADMIN
+}
+
+enum NotificationType {
+  CONTACT_REQUEST
 }
