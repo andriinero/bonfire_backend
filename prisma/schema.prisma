@@ -69,8 +69,8 @@ model Notification {
   receiver   User   @relation("NotificationReceiver", fields: [receiverId], references: [id])
   receiverId String
 
-  sender   User   @relation("NotificationSender", fields: [senderId], references: [id])
-  senderId String
+  sender   User?   @relation("NotificationSender", fields: [senderId], references: [id])
+  senderId String?
 
   @@map("notifications")
 }
@@ -95,5 +95,6 @@ enum UserRole {
 }
 
 enum NotificationType {
+  MESSAGE
   CONTACT_REQUEST
 }
