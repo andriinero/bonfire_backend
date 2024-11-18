@@ -13,8 +13,8 @@ import { ExtractJwt, Strategy as JWTStrategy } from 'passport-jwt';
 import { Server } from 'socket.io';
 
 import EnvVars from '@src/constants/EnvVars';
-import Paths from '@src/constants/Paths';
 import { NodeEnvs } from '@src/constants/misc';
+import Paths from '@src/constants/Paths';
 import { authenticate } from './middlewares/authentication';
 
 import type { StrategyOptionsWithoutRequest } from 'passport-jwt';
@@ -25,10 +25,11 @@ import { Req } from './routes/types/types';
 
 import socketManager from './listeners/socketManager';
 
-import AuthRouter from '@src/routes/api/AuthAPI';
-import UserRepo from './repos/UserRepo';
-import ChatRoomRouter from './routes/api/ChatRoomAPI';
+import authRouter from '@src/routes/api/AuthAPI';
+import userRepo from './repos/UserRepo';
+import chatRoomRouter from './routes/api/ChatRoomAPI';
 import messageRouter from './routes/api/MessageAPI';
+import notificationRouter from './routes/api/NotificationAPI';
 import profileRouter from './routes/api/ProfileAPI';
 
 // **** Variables **** //
@@ -67,7 +68,7 @@ const strategyOpts: StrategyOptionsWithoutRequest = {
 passport.use(
   new JWTStrategy(strategyOpts, async (jwt_payload: { sub: string }, done) => {
     try {
-      const user = await UserRepo.getOne({ id: jwt_payload.sub });
+      const user = await userRepo.getOne({ id: jwt_payload.sub });
 
       if (user) {
         return done(null, user);
@@ -81,10 +82,11 @@ passport.use(
 );
 
 // Add APIs, must be after middleware
-app.use(Paths.Base, AuthRouter);
-app.use(Paths.Base, ChatRoomRouter);
+app.use(Paths.Base, authRouter);
+app.use(Paths.Base, chatRoomRouter);
 app.use(Paths.Base, messageRouter);
 app.use(Paths.Base, profileRouter);
+app.use(Paths.Base, notificationRouter);
 
 // Add error handler
 app.use((err: Error, req: Req, res: IRes, next: NextFunction) => {

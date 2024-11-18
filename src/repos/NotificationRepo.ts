@@ -5,11 +5,14 @@ import type { PaginationOptions } from '@src/types/QueryOptions';
 
 type WhereQuery = Prisma.NotificationWhereInput;
 
+type OrderBy = Prisma.NotificationOrderByWithRelationInput;
+
 type CreateData = Prisma.NotificationCreateInput;
 
 const getAllByUserId = async (
   userId: string,
   query?: WhereQuery,
+  orderBy?: OrderBy,
   opts?: PaginationOptions,
 ) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
@@ -18,7 +21,7 @@ const getAllByUserId = async (
   const user = await prisma.user.findFirst({
     where: { id: userId },
     select: {
-      receivedNotifications: { where: query, take: limit, skip: skip },
+      receivedNotifications: { where: query, orderBy, take: limit, skip: skip },
     },
   });
 

@@ -38,6 +38,11 @@ export default {
     DELETE: '/:messageid',
     GET_COUNT: '/page-count',
   },
+  Notification: {
+    BASE: '/notifications',
+    GET_ALL: '/',
+    DELETE: '/:notificationid',
+  },
   Profile: {
     BASE: '/profile',
     Contacts: {

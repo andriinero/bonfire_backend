@@ -4,7 +4,7 @@ import authRoutes from '../AuthRoutes';
 
 const apiRouter = Router();
 
-const authRouter = Router();
+const authRouter = Router({ mergeParams: true });
 
 authRouter.get(Paths.Auth.GET, authRoutes.get);
 
