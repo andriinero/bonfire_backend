@@ -2,9 +2,6 @@
  * Miscellaneous shared functions go here.
  */
 
-import { ErrorData } from '@src/types/ErrorData';
-import { Result, ValidationError } from 'express-validator';
-
 const VALIDATION_ERROR_MESSAGE = 'Validation error';
 
 /**
@@ -24,10 +21,3 @@ export function tick(milliseconds: number): Promise<void> {
     }, milliseconds);
   });
 }
-
-export const formatValidationErrors = (result?: Result<ValidationError>) => {
-  return {
-    message: VALIDATION_ERROR_MESSAGE,
-    errors: result?.array() ?? [],
-  } as ErrorData;
-};
