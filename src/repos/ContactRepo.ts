@@ -5,7 +5,7 @@ import type { PaginationOptions } from '@src/types/QueryOptions';
 
 type WhereQuery = Prisma.UserWhereInput;
 
-const getAll = async (
+const getAllByUserId = async (
   userId: string,
   query?: WhereQuery,
   opts?: PaginationOptions,
@@ -21,7 +21,7 @@ const getAll = async (
   return user?.contacts;
 };
 
-const addById = async (userId: string, contactId: string) => {
+const addByUserId = async (userId: string, contactId: string) => {
   await prisma.user.update({
     where: { id: userId },
     data: { contacts: { connect: { id: contactId } } },
@@ -56,8 +56,8 @@ const hasContactsWithIds = async (userId: string, contactIds: string[]) => {
 };
 
 export default {
-  getAll,
-  addById,
+  getAllByUserId,
+  addByUserId,
   removeByUserId,
   getCountByUserId,
   hasContactsWithIds,
