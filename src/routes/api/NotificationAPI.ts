@@ -6,14 +6,11 @@ const apiRouter = Router();
 
 const notificationRouter = Router({ mergeParams: true });
 
-notificationRouter.get(
-  Paths.Notification.GET_ALL,
-  notificationRoutes.notification_get_all,
-);
+notificationRouter.get(Paths.Notification.GET_ALL, notificationRoutes.get_all);
 
 notificationRouter.delete(
   Paths.Notification.DELETE,
-  notificationRoutes.notification_delete,
+  notificationRoutes.delete_one,
 );
 
 apiRouter.use(Paths.Notification.BASE, notificationRouter);

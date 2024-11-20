@@ -6,7 +6,7 @@ const apiRouter = Router();
 
 const authRouter = Router({ mergeParams: true });
 
-authRouter.get(Paths.Auth.GET, authRoutes.get);
+authRouter.get(Paths.Auth.GET, authRoutes.get_data);
 
 authRouter.post(Paths.Auth.SIGN_IN, authRoutes.sign_in_post);
 

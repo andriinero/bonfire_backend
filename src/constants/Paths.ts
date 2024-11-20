@@ -42,6 +42,7 @@ export default {
     BASE: '/notifications',
     GET_ALL: '/',
     DELETE: '/:notificationid',
+    READ: '/:notificationid/read',
   },
   Profile: {
     BASE: '/profile',

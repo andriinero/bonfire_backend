@@ -5,7 +5,7 @@ import validationUtils, { validate } from '@src/util/validationUtils';
 import asyncHandler from 'express-async-handler';
 import { Req, ReqQuery } from './types/types';
 
-const notification_get_all = [
+const get_all = [
   authenticate,
   validate(validationUtils.queries.paginationQueriesSchema),
   asyncHandler((req: ReqQuery<{ limit: string; page: string }>, res) => {
@@ -25,9 +25,9 @@ const notification_get_all = [
   }),
 ];
 
-const notification_delete = [authenticate, asyncHandler((req: Req, res) => {})];
+const delete_one = [authenticate, asyncHandler((req: Req, res) => {})];
 
 export default {
-  notification_get_all,
-  notification_delete,
+  get_all,
+  delete_one,
 } as const;

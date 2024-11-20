@@ -11,7 +11,7 @@ type MessagePostData = {
   reply: string;
 };
 
-const message_get_all = [
+const get_all = [
   authenticate,
   validate(validationUtils.queries.paginationQueriesSchema),
   asyncHandler(async (req: ReqParams<{ chatroomid: string }>, res) => {
@@ -24,7 +24,7 @@ const message_get_all = [
   }),
 ];
 
-const message_post = [
+const post = [
   authenticate,
   asyncHandler(
     async (req: ReqParams<{ chatroomid: string }, MessagePostData>, res) => {
@@ -44,7 +44,7 @@ const message_post = [
   ),
 ];
 
-const message_page_count = [
+const page_count = [
   authenticate,
   asyncHandler(async (req: ReqParams<{ chatroomid: string }>, res) => {
     const { chatroomid } = req.params;
@@ -56,7 +56,7 @@ const message_page_count = [
 ];
 
 export default {
-  message_get_all,
-  message_post,
-  message_page_count,
+  get_all,
+  post,
+  page_count,
 } as const;
