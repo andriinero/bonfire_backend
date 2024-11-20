@@ -57,6 +57,9 @@ model User {
   receivedNotifications Notification[] @relation("NotificationReceiver")
   sentNotifications     Notification[] @relation("NotificationSender")
 
+  friendRequestReceiver FriendRequest[] @relation("FriendRequestReceiver")
+  friendRequestSender   FriendRequest[] @relation("FriendRequestSender")
+
   @@map("users")
 }
 
@@ -74,6 +77,18 @@ model Notification {
   senderId String?
 
   @@map("notifications")
+}
+
+model FriendRequest {
+  id String @id @default(uuid())
+
+  receiver   User   @relation("FriendRequestReceiver", fields: [receiverId], references: [id])
+  receiverId String
+
+  sender   User?   @relation("FriendRequestSender", fields: [senderId], references: [id])
+  senderId String?
+
+  @@map("friendRequests")
 }
 
 model Language {
