@@ -1,4 +1,3 @@
-import Paths from '@src/constants/Paths';
 import { Router } from 'express';
 import authRoutes from '../AuthRoutes';
 
@@ -6,12 +5,12 @@ const apiRouter = Router();
 
 const authRouter = Router({ mergeParams: true });
 
-authRouter.get(Paths.Auth.GET, authRoutes.get_data);
+authRouter.get('/data', authRoutes.get_data);
 
-authRouter.post(Paths.Auth.SIGN_IN, authRoutes.sign_in_post);
+authRouter.post('/sign-in', authRoutes.sign_in_post);
 
-authRouter.post(Paths.Auth.SIGN_UP, authRoutes.sign_up_post);
+authRouter.post('/sign-up', authRoutes.sign_up_post);
 
-apiRouter.use(Paths.Auth.BASE, authRouter);
+apiRouter.use('/auth', authRouter);
 
 export default apiRouter;

@@ -33,7 +33,7 @@ const getRecommendedContactsById = async (userId: string) => {
   return recommendedContacts;
 };
 
-const getContactsById = async (userId: string, opts?: GetOptions) => {
+const getContactsByUsername = async (userId: string, opts?: GetOptions) => {
   const queriedUsername = opts?.username;
   const contacts = await ContactRepo.getAllByUserId(
     userId,
@@ -81,7 +81,7 @@ const getContactPageCount = async (userId: string) => {
 
 export default {
   updateOnlineStatus,
-  getContactsById,
+  getContactsByUsername,
   getRecommendedContactsById,
   createContact,
   deleteContact,

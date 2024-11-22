@@ -22,7 +22,7 @@ const contacts_get_all = [
         page: +req.query.page,
       };
 
-      const participants = await ProfileService.getContactsById(
+      const participants = await ProfileService.getContactsByUsername(
         currentUserId,
         queryOpts,
       );

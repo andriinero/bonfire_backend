@@ -1,9 +1,9 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
-import type { ISocket } from '@src/routes/types/types';
 import {
   ReceivedUserMessage,
   ReceivedUserMessageSchema,
-} from '@src/schemas/MessageSchemas';
+} from '@src/routes/schemas/MessageSchemas';
+import type { ISocket } from '@src/routes/types/types';
 import MessageService from '@src/services/MessageService';
 import { handleSocketError } from './socketManager';
 

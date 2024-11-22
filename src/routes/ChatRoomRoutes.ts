@@ -4,7 +4,7 @@ import ChatRoomService from '@src/services/ChatRoomService';
 import ParticipantService from '@src/services/ParticipantService';
 import validationUtils, { validate } from '@src/util/validationUtils';
 import asyncHandler from 'express-async-handler';
-import ChatRoomSchemas from '../schemas/ChatRoomSchemas';
+import ChatRoomSchemas from './schemas/ChatRoomSchemas';
 import type { Req, ReqParams } from './types/types';
 
 type ChatRoomParam = {

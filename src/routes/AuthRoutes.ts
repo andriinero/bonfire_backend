@@ -3,7 +3,7 @@ import { authenticate } from '@src/middlewares/authentication';
 import AuthService from '@src/services/AuthService';
 import { validate } from '@src/util/validationUtils';
 import asyncHandler from 'express-async-handler';
-import AuthSchemas from '../schemas/AuthSchemas';
+import AuthSchemas from './schemas/AuthSchemas';
 import type { Req } from './types/types';
 
 type SignInBody = {

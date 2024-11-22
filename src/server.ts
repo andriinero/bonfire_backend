@@ -14,7 +14,6 @@ import { Server } from 'socket.io';
 
 import EnvVars from '@src/constants/EnvVars';
 import { NodeEnvs } from '@src/constants/misc';
-import Paths from '@src/constants/Paths';
 import { authenticate } from './middlewares/authentication';
 
 import type { StrategyOptionsWithoutRequest } from 'passport-jwt';
@@ -82,11 +81,12 @@ passport.use(
 );
 
 // Add APIs, must be after middleware
-app.use(Paths.Base, authRouter);
-app.use(Paths.Base, chatRoomRouter);
-app.use(Paths.Base, messageRouter);
-app.use(Paths.Base, profileRouter);
-app.use(Paths.Base, notificationRouter);
+const base = '/api';
+app.use(base, authRouter);
+app.use(base, chatRoomRouter);
+app.use(base, messageRouter);
+app.use(base, profileRouter);
+app.use(base, notificationRouter);
 
 // Add error handler
 app.use((err: Error, req: Req, res: IRes, next: NextFunction) => {
