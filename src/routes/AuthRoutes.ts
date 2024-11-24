@@ -6,12 +6,12 @@ import asyncHandler from 'express-async-handler';
 import AuthSchemas from './schemas/AuthSchemas';
 import type { Req } from './types/types';
 
-type SignInBody = {
+type SignInRequestBody = {
   email: string;
   password: string;
 };
 
-type SignUpBody = {
+type SignUpRequestBody = {
   username: string;
   email: string;
   password: string;
@@ -30,7 +30,7 @@ const get_data = [
 
 const sign_in_post = [
   validate(AuthSchemas.body.signInDataSchema),
-  asyncHandler(async (req: Req<SignInBody>, res) => {
+  asyncHandler(async (req: Req<SignInRequestBody>, res) => {
     const { email, password } = req.body;
 
     const token = await AuthService.signIn(email, password);
@@ -41,7 +41,7 @@ const sign_in_post = [
 
 const sign_up_post = [
   validate(AuthSchemas.body.signUpDataSchema),
-  asyncHandler(async (req: Req<SignUpBody>, res) => {
+  asyncHandler(async (req: Req<SignUpRequestBody>, res) => {
     const { username, email, password } = req.body;
 
     const signUpData = { username, email, password };
