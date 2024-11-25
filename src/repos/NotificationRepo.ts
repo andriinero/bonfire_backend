@@ -12,8 +12,8 @@ type CreateData = Prisma.NotificationCreateInput;
 const getAllByUserId = async (
   userId: string,
   query?: WhereQuery,
+  opts: PaginationOptions = { limit: undefined, page: 0 },
   orderBy?: OrderBy,
-  opts?: PaginationOptions,
 ) => {
   const skip = opts?.page ?? 0 * EnvVars.Bandwidth.MAX_DOCS_PER_FETCH;
   const limit = opts?.limit;
