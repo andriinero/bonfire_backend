@@ -23,6 +23,17 @@ const getAll = async (
 
   const messages = await prisma.message.findMany({
     where: query,
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          isOnline: true,
+          colorClass: true,
+          profileImage: true,
+        },
+      },
+    },
     orderBy,
     take: limit,
     skip,
