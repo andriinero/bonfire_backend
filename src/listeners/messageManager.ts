@@ -15,11 +15,12 @@ const sendMessage =
       const userId = socket.request.user!.id;
       const { chatRoomId, body } = message;
 
-      const createdMessage = await MessageService.createUserMessage({
+      const { id: messageId } = await MessageService.createUserMessage({
         chatRoomId,
         userId,
         body,
       });
+      const createdMessage = await MessageService.getOneById(messageId);
 
       socket.emit('message:receive', createdMessage);
     } catch (err) {

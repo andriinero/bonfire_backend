@@ -43,7 +43,20 @@ const getAll = async (
 };
 
 const getOne = async (query: WhereQuery) => {
-  const message = await prisma.message.findFirst({ where: query });
+  const message = await prisma.message.findFirst({
+    where: query,
+    include: {
+      user: {
+        select: {
+          id: true,
+          username: true,
+          isOnline: true,
+          colorClass: true,
+          profileImage: true,
+        },
+      },
+    },
+  });
 
   return message;
 };
