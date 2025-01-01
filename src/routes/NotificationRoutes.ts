@@ -8,7 +8,7 @@ import { Req, ReqQuery } from './types/types';
 const get_all = [
   authenticate,
   validate(validationUtils.queries.paginationQueriesSchema),
-  asyncHandler((req: ReqQuery<{ limit: string; page: string }>, res) => {
+  asyncHandler(async (req: ReqQuery<{ limit: string; page: string }>, res) => {
     const currentUserId = req.user!.id;
     const { limit, page } = req.query;
     const queryOpts = {
@@ -16,7 +16,7 @@ const get_all = [
       page: +page,
     };
 
-    const notifications = NotificationService.getRecent(
+    const notifications = await NotificationService.getRecent(
       currentUserId,
       queryOpts,
     );
@@ -25,7 +25,7 @@ const get_all = [
   }),
 ];
 
-const delete_one = [authenticate, asyncHandler((req: Req, res) => {})];
+const delete_one = [authenticate, asyncHandler(async (req: Req, res) => {})];
 
 export default {
   get_all,
