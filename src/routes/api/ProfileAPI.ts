@@ -3,6 +3,7 @@ import NotificationRoutes from '../NotificationRoutes';
 import ProfileRoutes from '../ProfileRoutes';
 
 const apiRouter = Router();
+
 const contactRouter = Router({ mergeParams: true });
 const notificationRouter = Router({ mergeParams: true });
 const profileRouter = Router({ mergeParams: true });
@@ -23,8 +24,13 @@ contactRouter.get('/page-count', ProfileRoutes.contacts_page_count);
 
 notificationRouter.get('/', NotificationRoutes.get_all);
 
+notificationRouter.delete('/', NotificationRoutes.delete_all);
+
+notificationRouter.delete('/:notificaionid', NotificationRoutes.delete_one);
+
 profileRouter.use('/contacts', contactRouter);
 profileRouter.use('/notifications', notificationRouter);
+
 apiRouter.use('/profile', profileRouter);
 
 export default apiRouter;

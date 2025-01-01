@@ -7,7 +7,7 @@ type WhereQuery = Prisma.NotificationWhereInput;
 
 type OrderBy = Prisma.NotificationOrderByWithRelationInput;
 
-type CreateData = Prisma.NotificationCreateInput;
+type CreateManyData = Prisma.NotificationCreateManyInput;
 
 const getAllByUserId = async (
   userId: string,
@@ -28,8 +28,10 @@ const getAllByUserId = async (
   return user?.receivedNotifications;
 };
 
-const createOne = async (data: CreateData) => {
-  await prisma.notification.create({ data });
+const createMany = async (data: CreateManyData[]) => {
+  await prisma.notification.createMany({
+    data,
+  });
 };
 
 const deleteById = async (id: string) => {
@@ -47,7 +49,7 @@ const getCountByUserId = async (userId: string) => {
 
 export default {
   getAllByUserId,
-  createOne,
+  createMany,
   deleteById,
   getCountByUserId,
 } as const;

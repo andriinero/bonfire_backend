@@ -1,3 +1,4 @@
+import { NotificationType } from '@prisma/client';
 import EnvVars from '@src/constants/EnvVars';
 import NotFoundError from '@src/other/errors/NotFoundError';
 import ChatRoomRepo from '@src/repos/ChatRoomRepo';
@@ -5,6 +6,7 @@ import ContactRepo from '@src/repos/ContactRepo';
 import type { PaginationOptions } from '@src/types/QueryOptions';
 import { getRandomColorClass } from '@src/util/getRandomColorClass';
 import MessageService from './MessageService';
+import NotificationService from './NotificationService';
 
 const getAllByUserId = async (userId: string, opts?: PaginationOptions) => {
   const allChatRooms = await ChatRoomRepo.getAll(
@@ -40,6 +42,12 @@ const createOne = async (userId: string, contactIds: string[]) => {
   await MessageService.createActionMessage({
     chatRoomId: createdChatRoomId,
     body: 'chat room created',
+  });
+  await NotificationService.create({
+    receivers: [...contactIds],
+    sender: userId,
+    body: "you've been added to the chat",
+    type: NotificationType.MESSAGE,
   });
 };
 

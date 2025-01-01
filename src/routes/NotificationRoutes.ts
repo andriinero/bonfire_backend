@@ -3,7 +3,7 @@ import { authenticate } from '@src/middlewares/authentication';
 import NotificationService from '@src/services/NotificationService';
 import validationUtils, { validate } from '@src/util/validationUtils';
 import asyncHandler from 'express-async-handler';
-import { Req, ReqQuery } from './types/types';
+import { ReqParams, ReqQuery } from './types/types';
 
 const get_all = [
   authenticate,
@@ -25,9 +25,24 @@ const get_all = [
   }),
 ];
 
-const delete_one = [authenticate, asyncHandler(async (req: Req, res) => {})];
+const delete_all = [
+  authenticate,
+  asyncHandler(async (_, res) => {
+    res.status(HttpStatusCodes.OK).json('Route not implemented');
+  }),
+];
+
+const delete_one = [
+  authenticate,
+  asyncHandler(async (req: ReqParams<{ notificationid: string }>, res) => {
+    const { notificationid } = req.params;
+
+    res.status(HttpStatusCodes.OK).json('Route not implemented');
+  }),
+];
 
 export default {
   get_all,
+  delete_all,
   delete_one,
 } as const;
