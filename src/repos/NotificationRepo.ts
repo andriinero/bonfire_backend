@@ -21,7 +21,27 @@ const getAllByUserId = async (
   const user = await prisma.user.findFirst({
     where: { id: userId },
     select: {
-      receivedNotifications: { where: query, orderBy, take: limit, skip: skip },
+      receivedNotifications: {
+        where: query,
+        orderBy,
+        take: limit,
+        skip: skip,
+        select: {
+          id: true,
+          body: true,
+          type: true,
+          created: true,
+          isRead: true,
+          sender: {
+            select: {
+              id: true,
+              username: true,
+              colorClass: true,
+              profileImage: true,
+            },
+          },
+        },
+      },
     },
   });
 

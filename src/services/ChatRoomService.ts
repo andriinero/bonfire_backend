@@ -46,7 +46,7 @@ const createOne = async (userId: string, contactIds: string[]) => {
   await NotificationService.create({
     receivers: [...contactIds],
     sender: userId,
-    body: "you've been added to the chat",
+    body: 'has added you to the chat',
     type: NotificationType.MESSAGE,
   });
 };
