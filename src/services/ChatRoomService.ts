@@ -34,7 +34,6 @@ const createOne = async (userId: string, contactIds: string[]) => {
         id: participantId,
       })),
     },
-    created: new Date(),
     colorClass: getRandomColorClass(),
   };
   const createdChatRoomId = await ChatRoomRepo.createOne(chatRoomData);

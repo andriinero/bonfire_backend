@@ -12,8 +12,8 @@ type AuthData = {
   username: string;
   email: string;
   role: string;
-  profile_image: string | null;
-  color_class: string;
+  profileImage: string | null;
+  colorClass: string;
 };
 
 type SignUpData = {
@@ -32,8 +32,8 @@ const getAuthData = async (userId: string) => {
     username,
     email,
     role,
-    profile_image: profileImage,
-    color_class: colorClass,
+    profileImage,
+    colorClass,
   };
 
   return authData;
@@ -51,8 +51,8 @@ const signIn = async (email: string, password: string) => {
     username: user.username,
     email: user.email,
     role: user.role,
-    profile_image: user.profileImage,
-    color_class: user.colorClass as ColorClass,
+    profileImage: user.profileImage,
+    colorClass: user.colorClass as ColorClass,
   };
   const token = jwt.sign(jwtPayload, EnvVars.Jwt.SECRET, {
     expiresIn: EnvVars.Jwt.EXP,
