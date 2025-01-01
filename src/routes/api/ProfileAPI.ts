@@ -1,30 +1,30 @@
 import { Router } from 'express';
+import NotificationRoutes from '../NotificationRoutes';
 import ProfileRoutes from '../ProfileRoutes';
 
 const apiRouter = Router();
-
+const contactRouter = Router({ mergeParams: true });
+const notificationRouter = Router({ mergeParams: true });
 const profileRouter = Router({ mergeParams: true });
 
-// CONTACTS //
+// CONTACT //
 
-const contactsBase = '/contacts';
+contactRouter.get('/', ProfileRoutes.contacts_get_all);
 
-profileRouter.get(contactsBase + '/', ProfileRoutes.contacts_get_all);
+contactRouter.get('/recommended', ProfileRoutes.contacts_get_recommended);
 
-profileRouter.get(
-  contactsBase + '/recommended',
-  ProfileRoutes.contacts_get_recommended,
-);
+contactRouter.post('/', ProfileRoutes.contact_post);
 
-profileRouter.post(contactsBase + '/', ProfileRoutes.contact_post);
+contactRouter.delete('/:userid', ProfileRoutes.contacts_delete);
 
-profileRouter.delete(contactsBase + '/:userid', ProfileRoutes.contacts_delete);
+contactRouter.get('/page-count', ProfileRoutes.contacts_page_count);
 
-profileRouter.get(
-  contactsBase + '/page-count',
-  ProfileRoutes.contacts_page_count,
-);
+// NOTIFICATIONS //
 
+notificationRouter.get('/', NotificationRoutes.get_all);
+
+profileRouter.use('/contacts', contactRouter);
+profileRouter.use('/notifications', notificationRouter);
 apiRouter.use('/profile', profileRouter);
 
 export default apiRouter;

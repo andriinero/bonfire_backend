@@ -28,7 +28,6 @@ import authRouter from '@src/routes/api/AuthAPI';
 import userRepo from './repos/UserRepo';
 import chatRoomRouter from './routes/api/ChatRoomAPI';
 import messageRouter from './routes/api/MessageAPI';
-import notificationRouter from './routes/api/NotificationAPI';
 import profileRouter from './routes/api/ProfileAPI';
 
 // **** Variables **** //
@@ -86,7 +85,6 @@ app.use(base, authRouter);
 app.use(base, chatRoomRouter);
 app.use(base, messageRouter);
 app.use(base, profileRouter);
-app.use(base, notificationRouter);
 
 // Add error handler
 app.use((err: Error, req: Req, res: IRes, next: NextFunction) => {
