@@ -26,7 +26,7 @@ notificationRouter.get('/', NotificationRoutes.get_all);
 
 notificationRouter.delete('/', NotificationRoutes.delete_all);
 
-notificationRouter.delete('/:notificaionid', NotificationRoutes.delete_one);
+notificationRouter.delete('/:notificationid', NotificationRoutes.delete_one);
 
 profileRouter.use('/contacts', contactRouter);
 profileRouter.use('/notifications', notificationRouter);

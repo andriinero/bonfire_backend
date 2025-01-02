@@ -27,8 +27,14 @@ const get_all = [
 
 const delete_all = [
   authenticate,
-  asyncHandler(async (_, res) => {
-    res.status(HttpStatusCodes.OK).json('Route not implemented');
+  asyncHandler(async (req, res) => {
+    const userId = req.user!.id;
+
+    await NotificationService.dismissAllByReceiverId(userId);
+
+    res
+      .status(HttpStatusCodes.OK)
+      .json({ message: 'All notifications dismissed' });
   }),
 ];
 
@@ -37,7 +43,9 @@ const delete_one = [
   asyncHandler(async (req: ReqParams<{ notificationid: string }>, res) => {
     const { notificationid } = req.params;
 
-    res.status(HttpStatusCodes.OK).json('Route not implemented');
+    await NotificationService.dismissOneById(notificationid);
+
+    res.status(HttpStatusCodes.OK).json({ message: 'Notification dismissed' });
   }),
 ];
 

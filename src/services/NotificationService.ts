@@ -2,31 +2,45 @@ import { NotificationType } from '@prisma/client';
 import NotificationRepo from '@src/repos/NotificationRepo';
 import { PaginationOptions } from '@src/types/QueryOptions';
 
-type CreateOne = {
+type Create = {
   receivers: string[];
   sender: string;
   body: string;
   type: NotificationType;
 };
 
-const getRecent = async (userId: string, opts: PaginationOptions) => {
-  const notificatoins = await NotificationRepo.getAllByUserId(
-    userId,
-    {},
+const getRecentByReceiverId = async (
+  receiverId: string,
+  opts: PaginationOptions,
+) => {
+  const notificatoins = await NotificationRepo.getAllByReceiverId(
+    receiverId,
     {
       created: 'desc',
     },
+    opts,
   );
 
   return notificatoins;
 };
 
-const create = async ({ receivers, sender, body, type }: CreateOne) => {
+const create = async ({ receivers, sender, body, type }: Create) => {
   await NotificationRepo.createMany(
     receivers.map((id) => ({ receiverId: id, senderId: sender, body, type })),
   );
 };
 
-const dismiss = async () => {};
+const dismissAllByReceiverId = async (id: string) => {
+  await NotificationRepo.deleteManyByReceiverId(id);
+};
 
-export default { getRecent, create, dismiss } as const;
+const dismissOneById = async (id: string) => {
+  await NotificationRepo.deleteById(id);
+};
+
+export default {
+  getRecent: getRecentByReceiverId,
+  create,
+  dismissAllByReceiverId,
+  dismissOneById,
+} as const;
