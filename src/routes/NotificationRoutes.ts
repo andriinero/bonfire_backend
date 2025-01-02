@@ -16,12 +16,25 @@ const get_all = [
       page: +page,
     };
 
-    const notifications = await NotificationService.getRecent(
+    const notifications = await NotificationService.getRecentByReceiverId(
       currentUserId,
       queryOpts,
     );
 
     res.status(HttpStatusCodes.OK).json(notifications);
+  }),
+];
+
+const post_mark_as_read = [
+  authenticate,
+  asyncHandler(async (req: ReqParams<{ notificationid: string }>, res) => {
+    const { notificationid } = req.params;
+
+    await NotificationService.markAsReadById(notificationid);
+
+    res
+      .status(HttpStatusCodes.OK)
+      .json({ message: 'Notification marked as read' });
   }),
 ];
 
@@ -51,6 +64,7 @@ const delete_one = [
 
 export default {
   get_all,
+  post_mark_as_read,
   delete_all,
   delete_one,
 } as const;

@@ -9,6 +9,8 @@ type OrderBy = Prisma.NotificationOrderByWithRelationInput;
 
 type CreateManyData = Prisma.NotificationCreateManyInput;
 
+type UpdateData = Prisma.NotificationUpdateInput;
+
 const notificationDataSelection = {
   id: true,
   body: true,
@@ -57,6 +59,10 @@ const createMany = async (data: CreateManyData[]) => {
   await prisma.notification.createMany({ data });
 };
 
+const updateById = async (id: string, data: UpdateData) => {
+  await prisma.notification.update({ where: { id }, data });
+};
+
 const deleteManyByReceiverId = async (id: string) => {
   await prisma.notification.deleteMany({ where: { receiverId: id } });
 };
@@ -78,6 +84,7 @@ export default {
   getAllByReceiverId,
   getOneById,
   createMany,
+  updateById,
   deleteManyByReceiverId,
   deleteById,
   getCountByReceiverId,

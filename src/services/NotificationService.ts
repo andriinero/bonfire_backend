@@ -30,6 +30,10 @@ const create = async ({ receivers, sender, body, type }: Create) => {
   );
 };
 
+const markAsReadById = async (id: string) => {
+  await NotificationRepo.updateById(id, { isRead: true });
+};
+
 const dismissAllByReceiverId = async (id: string) => {
   await NotificationRepo.deleteManyByReceiverId(id);
 };
@@ -39,8 +43,9 @@ const dismissOneById = async (id: string) => {
 };
 
 export default {
-  getRecent: getRecentByReceiverId,
+  getRecentByReceiverId,
   create,
+  markAsReadById,
   dismissAllByReceiverId,
   dismissOneById,
 } as const;

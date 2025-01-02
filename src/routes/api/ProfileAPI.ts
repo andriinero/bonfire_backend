@@ -26,6 +26,11 @@ notificationRouter.get('/', NotificationRoutes.get_all);
 
 notificationRouter.delete('/', NotificationRoutes.delete_all);
 
+notificationRouter.post(
+  '/:notificationid/mark-as-read',
+  NotificationRoutes.post_mark_as_read,
+);
+
 notificationRouter.delete('/:notificationid', NotificationRoutes.delete_one);
 
 profileRouter.use('/contacts', contactRouter);
