@@ -3,8 +3,6 @@ import EnvVars from '@src/constants/EnvVars';
 import prisma from '@src/prisma';
 import type { PaginationOptions } from '@src/types/QueryOptions';
 
-type WhereQuery = Prisma.NotificationWhereInput;
-
 type OrderBy = Prisma.NotificationOrderByWithRelationInput;
 
 type CreateManyData = Prisma.NotificationCreateManyInput;

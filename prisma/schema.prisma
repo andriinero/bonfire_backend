@@ -39,10 +39,13 @@ model User {
   id           String   @id @default(uuid())
   username     String   @unique
   email        String   @unique
+  firstName    String
+  lastName     String
+  location     String
   password     String
   role         UserRole @default(USER)
   created      DateTime @default(now())
-  isOnline     Boolean  @map("is_online")
+  isOnline     Boolean  @default(false) @map("is_online")
   profileImage String?  @map("profile_image")
   colorClass   String   @map("color_class")
 

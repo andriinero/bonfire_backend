@@ -11,6 +11,9 @@ type AuthData = {
   sub: string;
   username: string;
   email: string;
+  firstName: string;
+  lastName: string;
+  location: string;
   role: string;
   profileImage: string | null;
   colorClass: string;
@@ -19,6 +22,9 @@ type AuthData = {
 type SignUpData = {
   username: string;
   email: string;
+  firstName: string;
+  lastName: string;
+  location: string;
   password: string;
 };
 
@@ -26,11 +32,24 @@ const getAuthData = async (userId: string) => {
   const user = await UserRepo.getOne({ id: userId });
   if (!user) throw new NotFoundError();
 
-  const { id, username, email, role, profileImage, colorClass } = user;
+  const {
+    id,
+    username,
+    email,
+    firstName,
+    lastName,
+    location,
+    role,
+    profileImage,
+    colorClass,
+  } = user;
   const authData: AuthData = {
     sub: id,
     username,
     email,
+    firstName,
+    lastName,
+    location,
     role,
     profileImage,
     colorClass,
@@ -50,6 +69,9 @@ const signIn = async (email: string, password: string) => {
     sub: user.id,
     username: user.username,
     email: user.email,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    location: user.location,
     role: user.role,
     profileImage: user.profileImage,
     colorClass: user.colorClass as ColorClass,
@@ -66,10 +88,8 @@ const signUp = async (data: SignUpData) => {
   const userData = {
     ...data,
     password: hashedPassword,
-    created: new Date(),
-    role: 'USER' as const,
-    isOnline: false,
     colorClass: getRandomColorClass(),
+    isOnline: false,
   };
 
   await UserRepo.createOne(userData);

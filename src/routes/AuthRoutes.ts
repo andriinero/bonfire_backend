@@ -14,6 +14,9 @@ type SignInRequestBody = {
 type SignUpRequestBody = {
   username: string;
   email: string;
+  firstName: string;
+  lastName: string;
+  location: string;
   password: string;
   confirmPassword: string;
 };
@@ -42,9 +45,16 @@ const sign_in_post = [
 const sign_up_post = [
   validate(AuthSchemas.body.signUpDataSchema),
   asyncHandler(async (req: Req<SignUpRequestBody>, res) => {
-    const { username, email, password } = req.body;
-
-    const signUpData = { username, email, password };
+    const { username, email, firstName, lastName, location, password } =
+      req.body;
+    const signUpData = {
+      username,
+      email,
+      firstName,
+      lastName,
+      location,
+      password,
+    };
 
     await AuthService.signUp(signUpData);
 
