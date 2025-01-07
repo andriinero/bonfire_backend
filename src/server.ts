@@ -27,6 +27,7 @@ import socketManager from './listeners/socketManager';
 import authRouter from '@src/routes/api/AuthAPI';
 import userRepo from './repos/UserRepo';
 import chatRoomRouter from './routes/api/ChatRoomAPI';
+import languageRouter from './routes/api/LanguagesAPI';
 import messageRouter from './routes/api/MessageAPI';
 import profileRouter from './routes/api/ProfileAPI';
 
@@ -85,6 +86,7 @@ app.use(base, authRouter);
 app.use(base, chatRoomRouter);
 app.use(base, messageRouter);
 app.use(base, profileRouter);
+app.use(base, languageRouter);
 
 // Add error handler
 app.use((err: Error, req: Req, res: IRes, next: NextFunction) => {
