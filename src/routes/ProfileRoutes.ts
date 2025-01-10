@@ -3,7 +3,29 @@ import { authenticate } from '@src/middlewares/authentication';
 import ProfileService from '@src/services/ProfileService';
 import validationUtils, { validate } from '@src/util/validationUtils';
 import asyncHandler from 'express-async-handler';
+import { ProfilePatch, profilePatchSchema } from './schemas/ProfileSchemas';
 import type { Req, ReqParams, ReqQuery } from './types/types';
+
+// PROFILE //
+
+const patch = [
+  authenticate,
+  validate(profilePatchSchema),
+  asyncHandler(async (req: Req<ProfilePatch>, res) => {
+    const userId = req.user!.id;
+    const { firstName, lastName, username, email, bio, location } = req.body;
+    const profilePatchData = {
+      firstName,
+      lastName,
+      username,
+      email,
+      bio,
+      location,
+    };
+
+    await ProfileService.patchProfileByUserId(userId, profilePatchData);
+  }),
+];
 
 // CONTACTS //
 
@@ -83,6 +105,7 @@ const contacts_page_count = [
 ];
 
 export default {
+  patch,
   contacts_get_all,
   contacts_get_recommended,
   contacts_delete,

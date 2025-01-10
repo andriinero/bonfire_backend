@@ -42,6 +42,7 @@ model User {
   firstName    String
   lastName     String
   location     String
+  bio          String?
   password     String
   role         UserRole @default(USER)
   created      DateTime @default(now())

@@ -8,6 +8,10 @@ const contactRouter = Router({ mergeParams: true });
 const notificationRouter = Router({ mergeParams: true });
 const profileRouter = Router({ mergeParams: true });
 
+// PROFILE //
+
+profileRouter.patch('/', ProfileRoutes.patch);
+
 // CONTACT //
 
 contactRouter.get('/', ProfileRoutes.contacts_get_all);

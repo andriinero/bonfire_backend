@@ -1,12 +1,21 @@
+import { Optional } from '@prisma/client/runtime/library';
 import EnvVars from '@src/constants/EnvVars';
 import ContactExistsError from '@src/other/errors/ContactExistsError';
 import NotFoundError from '@src/other/errors/NotFoundError';
 import SelfActionError from '@src/other/errors/SelfActionError';
 import ContactRepo from '@src/repos/ContactRepo';
 import UserRepo from '@src/repos/UserRepo';
+import { ProfilePatch } from '@src/routes/schemas/ProfileSchemas';
 import type { PaginationOptions } from '@src/types/QueryOptions';
 
 type GetOptions = { username?: string } & PaginationOptions;
+
+const patchProfileByUserId = async (
+  id: string,
+  data: Optional<ProfilePatch>,
+) => {
+  await UserRepo.updateOne({ id }, data);
+};
 
 // ONLINE STATUS //
 
@@ -80,6 +89,7 @@ const getContactPageCount = async (userId: string) => {
 };
 
 export default {
+  patchProfileByUserId,
   updateOnlineStatus,
   getContactsByUsername,
   getRecommendedContactsById,
