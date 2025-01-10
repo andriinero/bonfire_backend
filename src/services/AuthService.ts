@@ -13,6 +13,7 @@ type AuthData = {
   email: string;
   firstName: string;
   lastName: string;
+  bio: string | null;
   location: string;
   role: string;
   profileImage: string | null;
@@ -39,6 +40,7 @@ const getAuthData = async (userId: string) => {
     firstName,
     lastName,
     location,
+    bio,
     role,
     profileImage,
     colorClass,
@@ -50,6 +52,7 @@ const getAuthData = async (userId: string) => {
     firstName,
     lastName,
     location,
+    bio,
     role,
     profileImage,
     colorClass,
@@ -72,6 +75,7 @@ const signIn = async (email: string, password: string) => {
     firstName: user.firstName,
     lastName: user.lastName,
     location: user.location,
+    bio: user.bio,
     role: user.role,
     profileImage: user.profileImage,
     colorClass: user.colorClass as ColorClass,

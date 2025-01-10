@@ -34,7 +34,7 @@ const createOne = async (data: CreateData) => {
 };
 
 const updateOne = async (query: WhereUniqueQuery, data: UpdateData) => {
-  await prisma.user.update({ where: query, data });
+  return await prisma.user.update({ where: query, data });
 };
 
 const deleteOne = async (query: WhereUniqueQuery) => {

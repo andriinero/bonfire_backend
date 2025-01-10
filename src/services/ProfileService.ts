@@ -14,7 +14,7 @@ const patchProfileByUserId = async (
   id: string,
   data: Optional<ProfilePatch>,
 ) => {
-  await UserRepo.updateOne({ id }, data);
+  return await UserRepo.updateOne({ id }, data);
 };
 
 // ONLINE STATUS //

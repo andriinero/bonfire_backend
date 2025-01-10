@@ -23,7 +23,17 @@ const patch = [
       location,
     };
 
-    await ProfileService.patchProfileByUserId(userId, profilePatchData);
+    const updatedUser = await ProfileService.patchProfileByUserId(
+      userId,
+      profilePatchData,
+    );
+
+    // FIXME: remove comment
+    console.log(updatedUser.bio);
+
+    res
+      .status(HttpStatusCodes.OK)
+      .json({ message: 'Profile updated successfully' });
   }),
 ];
 
