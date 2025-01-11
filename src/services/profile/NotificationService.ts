@@ -2,7 +2,7 @@ import { NotificationType } from '@prisma/client';
 import NotificationRepo from '@src/repos/NotificationRepo';
 import { PaginationOptions } from '@src/types/QueryOptions';
 
-type Create = {
+type CreateData = {
   receivers: string[];
   sender: string;
   body: string;
@@ -24,7 +24,7 @@ const getRecentByReceiverId = async (
   return notificatoins;
 };
 
-const create = async ({ receivers, sender, body, type }: Create) => {
+const create = async ({ receivers, sender, body, type }: CreateData) => {
   await NotificationRepo.createMany(
     receivers.map((id) => ({ receiverId: id, senderId: sender, body, type })),
   );

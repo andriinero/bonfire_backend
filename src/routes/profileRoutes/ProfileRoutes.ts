@@ -1,6 +1,6 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { authenticate } from '@src/middlewares/authentication';
-import ProfileService from '@src/services/ProfileService';
+import ProfileService from '@src/services/profile/ProfileService';
 import { validate } from '@src/util/validationUtils';
 import asyncHandler from 'express-async-handler';
 import { ProfilePatch, profilePatchSchema } from '../schemas/ProfileSchemas';

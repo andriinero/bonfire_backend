@@ -6,7 +6,7 @@ import ContactRepo from '@src/repos/ContactRepo';
 import type { PaginationOptions } from '@src/types/QueryOptions';
 import { getRandomColorClass } from '@src/util/getRandomColorClass';
 import MessageService from './MessageService';
-import NotificationService from './NotificationService';
+import NotificationService from './profile/NotificationService';
 
 const getAllByUserId = async (userId: string, opts?: PaginationOptions) => {
   const allChatRooms = await ChatRoomRepo.getAll(

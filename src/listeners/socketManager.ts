@@ -1,6 +1,6 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import type { ISocket } from '@src/routes/types/types';
-import ProfileService from '@src/services/ProfileService';
+import ProfileService from '@src/services/profile/ProfileService';
 import { ZodError } from 'zod';
 import { fromError } from 'zod-validation-error';
 import messageManager from './messageManager';

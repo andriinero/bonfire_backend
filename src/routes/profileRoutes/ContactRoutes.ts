@@ -1,6 +1,6 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { authenticate } from '@src/middlewares/authentication';
-import ProfileService from '@src/services/ProfileService';
+import ContactService from '@src/services/profile/ContactService';
 import validationUtils, { validate } from '@src/util/validationUtils';
 import asyncHandler from 'express-async-handler';
 import { Req, ReqParams, ReqQuery } from '../types/types';
@@ -20,7 +20,7 @@ const contacts_get_all = [
         page: +req.query.page,
       };
 
-      const participants = await ProfileService.getContactsByUsername(
+      const participants = await ContactService.getContactsByUsername(
         currentUserId,
         queryOpts,
       );
@@ -36,7 +36,7 @@ const contacts_get_recommended = [
     const currentUserId = req.user!.id;
 
     const recommendedConctacts =
-      await ProfileService.getRecommendedContactsById(currentUserId);
+      await ContactService.getRecommendedContactsById(currentUserId);
 
     res.status(HttpStatusCodes.OK).json(recommendedConctacts);
   }),
@@ -48,7 +48,7 @@ const contact_post = [
     const currentUserId = req.user!.id;
     const { contactUsername } = req.body;
 
-    await ProfileService.createContact(currentUserId, contactUsername);
+    await ContactService.createContact(currentUserId, contactUsername);
 
     res.status(HttpStatusCodes.CREATED).json({ message: 'Contact created' });
   }),
@@ -60,7 +60,7 @@ const contacts_delete = [
     const currentUserId = req.user!.id;
     const { userid } = req.params;
 
-    const participants = await ProfileService.deleteContact(
+    const participants = await ContactService.deleteContact(
       currentUserId,
       userid,
     );
@@ -74,7 +74,7 @@ const contacts_page_count = [
   asyncHandler(async (req: Req, res) => {
     const currentUserId = req.user!.id;
 
-    const count = await ProfileService.getContactPageCount(currentUserId);
+    const count = await ContactService.getContactPageCount(currentUserId);
 
     res.status(HttpStatusCodes.OK).json(count);
   }),

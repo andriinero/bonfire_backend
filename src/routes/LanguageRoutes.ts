@@ -1,6 +1,6 @@
 import HttpStatusCodes from '@src/constants/HttpStatusCodes';
 import { authenticate } from '@src/middlewares/authentication';
-import LanguagesService from '@src/services/LanguagesService';
+import LanguagesService from '@src/services/LanguageService';
 import validationUtils, { validate } from '@src/util/validationUtils';
 import asyncHandler from 'express-async-handler';
 import { ReqParams, ReqQuery } from './types/types';
