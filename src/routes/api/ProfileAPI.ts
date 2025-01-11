@@ -1,6 +1,7 @@
 import { Router } from 'express';
-import NotificationRoutes from '../NotificationRoutes';
-import ProfileRoutes from '../ProfileRoutes';
+import ContactRoutes from '../profileRoutes/ContactRoutes';
+import NotificationRoutes from '../profileRoutes/NotificationRoutes';
+import ProfileRoutes from '../profileRoutes/ProfileRoutes';
 
 const apiRouter = Router();
 
@@ -14,15 +15,15 @@ profileRouter.patch('/', ProfileRoutes.patch);
 
 // CONTACT //
 
-contactRouter.get('/', ProfileRoutes.contacts_get_all);
+contactRouter.get('/', ContactRoutes.contacts_get_all);
 
-contactRouter.get('/recommended', ProfileRoutes.contacts_get_recommended);
+contactRouter.get('/recommended', ContactRoutes.contacts_get_recommended);
 
-contactRouter.post('/', ProfileRoutes.contact_post);
+contactRouter.post('/', ContactRoutes.contact_post);
 
-contactRouter.delete('/:userid', ProfileRoutes.contacts_delete);
+contactRouter.delete('/:userid', ContactRoutes.contacts_delete);
 
-contactRouter.get('/page-count', ProfileRoutes.contacts_page_count);
+contactRouter.get('/page-count', ContactRoutes.contacts_page_count);
 
 // NOTIFICATIONS //
 

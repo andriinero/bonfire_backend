@@ -1,13 +1,13 @@
 import { Router } from 'express';
-import LanguagesRoutes from '../LanguagesRoutes';
+import LanguageRoutes from '../LanguageRoutes';
 
 const apiRouter = Router();
 
 const languageRouter = Router({ mergeParams: true });
 
-languageRouter.get('/', LanguagesRoutes.get_all);
+languageRouter.get('/', LanguageRoutes.get_all);
 
-languageRouter.get('/:languageid', LanguagesRoutes.get_one);
+languageRouter.get('/:languageid', LanguageRoutes.get_one);
 
 apiRouter.use('/languages', languageRouter);
 

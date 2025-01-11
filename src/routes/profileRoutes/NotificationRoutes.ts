@@ -3,7 +3,7 @@ import { authenticate } from '@src/middlewares/authentication';
 import NotificationService from '@src/services/NotificationService';
 import validationUtils, { validate } from '@src/util/validationUtils';
 import asyncHandler from 'express-async-handler';
-import { ReqParams, ReqQuery } from './types/types';
+import { ReqParams, ReqQuery } from '../types/types';
 
 const get_all = [
   authenticate,

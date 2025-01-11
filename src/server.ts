@@ -27,7 +27,7 @@ import socketManager from './listeners/socketManager';
 import authRouter from '@src/routes/api/AuthAPI';
 import userRepo from './repos/UserRepo';
 import chatRoomRouter from './routes/api/ChatRoomAPI';
-import languageRouter from './routes/api/LanguagesAPI';
+import languageRouter from './routes/api/LanguageAPI';
 import messageRouter from './routes/api/MessageAPI';
 import profileRouter from './routes/api/ProfileAPI';
 
